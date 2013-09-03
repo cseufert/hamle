@@ -27,7 +27,7 @@ a#home[href=/index.php&target=_blank]
 p.quote[data-ref=\[12\&3 and \$4\]]
 
 ### HTML Tags with Content
-div#content $content
+div#content.fun.midcol $content
 .title $title
 a[href=$url] $title
 p This is my $name, how are you today
@@ -65,3 +65,4 @@ $(social_media)->children(“link”)
 ### All will parse with
 /^((([a-zA-Z]*)([\.#]\w*)*(\[[^\]]*[\]]*\])?)|([_\/][\/]?)|([\|:\$][\w]+)|({?\$[^}]+}?)|)( .*)?$/
 /^((([a-zA-Z]*)([\.#]\w*)*(\[([^\\\]]*(\\.)*)+\])?)|([_\/][\/]?)|([\|:\$][\w]+)|({?\$[^}]+}?)|)( .*)?$/
+/^(\s*)(?:(?:([a-zA-Z]*)((?:[\.#]\w+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
