@@ -3,19 +3,26 @@ hamle
 
 ### Enhanced Version of HAML - HAMLE
 
-This haml port uses slightly different syntax to the general format to use less characters, 
-and as a templating language to be combined with a model/controller to insert data into the template expects
-that you will be entering far less plain text, and focusing on document structure.
+This haml port uses slightly different syntax to the haml standard format. The main idea
+here is to reduce the number of symbols that are typed. The second issue this port is attempting
+to address, is to remove native code from the template. The idea here being that your template 
+could be served as html from the server, however where supported, it could be rendered by
+javascript, with a small json request to retreive the data to fill the template with. The main
+focus for hamle is not on markup, but on page/document structure, so inline tags are not a
+consideration at this stage.
 
-* Indented Stucture (Python like), increased indents means inside element, decreased implies closing tag
+* Indented Stucture (Python like), increased indents means inside parent element, decreased implies closing tag
 * HTML tags just go straigt in, no symbol required (eg `DIV`, `P`, `A`, etc)
   * Tag attributes are specified in square brackets as url encoded string (eg `A[href=/]` or `.button[data-size=$id&class=$tags]`)
   * Escape & with \&, ] with \], etc
 * CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
-* All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}, etc)
+  * DIVs are assumed if no html tag is specified
+  * There is no specific order to the id and class
+* All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}`, etc)
+  * `{$...}` over `$...` are required when accessing array/object.
   * Super Global like objects
     * `$_THIS` = current model/controller that is in scope
-    * `$_LAST` = array of scopes `$_LAST(-1)` last scope, `$_LAST(0)` root scope, etc
+    * `$_LAST` = array of scopes `$_LAST[-1]` last scope, `$_LAST[0]` root scope, etc
     * `$_SITE` = site globals, etc
     * `$_MODS` = Module/Plugins loaded under this
     * `$_TOOL` = Model/Controller Tools (search, special functions, shopping cart, etc)
@@ -31,9 +38,11 @@ that you will be entering far less plain text, and focusing on document structur
   * `|if $id = $_VIEW->id` - include section if this id is the view id
   * `|else` - else for `|with`, and `|if`
   * `|switch $type` - switch based on $type
-    * `|case "page"` - include section if switch matches
-    * `|default` - inclused section if nothing matches
+    * `|case "page"` - include section if case matches
+    * `|default` - include section if none of the cases matches
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
+    * Variable substitution is active within the filename
+    * Ability to include a block for recursive lookup
 * `:filtername` - Use filter named filtername to process section (eg `:CSS a {color:red}` or `:JAVASCRIPT alert('hi');`)
 * `// Comment` - not included in output
 * `/ Comment` - included as HTML comment
