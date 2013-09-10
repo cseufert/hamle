@@ -1,7 +1,7 @@
 hamle
 =====
 
-### Enhanced Version of HAML
+### Enhanced Version of HAML - HAMLE
 
 This haml port uses slightly different syntax to the general format to use less characters, 
 and as a templating language to be combined with a model/controller to insert data into the template expects
@@ -19,7 +19,12 @@ that you will be entering far less plain text, and focusing on document structur
     * `$_SITE` = site globals, etc
     * `$_MODS` = Module/Plugins loaded under this
     * `$_TOOL` = Model/Controller Tools (search, special functions, shopping cart, etc)
-  * jQuery like magic `$` function `$(1024)` opens id, `$(mine)` opens object named mine, `$(page=3)` opens page with id=3
+  * jQuery like magic `$` function 
+    * `$(#1024)` opens id = 1024
+    * `$(#mine)` opens object with id/alias = mine
+    * `$(page#3)` opens page type with id = 3
+    * `$(cat)` opens a list of all category objects
+    * `$(product.onsale)` opens a list of all products with onsale tag
 * Iteratorable model/controller can use special methods
   * `|with $(mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope
