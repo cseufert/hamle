@@ -43,7 +43,7 @@ class hamleTag {
   
   function addContent($s) {
     if(trim($s))
-      $this->content[] = $s;
+      $this->content[] = hamleStr::pass($s, true);
     //else
     //  throw new Exception("Blank Line");
   }
@@ -104,7 +104,7 @@ class hamleTag_HTML extends hamleTag {
   function optToTags() {
     $out = array();
     foreach($this->opt as $k=>$v)
-      $out[] = " $k=\"".  htmlspecialchars($v)."\"";
+      $out[] = " ".hamleStr::pass($k, true)."=\"".hamleStr::pass($v, true)."\"";
     return implode("", $out);
   }
 }
