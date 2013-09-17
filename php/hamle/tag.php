@@ -14,7 +14,7 @@ class hamleTag {
   
   function __construct() {
     $this->tags = array();
-    $this->content = "";
+    $this->content = array();
   }
   
   function addChild($tag) {
@@ -24,10 +24,17 @@ class hamleTag {
   function render($indent = 0) {
     $ind = str_pad("", $indent, " ");
     $out = $ind.$this->renderStTag()."\n";
-    if($this->content) $out .= $ind.$this->content."\n";
+    if($this->content) $out .= $this->renderContent($ind);
     foreach($this->tags as $tag)
       $out .= $tag->render($indent + 2);
     $out .= $ind.$this->renderEnTag()."\n";
+    return $out;
+  }
+  
+  function renderContent($pad = "") {
+    $out = "";
+    foreach($this->content as $c)
+      $out .= $pad.$c."\n";
     return $out;
   }
   
@@ -35,19 +42,43 @@ class hamleTag {
   function renderEnTag() {}
   
   function addContent($s) {
-    $this->content = $s;
+    if(trim($s))
+      $this->content[] = $s;
+    //else
+    //  throw new Exception("Blank Line");
   }
   
 }
 
-class hamleTag_Ctrl {
-  
+class hamleTag_Ctrl extends hamleTag {
+}
+
+class hamleTag_Filter extends hamleTag {
+  function __construct($tag) {
+    parent::__construct();
+    $this->type = strtolower($tag);
+    $this->filter = "hamleFilter_{$this->type}";
+    if(!class_exists($this->filter))
+      Throw new hamleEx_NoFilter("Unable to fild filter $tag");
+  }
+  function renderContent($pad = "") {
+    $c = $this->filter;
+    return $c::filterText(parent::renderContent($pad));
+  }
+  function renderStTag() {
+    $c = $this->filter;
+    return $c::stTag();
+  }
+  function renderEnTag() {
+    $c = $this->filter;
+    return $c::ndTag();
+  }
 }
 
 class hamleTag_HTML extends hamleTag {
   function __construct($tag, $classid, $param=array()) {
     parent::__construct();
-    $this->type = $tag;
+    $this->type = $tag?$tag:"div";
     /// todo: variable substitution
     if(isset($param[0]) && $param[0] == "[") {
       $param = substr($param, 1, strlen($param)-2);
