@@ -43,7 +43,16 @@ p.quote[data-ref=\[12\&3 and \$4\] \]] Hi There
 ### Filters
 ```
 :javascript alert('hi');
+//Future Feaures
+  //|with $pages
+  /*|each*/
+    var myvar = /*|json $0/*
+  /*|endeach*/
+  //|endwith
+  var title = /*$title*/
 :css a {color:green;}
+/* Future Features */
+  a {border: {$width}px solid {$color};}
 :php echo "Just Testing";
 ```
 
