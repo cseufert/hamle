@@ -20,22 +20,23 @@ consideration at this stage.
   * There is no specific order to the id and class
 * All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}`, etc)
   * `{$...}` over `$...` are required when accessing array/object.
-  * Super Global like objects
-    * `$_THIS` = current model/controller that is in scope
-    * `$_LAST` = array of scopes `$_LAST[-1]` last scope, `$_LAST[0]` root scope, etc
-    * `$_SITE` = site globals, etc
-    * `$_MODS` = Module/Plugins loaded under this
-    * `$_TOOL` = Model/Controller Tools (search, special functions, shopping cart, etc)
+  * History objects
+    * `$[0]` = current model/controller that is in scope
+      * Usage #1 `|with $[-1]` - Switch back to last scope
+      * Usage #2 `{$[1]->title} - read from initial scope
+    * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$_LAST[-2]` second last scope
   * jQuery like magic `$` function 
     * `$(#1024)` opens id = 1024
     * `$(#mine)` opens object with id/alias = mine
     * `$(page#3)` opens page type with id = 3
     * `$(cat)` opens a list of all category objects
     * `$(product.onsale)` opens a list of all products with onsale tag
-* Iteratorable model/controller can use special methods
+    * `$(cart#summary)
+* Iteratorable model/controller list/array can use special methods
   * `|with $(mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope
   * `|if $id = $_VIEW->id` - include section if this id is the view id
+  * `|unless $title` - if not shortcut
   * `|else` - else for `|with`, and `|if`
   * `|switch $type` - switch based on $type
     * `|case "page"` - include section if case matches
@@ -48,7 +49,7 @@ consideration at this stage.
 * `/ Comment` - included as HTML comment
 * `_This is just plain text`
   * Plain text, can be easily translated
-  * _ is only required when text is the first thing on a new line
+  * `_` is only required when text is the first thing on a new line
   * To escape $ sign, use \$
  
 
