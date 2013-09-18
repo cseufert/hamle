@@ -13,7 +13,8 @@ class hamleSetup {
    * 
    * @return string Directory to store cache in
    */
-  function getCacheDir() { return "cache/hamle"; }
+  function getCacheDir() { 
+    return __DIR__."/../../cache"; }
   
   /**
    * Open the default model when only an ID is specified in the template
@@ -30,7 +31,7 @@ class hamleSetup {
    * @param mixed $id Identifier for Model
    * @return hamleModel Instance of model class that implements hamleModel
    */
-  function getNamedModel($name, $id) { 
+  function getNamedModel($name, $id = NULL) { 
     return hamleDemoModel::findId($name, $id); 
   }
   
@@ -41,7 +42,7 @@ class hamleSetup {
    * @param array $tags Array of Tags to search for (Default Logic is AND)
    * @return hamleModel Instance of Iteratable model class
    */
-  function getSearchedModel($name, $tags) {
-    return hamleDemoModel::findTag($name, $tags);
+  function getSearchedModel($name, $tags, $id = NULL) {
+    return hamleDemoModel::findTag($name, $tags, $id);
   }
 }
