@@ -7,40 +7,81 @@
  * @package hamle
  */
 class hamleTag {
+  /**
+   * @var array Array of children tag elements 
+   */
   protected $tags;
+  /**
+   * @var string Tag Type for Printable Tags 
+   */
   protected $type;
-  protected $opt;
+  /**
+   * @var array Array of lines of Content 
+   */
   protected $content;
+  /**
+   * Number of spaces for each Indent when doing pretty format of output
+   */
+  const INDENT_SIZE = 2;
   
+  /**
+   * Initialize instance vars
+   */
   function __construct() {
     $this->tags = array();
     $this->content = array();
   }
   
+  /**
+   * Add a child tag to this tag
+   * @param hamleTag $tag Tag to add as child
+   */
   function addChild($tag) {
     $this->tags[] = $tag;
   }
   
-  function render($indent = 0) {
-    $ind = str_pad("", $indent, " ");
+  /**
+   * Render html/php output to disk
+   * 
+   * @param int $indent Number of spaces in current indent level
+   * @param boolean $doIndent Indent this tag
+   * @return string HTML/PHP Output
+   */
+  function render($indent = 0, $doIndent = true) {
+    $ind = $doIndent?str_pad("", $indent, " "):"";
     $out = $ind.$this->renderStTag()."\n";
     if($this->content) $out .= $this->renderContent($ind);
     foreach($this->tags as $tag)
-      $out .= $tag->render($indent + 2);
+      $out .= $tag->render($indent + self::INDENT_SIZE);
     $out .= $ind.$this->renderEnTag()."\n";
     return $out;
   }
   
+  /**
+   * Apply indent, to content, and return as string
+   * 
+   * @param string $pad Indent String
+   * @return string Indented Content
+   */
   function renderContent($pad = "") {
     $out = "";
     foreach($this->content as $c)
       $out .= $pad.$c."\n";
     return $out;
   }
-  
+  /**
+   * Output the Start Tag for this element
+   */
   function renderStTag() {}
+  /**
+   * Output the End Tag for this element
+   */
   function renderEnTag() {}
-  
+  /**
+   * Add content to this tag, one line at a time
+   * 
+   * @param string $s One line of content
+   */
   function addContent($s) {
     if(trim($s))
       $this->content[] = hamleStr::pass($s, true);
@@ -49,10 +90,64 @@ class hamleTag {
   }
   
 }
-
+/**
+ * HAMLE Control Tag
+ * Used for tags starting with the pipe (|) symbol
+ */
 class hamleTag_Ctrl extends hamleTag {
+  /**
+   * @var string Variable passed to Control Tag 
+   */
+  protected $var;
+  function __construct($tag) {
+    parent::__construct();
+    $this->type = strtolower($tag);
+  }
+    
+  function renderStTag() {
+    $out = "<"."?php ";
+    var_dump($this->type);
+    switch($this->type) {
+      case "each":
+        $out .= hamleStr::native($this->var);
+        $out .= "\$o2 = \$o;\n";
+        $out .= "foreach(\$o2 as \$o) { \n";
+        $out .= "hamleScope::add(\$o); "; 
+        break;
+      case "if":
+        $out .= "if()";
+        break;
+    }
+    return $out.'?>';
+  }
+  /**
+   * @param string $s Variable String for control tag
+   */
+  function setVar($s) {
+    $this->var = trim($s);
+  }
+  function renderEnTag() {
+    $out = '<'.'?php ';
+    switch($this->type) {
+      case "each";
+      case "with";
+        $out .= 'hamleScope::done(); ';
+        break;
+      case "include":
+        return "";
+        break;
+    }
+    return $out.'} ?>';
+  }
+  function render($indent = 0, $doIndent = true) {
+    return parent::render($indent - self::INDENT_SIZE, false);
+  }
 }
 
+/**
+ * HAMLE Filter Tag
+ * Filter tags start with colon or (:) and use hamleFilter_<filtername>
+ */
 class hamleTag_Filter extends hamleTag {
   function __construct($tag) {
     parent::__construct();
@@ -74,8 +169,16 @@ class hamleTag_Filter extends hamleTag {
     return $c::ndTag();
   }
 }
-
+/**
+ * HAMLE HTML Tag
+ * Use to represent plain HTML Tags
+ */
 class hamleTag_HTML extends hamleTag {
+  /**
+   * @var array Options for html tags (eg, href, class, style, etc) 
+   */
+  protected $opt;
+
   function __construct($tag, $classid, $param=array()) {
     parent::__construct();
     $this->type = $tag?$tag:"div";
@@ -100,7 +203,11 @@ class hamleTag_HTML extends hamleTag {
   function renderEnTag() {
     return "</{$this->type}>";
   }
-  
+  /**
+   * Used to convert urlencoded string into html attributes
+   * 
+   * @return string HTML Attributes
+   */
   function optToTags() {
     $out = array();
     foreach($this->opt as $k=>$v)
