@@ -1,4 +1,4 @@
-hamle
+HAMLE
 =====
 
 ### Enhanced Version of HAML - HAMLE
@@ -32,10 +32,11 @@ consideration at this stage.
     * `$(cat)` opens a list of all category objects
     * `$(product.onsale)` opens a list of all products with onsale tag
     * `$(cart#summary)
-* Iteratorable model/controller list/array can use special methods
-  * `|with $(mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
-  * `|each` - iterates through each object in the current scope
+* Iterateable model/controller list/array can use special methods
   * `|if $id = $_VIEW->id` - include section if this id is the view id
+  * `|with $(#mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
+  * `|each` - iterates through each object in the current scope
+  * `|each $childred()` - iterate through returned data
   * `|unless $title` - if not shortcut
   * `|else` - else for `|with`, and `|if`
   * `|switch $type` - switch based on $type
@@ -44,10 +45,10 @@ consideration at this stage.
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
     * Variable substitution is active within the filename
     * Ability to include a block for recursive lookup
-* `:filtername` - Use filter named filtername to process section (eg `:CSS a {color:red}` or `:JAVASCRIPT alert('hi');`)
+* `:filtername` - Use filter named filtername to process section (eg `:css a {color:red}` or `:javascript alert('hi');`)
 * `// Comment` - not included in output
 * `/ Comment` - included as HTML comment
-* `_This is just plain text`
+* `_ This is just plain text`
   * Plain text, can be easily translated
   * `_` is only required when text is the first thing on a new line
   * To escape $ sign, use \$
