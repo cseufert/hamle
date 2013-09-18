@@ -43,8 +43,8 @@ class hamleParse {
         //var_dump($m);
         switch(strlen($code)?$code[0]:"") {
           case "|":
-            $hTag = new hamleTag_Ctrl(substr($tag,1));
-            $hTag->addContent($text);
+            $hTag = new hamleTag_Ctrl(substr($code,1));
+            $hTag->setVar($text);
             break;
           case ":":
             $hTag = new hamleTag_Filter(substr($code,1));
