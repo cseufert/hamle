@@ -20,7 +20,7 @@ consideration at this stage.
   * There is no specific order to the id and class
 * All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}`, etc)
   * `{$...}` over `$...` are required when accessing array/object.
-  * History objects
+  * Scope History
     * `$[0]` = current model/controller that is in scope
       * Usage #1 `|with $[-1]` - Switch back to last scope
       * Usage #2 `{$[1]->title} - read from initial scope
@@ -32,16 +32,16 @@ consideration at this stage.
     * `$(cat)` opens a list of all category objects
     * `$(product.onsale)` opens a list of all products with onsale tag
     * `$(cart#summary)
-* Iterateable model/controller list/array can use special methods
-  * `|if $id = $_VIEW->id` - include section if this id is the view id
+* Iterateable model/controller list/array can use special methods (* Future)
+  * `|if $id = $_VIEW->id`* - include section if this id is the view id
   * `|with $(#mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope
   * `|each $childred()` - iterate through returned data
-  * `|unless $title` - if not shortcut
+  * `|unless $title`* - if not shortcut
   * `|else` - else for `|with`, and `|if`
-  * `|switch $type` - switch based on $type
-    * `|case "page"` - include section if case matches
-    * `|default` - include section if none of the cases matches
+  * `|switch $type`* - switch based on $type
+    * `|case "page"`* - include section if case matches
+    * `|default`* - include section if none of the cases matches
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
     * Variable substitution is active within the filename
     * Ability to include a block for recursive lookup
