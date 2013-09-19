@@ -33,15 +33,15 @@ class hamleStr {
   static function native($s) {
     $code = "";
     if(preg_match('/^\$\(([a-zA-Z0-9\.#]+)\)(.*)$/',$s, $m)) {
-      $code .= '$o = hamle::modelFind("'.  addslashes($m[1]).'");'."\n";
+      $code .= 'hamle::modelFind("'.  addslashes($m[1]).'")';
       if($m[2]) {
-        $code .= '$o = $o'.$m[2].";\n";
+        $code .= $m[2];
       }
     }
     if(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
-      $code .= '$o = hamleScope::get("'.addslashes($m[1]).'");'."\n";
+      $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
       if($m[2]) {
-        $code .= '$o = $o'.$m[2].";\n";
+        $code .= $m[2];
       }
     }
     return $code;
