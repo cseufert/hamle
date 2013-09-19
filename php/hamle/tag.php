@@ -102,6 +102,7 @@ class hamleTag_Ctrl extends hamleTag {
   function __construct($tag) {
     parent::__construct();
     $this->type = strtolower($tag);
+    $this->var = "";
   }
     
   function renderStTag() {
@@ -109,13 +110,19 @@ class hamleTag_Ctrl extends hamleTag {
     var_dump($this->type);
     switch($this->type) {
       case "each":
-        $out .= hamleStr::native($this->var);
-        $out .= "\$o2 = \$o;\n";
-        $out .= "foreach(\$o2 as \$o) { \n";
-        $out .= "hamleScope::add(\$o); "; 
+        if($this->var) {
+          $out .= "foreach(".hamleStr::native($this->var)." as \$o) { \n";
+          $out .= "hamleScope::add(\$o); ";
+        } else {
+          $out .= "foreach(hamleScope::get() as \$o) { \n";
+          $out .= "hamleScope::add(\$o); ";
+        }
         break;
       case "if":
         $out .= "if()";
+        break;
+      case "with":
+        $out .= "hamleScope::add(".hamleStr::native($this->var).");\n;";
         break;
     }
     return $out.'?>';
@@ -130,14 +137,17 @@ class hamleTag_Ctrl extends hamleTag {
     $out = '<'.'?php ';
     switch($this->type) {
       case "each";
-      case "with";
         $out .= 'hamleScope::done(); ';
+        break;
+      case "with";
+          $out .= 'hamleScope::done(); ';
+          $out .= '} ';
         break;
       case "include":
         return "";
         break;
     }
-    return $out.'} ?>';
+    return $out.'?>';
   }
   function render($indent = 0, $doIndent = true) {
     return parent::render($indent - self::INDENT_SIZE, false);
