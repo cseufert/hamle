@@ -41,7 +41,7 @@ class hamle {
     $dir = $this->setup->getCacheDir();
     $tpl = file_get_contents($f);
     if(!$tpl) throw new hamleEx("Unable to open file [$f]");
-    file_put_contents("$dir/string.hamle.php", hamleParse::str($$tpl));
+    file_put_contents("$dir/string.hamle.php", hamleParse::str($tpl));
     require "$dir/string.hamle.php";
   }
   
