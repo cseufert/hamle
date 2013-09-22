@@ -65,9 +65,9 @@ class hamleParse {
         $heir[$i] = $hTag;
         if($indent > 0)
           $heir[$i - 1]->addChild($hTag);
-        $lineNo++;
       } else 
         throw new hamlEx_ParseError("Unable to parse line $l\n\"$line\"");
+      $lineNo++;
     }
     return $heir[0]->render();
 
