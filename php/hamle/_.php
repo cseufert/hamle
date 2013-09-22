@@ -36,6 +36,14 @@ class hamle {
     require "$dir/string.hamle.php";
   }
   
+  function outputFile($f) {
+    self::$me = $this;
+    $dir = $this->setup->getCacheDir();
+    $tpl = file_get_contents($f);
+    file_put_contents("$dir/string.hamle.php", hamleParse::str($$tpl));
+    require "$dir/string.hamle.php";
+  }
+  
   static function modelFind($s) {
     return self::$me->_modelFind($s);
   }
