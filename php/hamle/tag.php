@@ -131,7 +131,7 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= "hamleScope::add({$this->o});\n;";
         break;
       case "include":
-        $out .= "";
+        $out .= "echo hamle::includeFile(\"".hamleStr::passStr($this->var)."\");";
         break;
     }
     return $out.' ?>';
@@ -154,7 +154,7 @@ class hamleTag_Ctrl extends hamleTag {
         return "";
         break;
     }
-    return $out.'?>';
+    return $out.' ?>';
   }
   function render($indent = 0, $doIndent = true) {
     return parent::render($indent - self::INDENT_SIZE, false);
