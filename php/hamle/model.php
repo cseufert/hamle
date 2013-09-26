@@ -22,6 +22,8 @@ interface hamleModel extends Iterator {
    * @throws hamleEx_NoFunc
    */
   function hamleExec($func, $args);
+  
+  function hamleChild($selector);
 }
 
 class hamleModel_zero implements hamleModel {
@@ -30,6 +32,9 @@ class hamleModel_zero implements hamleModel {
   }
   function hamleExec($func, $args) {
     throw new hamleEx_NoFunc("Cant find Func ($func)");
+  }
+  function hamleChild($selector) {
+    throw new hamleEx_NoFunc("Unable to find children");
   }
   
   function valid() { return false; }
