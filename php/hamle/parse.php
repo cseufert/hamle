@@ -14,10 +14,6 @@ class hamleParse {
    * @return string Parsed HAMLE as HTML
    */
   static $indents;
-
-  static function file($file) {
-    return self::str(file_get_conents($file));
-  }
   
   /**
    * Parse a string
@@ -36,6 +32,8 @@ class hamleParse {
       if(trim($line)) if(preg_match($rx, $line, $m)) {
         unset($m[0]);
         $indent = strlen($m[1]);
+        if(FALSE !== strpos($indent, "\t"))
+          throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
         $params = isset($m[4])?$m[4]:"";
@@ -91,13 +89,9 @@ class hamleParse {
       $lineNo++;
     }
     $out = "";
-    //var_dump($root);
     foreach($root as $tag)
       $out .= $tag->render();
     return $out;
-    //return $heir[0]->render();
-
-    
   }
   
   
