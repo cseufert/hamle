@@ -30,19 +30,34 @@ class hamle {
   }
   
   function outputStr($s) {
+    $out = "";
     self::$me = $this;
     $dir = $this->setup->getCacheDir();
     file_put_contents("$dir/string.hamle.php", hamleParse::str($s));
-    require "$dir/string.hamle.php";
+    return $this->output("$dir/string.hamle.php");
   }
   
   function outputFile($f) {
     self::$me = $this;
+    $f = $this->setup->themePath($f);
     $dir = $this->setup->getCacheDir();
     $tpl = file_get_contents($f);
     if(!$tpl) throw new hamleEx("Unable to open file [$f]");
-    file_put_contents("$dir/string.hamle.php", hamleParse::str($tpl));
-    require "$dir/string.hamle.php";
+    $of = $dir."/".str_replace("/","-",$f).".php";
+    file_put_contents($of, hamleParse::str($tpl));
+    return $this->output($of);
+  }
+
+  protected function output($f) {
+    try {
+      ob_start();
+      require $f;
+      $out = ob_get_contents();
+      ob_end_clean();
+    } catch (hamleEx $e) {
+      throw $e;
+    }
+    return $out;
   }
   
   static function modelFind($s) {
@@ -56,8 +71,6 @@ class hamle {
         return $this->setup->getNamedModel($type);
       else
         throw new hamleEx("Unable to parse ($s)");
-    var_dump($idclass);
-    exit();
     if(!isset($idclass['class']) && isset($idclass['id']))
       if($type)
         return $this->setup->getNamedModel($type, $idclass['id']);
