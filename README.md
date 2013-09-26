@@ -17,7 +17,7 @@ consideration at this stage.
   * Escape & with \&, ] with \], etc
 * CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
-  * There is no specific order to the id and class
+  * There is no specific order to the id and class, however the name, if specified must be first
 * All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}`, etc)
   * `{$...}` over `$...` are required when accessing array/object.
   * Scope History
@@ -32,19 +32,28 @@ consideration at this stage.
     * `$(cat)` opens a list of all category objects
     * `$(product.onsale)` opens a list of all products with onsale tag
     * `$(cart#summary)
-* Iterateable model/controller list/array can use special methods (* Future)
-  * `|if $id = $_VIEW->id`* - include section if this id is the view id
+    * `$(#mainmenu > page,cat)` returns list of all children of #mainmenu that are pages, and cats
+    * `$( > photo, image)` return list of all photos and images who are children of current scope
+    * `$( >g2 image)` return list of all imageswho are children group type 2
+    * `$( < cat)` returns all parents of type category within the current scope
+    * `$( <f manu)` returns first parents that is of type manu within the current scope
+    * `$( >l link)` returns last child link of current scope
+* Iterateable model/controller list/array can use special methods
   * `|with $(#mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope
   * `|each $childred()` - iterate through returned data
-  * `|unless $title`* - if not shortcut
-  * `|else` - else for `|with`, and `|if`
-  * `|switch $type`* - switch based on $type
-    * `|case "page"`* - include section if case matches
-    * `|default`* - include section if none of the cases matches
+  * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
     * Variable substitution is active within the filename
-    * Ability to include a block for recursive lookup
+  * Future Ideas
+    * `|if $id = $_VIEW->id` - include section if this id is the view id
+    * `|unless $title` - if not shortcut
+    * `|else` - else for `|with`, and `|if`
+    * `|switch $type` - switch based on $type
+      * `|case page` - include section if case matches
+      * `|default` - include section if none of the cases matches
+    * `|iterate` - iterate until end of list
+      * `|iterate 3` - iterate 3 times
 * `:filtername` - Use filter named filtername to process section (eg `:css a {color:red}` or `:javascript alert('hi');`)
 * `// Comment` - not included in output
 * `/ Comment` - included as HTML comment
@@ -60,19 +69,19 @@ html
   body
     .head
       h1 This is my website
-      img[src=/img/myimage.png]
+      img[src=/img/$imagename.png]
     .content
       .h2 $title
-      |with $(1012)->children(“text”)
+      |with $(#1012 > text)
         ul#mainmenu
           |each
             li.menuitem
-              a[href=/$url] $title
-                |with $children(“text”)
+              a[href=$url] $title
+                |with $( > text)
                   ul.submenu
-                    |each $
+                    |each
                       li.menuitem
-                        |if $_VIEW->id = $id
+                        |if $[0]->id = $id
                           a.highlight[href=$url] $title
                         |else
                           a[href=$url] $title
@@ -83,13 +92,13 @@ html
           p Nothing to see here. Page ID=$id is emtpy           
       .foot
         ul.socialicons
-          |each $(social_media)->children(“link”)
+          |each $(#socialmedia > link)
             li.icon
                a[href=$url&class=$code]
                  img[alt=$title] $->child(“img”)->url
-        $show(“my_template.haml”)
+        |include footer_$type.hamle
         |if $alias != “home”
           a[href=/] Home
         .powered
-          $_SITE.poweredby
+          $(site)->poweredby
 ```
