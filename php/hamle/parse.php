@@ -26,7 +26,7 @@ class hamleParse {
    */
   static function str($s) {
     $lines = explode("\n", str_replace("\r","",$s));
-    $rx = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#]\w+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
+    $rx = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#][\w\-\_]+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
     $heir = array();
     $lineCount = count($lines);
     $lineNo = 0;
@@ -38,21 +38,39 @@ class hamleParse {
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
         $params = isset($m[4])?$m[4]:"";
+        $textcode = isset($m[5])?$m[5]:"";
         $text = isset($m[8])?$m[8]:"";
         $code = isset($m[6])?$m[6]:"";
         //var_dump($m);
-        switch(strlen($code)?$code[0]:"") {
-          case "|":
+        switch(strlen($code)?$code[0]:($textcode?$textcode:"")) {
+          case "|": //Control Tag
             $hTag = new hamleTag_Ctrl(substr($code,1));
             $hTag->setVar($text);
             break;
-          case ":":
+          case ":": //Filter Tag
             $hTag = new hamleTag_Filter(substr($code,1));
             $hTag->addContent($text);
-            while($lineNo + 1 < $lineCount && 
+            while($lineNo + 1 < $lineCount && ( !trim($lines[$lineNo+1]) ||
                     preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
-                                      $lines[$lineNo+1], $m)) {
-              $hTag->addContent($m[2]);
+                                      $lines[$lineNo+1], $m))) {
+              if(trim($lines[$lineNo+1]))
+                $hTag->addContent($m[2]);
+              $lineNo++;
+            }
+            break;
+          case "_": //String Tag
+            $hTag = new hamleTag_String();
+            $hTag->addContent($text);
+            break;
+          case "/": // Comment
+          case "//":
+            $hTag = new hamleTag_Comment($textcode);
+            $hTag->addContent($text);
+            while($lineNo + 1 < $lineCount && ( !trim($lines[$lineNo+1]) ||
+                    preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
+                                      $lines[$lineNo+1], $m))) {
+              if(trim($lines[$lineNo+1]))
+                $hTag->addContent($m[2]);
               $lineNo++;
             }
             break;
