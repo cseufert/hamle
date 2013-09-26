@@ -47,6 +47,10 @@ class hamle {
     file_put_contents($of, hamleParse::str($tpl));
     return $this->output($of);
   }
+  
+  static function includeFile($path) {
+    return self::$me->outputFile($path);
+  }
 
   protected function output($f) {
     try {
