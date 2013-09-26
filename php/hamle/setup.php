@@ -45,4 +45,13 @@ class hamleSetup {
   function getSearchedModel($name, $tags, $id = NULL) {
     return hamleDemoModel::findTag($name, $tags, $id);
   }
+  /**
+   * Give you the ability to adjust paths to template files
+   * 
+   * @param string $f File Name and Path requested
+   * @return string File Path to actual template file
+   */
+  function themePath($f) {
+    return $f;
+  }
 }
