@@ -195,6 +195,9 @@ class hamleTag_HTML extends hamleTag {
    * @var array Options for html tags (eg, href, class, style, etc) 
    */
   protected $opt;
+  static protected $selfCloseTags = array("area","base","br","col","command",
+                              "embed","hr","img","input","keygen","link",
+                                "meta","param","source","track","wbr");
 
   function __construct($tag, $classid, $param=array()) {
     parent::__construct();
@@ -215,9 +218,12 @@ class hamleTag_HTML extends hamleTag {
     if(!$this->opt['class']) unset($this->opt['class']);
   }
   function renderStTag() {
-    return "<{$this->type}".$this->optToTags().">";
+    $close = in_array($this->type,self::$selfCloseTags)?" />":">";
+    return "<{$this->type}".$this->optToTags().$close;
   }
   function renderEnTag() {
+    if(in_array($this->type,self::$selfCloseTags))
+            return "";
     return "</{$this->type}>";
   }
   /**
