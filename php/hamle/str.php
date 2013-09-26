@@ -35,7 +35,7 @@ class hamleStr {
   
   static function passStr($s) {
     //$s = preg_replace_callback(self::REGEX_BARDOLLAR,array(get_class(),"barDollarStr"),$s);
-    return preg_replace_callback(self::REGEX_DOLLAR, array(get_class(),"dollar"),$s);
+    return preg_replace_callback(self::REGEX_DOLLAR, array(get_class(),"dollarStr"),$s);
   }
   static function dollarStr($m) {
     return "\".hamleScope::getVal('".$m[1]."').\"";
