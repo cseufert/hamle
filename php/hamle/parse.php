@@ -28,6 +28,7 @@ class hamleParse {
     $lines = explode("\n", str_replace("\r","",$s));
     $rx = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#][\w\-\_]+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
     $heir = array();
+    $root = array();
     $lineCount = count($lines);
     $lineNo = 0;
     while($lineNo < $lineCount) {
@@ -83,11 +84,18 @@ class hamleParse {
         $heir[$i] = $hTag;
         if($indent > 0)
           $heir[$i - 1]->addChild($hTag);
+        else
+          $root[] = $hTag;
       } else 
-        throw new hamlEx_ParseError("Unable to parse line $l\n\"$line\"");
+        throw new hamleEx_ParseError("Unable to parse line $lineNo\n\"$line\"");
       $lineNo++;
     }
-    return $heir[0]->render();
+    $out = "";
+    //var_dump($root);
+    foreach($root as $tag)
+      $out .= $tag->render();
+    return $out;
+    //return $heir[0]->render();
 
     
   }
