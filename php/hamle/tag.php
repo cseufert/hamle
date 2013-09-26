@@ -48,12 +48,14 @@ class hamleTag {
    * @return string HTML/PHP Output
    */
   function render($indent = 0, $doIndent = true) {
+    //if(strtoupper($this->type) == "A") var_dump($this);
     $ind = $doIndent?str_pad("", $indent, " "):"";
-    $out = $ind.$this->renderStTag()."\n";
-    if($this->content) $out .= $this->renderContent($ind);
+    $oneliner = ((count($this->content) > 1 || $this->tags)?false:true);
+    $out = $ind.$this->renderStTag().($oneliner?"":"\n");
+    if($this->content) $out .= $this->renderContent($ind, $oneliner);
     foreach($this->tags as $tag)
       $out .= $tag->render($indent + self::INDENT_SIZE);
-    $out .= $ind.$this->renderEnTag()."\n";
+    $out .= ($oneliner?"":$ind).$this->renderEnTag()."\n";
     return $out;
   }
   
@@ -63,10 +65,10 @@ class hamleTag {
    * @param string $pad Indent String
    * @return string Indented Content
    */
-  function renderContent($pad = "") {
+  function renderContent($pad = "", $oneliner = false) {
     $out = "";
     foreach($this->content as $c)
-      $out .= $pad.$c."\n";
+      $out .= ($oneliner?"":$pad).$c.($oneliner?"":"\n");
     return $out;
   }
   /**
@@ -99,34 +101,40 @@ class hamleTag_Ctrl extends hamleTag {
    * @var string Variable passed to Control Tag 
    */
   protected $var;
+  protected $o;
+  static $instCount = 1;
   function __construct($tag) {
     parent::__construct();
+    $this->o = "\$o".self::$instCount++;
     $this->type = strtolower($tag);
     $this->var = "";
   }
     
   function renderStTag() {
     $out = "<"."?php ";
-    var_dump($this->type);
+    //var_dump($this->type);
     switch($this->type) {
       case "each":
         if($this->var) {
-          $out .= "foreach(".hamleStr::native($this->var)." as \$o) { \n";
-          $out .= "hamleScope::add(\$o); ";
+          $out .= "foreach(".hamleStr::native($this->var)." as {$this->o}) { \n";
+          $out .= "hamleScope::add({$this->o}); ";
         } else {
-          $out .= "foreach(hamleScope::get() as \$o) { \n";
-          $out .= "hamleScope::add(\$o); ";
+          $out .= "foreach(hamleScope::get() as {$this->o}) { \n";
+          $out .= "hamleScope::add({$this->o}); ";
         }
         break;
       case "if":
         $out .= "if()";
         break;
       case "with":
-        $out .= "if((\$o = ".hamleStr::native($this->var).") && \$o->valid()) {\n";
-        $out .= "hamleScope::add(".$o.");\n;";
+        $out .= "if(({$this->o} = ".hamleStr::native($this->var).") && (is_array({$this->o}) || {$this->o}"."->valid())) {\n";
+        $out .= "hamleScope::add({$this->o});\n;";
+        break;
+      case "include":
+        $out .= "";
         break;
     }
-    return $out.'?>';
+    return $out.' ?>';
   }
   /**
    * @param string $s Variable String for control tag
@@ -139,7 +147,6 @@ class hamleTag_Ctrl extends hamleTag {
     switch($this->type) {
       case "each";
       case "with";
-        if($this->var)
           $out .= 'hamleScope::done(); ';
         $out .= '}';
         break;
@@ -166,7 +173,7 @@ class hamleTag_Filter extends hamleTag {
     if(!class_exists($this->filter))
       Throw new hamleEx_NoFilter("Unable to fild filter $tag");
   }
-  function renderContent($pad = "") {
+  function renderContent($pad = "", $oneliner = false) {
     $c = $this->filter;
     return $c::filterText(parent::renderContent($pad));
   }
@@ -224,4 +231,18 @@ class hamleTag_HTML extends hamleTag {
       $out[] = " ".hamleStr::pass($k, true)."=\"".hamleStr::pass($v, true)."\"";
     return implode("", $out);
   }
+}
+
+/**
+ * String Tag
+ */
+class hamleTag_String extends hamleTag {
+  
+}
+
+class hamleTag_Comment extends hamleTag {
+  function render($indent = 0, $doIndent = true) {
+    return "";
+  }
+    
 }
