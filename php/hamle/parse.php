@@ -66,7 +66,7 @@ class hamleParse {
           throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
-        $params = stripslashes(isset($m[4])?$m[4]:"");
+        $params = str_replace('\\&','%26',isset($m[4])?$m[4]:"");
         $textcode = isset($m[5])?$m[5]:"";
         $text = isset($m[8])?$m[8]:"";
         $code = isset($m[6])?$m[6]:"";

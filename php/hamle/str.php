@@ -9,13 +9,13 @@
 
 class hamleStr {
   const REGEX_BARDOLLAR = '/{\$(.*?)}/';
-  const REGEX_DOLLAR = '/\$([a-zA-Z0-9]+)/';
+  const REGEX_DOLLAR = '/(?:^|[^\\\\])\$([a-zA-Z0-9_]+)/';
   
   static function pass($s, $dollarOnly = false) {
     $out = preg_replace_callback(self::REGEX_BARDOLLAR,array(get_class(),"barDollar"),$s);
     if($dollarOnly)
       $out = preg_replace_callback(self::REGEX_DOLLAR, array(get_class(),"dollar"),$out);
-    return $out;
+    return stripslashes($out);
   }
   
   /**
@@ -29,7 +29,6 @@ class hamleStr {
   }
   
   static function dollar($m) {
-    //var_dump($m);
     return "<?=hamleScope::getVal('".$m[1]."')?>";
   }
   

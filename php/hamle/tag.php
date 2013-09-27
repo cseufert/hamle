@@ -233,8 +233,10 @@ class hamleTag_HTML extends hamleTag {
    */
   function optToTags() {
     $out = array();
-    foreach($this->opt as $k=>$v)
-      $out[] = " ".hamleStr::pass($k, true)."=\"".hamleStr::pass($v, true)."\"";
+    foreach($this->opt as $k=>$v) {
+      $val = str_replace(array('&','"'),array('&amp;','&quot;'),hamleStr::pass($v, true));
+      $out[] = " ".hamleStr::pass($k, true)."=\"".$val."\"";
+    }
     return implode("", $out);
   }
 }
