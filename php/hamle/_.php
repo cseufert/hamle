@@ -14,6 +14,10 @@ class hamle {
    */
   static protected $me;
   /**
+   * @var hamleParse Parser Instance
+   */
+  protected $parse;
+  /**
    * Create new HAMLE Parser
    * 
    * @param hamleModel $baseModel
@@ -23,6 +27,7 @@ class hamle {
   function __construct($baseModel, $setup = NULL) {
     if(!$setup)
       $setup = new hamleSetup();
+    $this->parse = new hamleParse();
     if(!$setup instanceOf hamleSetup)
       throw new hamleEx_Unsupported("Unsupported Setup Helper was passed, it must extends hamleSetup");
     $this->setup = $setup;
@@ -38,8 +43,7 @@ class hamle {
     $out = "";
     self::$me = $this;
     $dir = $this->setup->getCacheDir();
-    $parse = new hamleParse();
-    file_put_contents("$dir/string.hamle.php", $parse->str($s));
+    file_put_contents("$dir/string.hamle.php", $this->parse->str($s));
     return $this->output("$dir/string.hamle.php");
   }
   
@@ -57,7 +61,7 @@ class hamle {
     $tpl = file_get_contents($f);
     if(!$tpl) throw new hamleEx("Unable to open file [$f]");
     $of = $dir."/".str_replace("/","-",$f).".php";
-    file_put_contents($of, hamleParse::str($tpl));
+    file_put_contents($of, $this->parse->str($tpl));
     return $this->output($of);
   }
   
