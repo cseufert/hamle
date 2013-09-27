@@ -1,8 +1,8 @@
 <?php
 
-require_once "baseTest.php";
+require_once "base.php";
 
-class basic extends baseTest {
+class basicTest extends base {
   public function testTags() {
     $hamle = "html\n".
              "  body\n".

@@ -3,7 +3,7 @@
 require_once 'XmlDiff/src/XmlDiff.php';
 require_once("../php/autoload.php");
 
-class BaseTest extends PHPUnit_Framework_TestCase {
+class base extends PHPUnit_Framework_TestCase {
 	/**
 	 * @var hamle Hamle Parser
 	 */
