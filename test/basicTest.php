@@ -65,6 +65,31 @@ class basicTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
+  public function testCommentSingle() {
+    $hamle = "html\n".
+             "  #box\n".
+             "    // Comment is Hidden";
+    $html = "<html><div id=\"box\"></div></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testCommentBlock() {
+    $hamle = "html\n".
+             "  // #box\n".
+             "    .message Comment is Hidden";
+    $html = "<html></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testTextLine() {
+    $hamle = "html\n".
+             "   #box Content Line 1\n".
+             "     br\n".
+             "      _ Box Content Line 2";
+    $html = "<html><div id=\"box\">Content Line 1<br />Box Content Line 2</div></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
   
 }
 
