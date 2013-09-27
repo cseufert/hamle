@@ -1,0 +1,3 @@
+[submodule "test/xmldiff"]
+	path = test/xmldiff
+	url = https://github.com/mmacia/XMLdiff.git
