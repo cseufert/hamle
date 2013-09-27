@@ -46,19 +46,20 @@ class hamleModel_zero implements hamleModel {
 
 class hamleModel_array extends hamleModel_zero {
   protected $data;
-  protected $pos = 0;
+  protected $pos;
   function __construct($array = array()) {
     $this->data = $array;
+    $this->pos = 0;
   }
   function hamleGet($key) {
     if(!isset($this->data[$this->pos][$key]))
-      throw new hamleEx_NoKey("Cant find Key ($key)");
+      return "Missing Key [$key]";
     return $this->data[$this->pos][$key];
   }
   function valid() { return isset($this->data[$this->pos]); }
   function key() { return $this->pos; }
   function current() { return $this; }
   function rewind() { $this->pos = 0; }
-  function next() { $this->pos++; }
+  function next() { ++$this->pos; }
     
 }

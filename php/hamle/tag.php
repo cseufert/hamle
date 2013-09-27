@@ -115,13 +115,11 @@ class hamleTag_Ctrl extends hamleTag {
     //var_dump($this->type);
     switch($this->type) {
       case "each":
-        if($this->var) {
+        if($this->var)
           $out .= "foreach(".hamleStr::native($this->var)." as {$this->o}) { \n";
-          $out .= "hamleScope::add({$this->o}); ";
-        } else {
+        else
           $out .= "foreach(hamleScope::get() as {$this->o}) { \n";
-          $out .= "hamleScope::add({$this->o}); ";
-        }
+        $out .= "hamleScope::add({$this->o}); ";
         break;
       case "if":
         $out .= "if()";
@@ -146,8 +144,12 @@ class hamleTag_Ctrl extends hamleTag {
     $out = '<'.'?php ';
     switch($this->type) {
       case "each";
+        $out .= 'hamleScope::done(); ';
+        $out .= '}';
+        $out .= "{$this->o}->rewind();\n";
+        break;
       case "with";
-          $out .= 'hamleScope::done(); ';
+        $out .= 'hamleScope::done(); ';
         $out .= '}';
         break;
       case "include":
