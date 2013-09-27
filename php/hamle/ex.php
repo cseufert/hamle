@@ -19,7 +19,7 @@ class hamleEx_NoFilter extends hamleEx_Filter { }
 class hamleEx_Unsupported extends hamleEx { }
 class hamleEx_OutOfScope extends hamleEx { }
 
-class hamlEx_Unimplemented extends hamleEx { }
+class hamleEx_Unimplemented extends hamleEx { }
 
 class hamleEx_NoKey extends hamleEx { }
 class hamleEx_NoFunc extends hamleEx { }
