@@ -1,7 +1,74 @@
 <?php
 
-require_once("../php/autoload.php");
+require_once "baseTest.php";
 
+class basic extends baseTest {
+  public function testTags() {
+    $hamle = "html\n".
+             "  body\n".
+             "    #content[align=center]\n".
+             "      ul.menu\n".
+             "        li.menuitem[data-menu=home] Home\n".
+             "        li.menuitem[data-menu=About]\n".
+             "          a[href=/aboutus.php] About Us\n";
+    $html = "<html><body><div id=\"content\" align=\"center\">".
+            "<ul class=\"menu\">".
+            "        <li data-menu=\"home\" class=\"menuitem\">Home</li>".
+            "        <li data-menu=\"About\" class=\"menuitem\">".
+            "<a href=\"/aboutus.php\">About Us</a>".
+            "</li>".
+            "</ul>".
+            "</div></body></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  
+  public function testShortTags() {
+    $hamle = "html\n  meta\n  link\n";
+    $html = "<html><meta /><link /></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  
+  public function testAttr1() {
+    $hamle= "html\n".
+            "  meta[name=viewport&content=user-scalable=no,width=device-width,maximum-scale=1.0]\n".
+            "  link[href=/css&type=text/css]\n";
+    $html = "<html>".
+            '<meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.
+            '<link href="/css" type="text/css" />'.
+            "</html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAttrSquareBracket() {
+    $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
+    $html = "<a href=\"/special[10]\">Hello [Mate] [ ]</a>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAttrDollar() {
+    $hamle = "a[href=\$url&class=\$class] \$title";
+    $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAttrEscDollars() {
+    $hamle = "html\n  p.quote[data-ref=12\&3 and \\\$4]";
+    $html = "<html><p class=\"quote\" data-ref=\"12&amp;3 and \$4\"></p></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAttrQuotes() {
+    $hamle = "html\n  p.quote[data-ref=My Quote \"]";
+    $html = "<html><p class=\"quote\" data-ref=\"My Quote &quot;\"></p></html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  
+}
+
+/*
 $hamle1 = <<<ENDHAMLE
 html
   head
@@ -38,3 +105,4 @@ $h = new hamle(new hamleModel_array(array(array(
                         'website'=>'Secure.com'))),
                 new mySetup());
 $h->outputStr($hamle1);
+*/
