@@ -9,34 +9,64 @@
  */
 class hamleParse {
   /**
-   * Parse a File
-   * @param string $file Filename to parse
-   * @return string Parsed HAMLE as HTML
+   * @param array Array of indent levels
    */
-  static $indents;
+  protected $indents;
+  /**
+   * @var array Array of Root Document Tags
+   */
+  protected $root;
+  /**
+   * @var string Each Line read in from template
+   */
+  protected $lines;
+  /**
+   * Regex for parsing each HAMLE line
+   */
+  const REGEX_PARSE_LINE = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#][\w\-\_]+)*)(\[(?:[^\\\\\\]]*?(?:\\\.)*?)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
+  /**
+   * @var int Current Line Number
+   */
+  protected $lineNo;
+  /**
+   * @var Total Lines in File 
+   */
+  protected $lineCount;
+  
+  function __construct() {
+    $this->init();
+  }
+  /**
+   * Clear Lines, and Line Number, so if output is 
+   * called, no output will be produced
+   */
+  protected function init() {
+    $this->lines = array();
+    $this->lineNo = 0;
+    $this->lineCount = 0;
+    $heir = array();
+    $this->root = array();
+  }
   
   /**
-   * Parse a string
+   * Parse HAMLE template, from a string
    * @param string $s String to parse
    * @return string Parsed HAMLE as HTML
    */
-  static function str($s) {
-    $lines = explode("\n", str_replace("\r","",$s));
-    $rx = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#][\w\-\_]+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
-    $heir = array();
-    $root = array();
-    $lineCount = count($lines);
-    $lineNo = 0;
-    while($lineNo < $lineCount) {
-      $line = $lines[$lineNo];
-      if(trim($line)) if(preg_match($rx, $line, $m)) {
+  function str($s) {
+    $this->init();
+    $this->lines = explode("\n", str_replace("\r","",$s));
+    $this->lineCount = count($this->lines);
+    while($this->lineNo < $this->lineCount) {
+      $line = $this->lines[$this->lineNo];
+      if(trim($line)) if(preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
         unset($m[0]);
         $indent = strlen($m[1]);
         if(FALSE !== strpos($indent, "\t"))
           throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
-        $params = isset($m[4])?$m[4]:"";
+        $params = stripslashes(isset($m[4])?$m[4]:"");
         $textcode = isset($m[5])?$m[5]:"";
         $text = isset($m[8])?$m[8]:"";
         $code = isset($m[6])?$m[6]:"";
@@ -49,13 +79,7 @@ class hamleParse {
           case ":": //Filter Tag
             $hTag = new hamleTag_Filter(substr($code,1));
             $hTag->addContent($text);
-            while($lineNo + 1 < $lineCount && ( !trim($lines[$lineNo+1]) ||
-                    preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
-                                      $lines[$lineNo+1], $m))) {
-              if(trim($lines[$lineNo+1]))
-                $hTag->addContent($m[2]);
-              $lineNo++;
-            }
+            $this->consumeBlock($hTag, $indent);
             break;
           case "_": //String Tag
             $hTag = new hamleTag_String();
@@ -65,13 +89,7 @@ class hamleParse {
           case "//":
             $hTag = new hamleTag_Comment($textcode);
             $hTag->addContent($text);
-            while($lineNo + 1 < $lineCount && ( !trim($lines[$lineNo+1]) ||
-                    preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
-                                      $lines[$lineNo+1], $m))) {
-              if(trim($lines[$lineNo+1]))
-                $hTag->addContent($m[2]);
-              $lineNo++;
-            }
+            $this->consumeBlock($hTag, $indent);
             break;
           default:
             $hTag = new hamleTag_HTML($tag, $classid, $params);
@@ -83,32 +101,42 @@ class hamleParse {
         if($indent > 0)
           $heir[$i - 1]->addChild($hTag);
         else
-          $root[] = $hTag;
+          $this->root[] = $hTag;
       } else 
-        throw new hamleEx_ParseError("Unable to parse line $lineNo\n\"$line\"");
-      $lineNo++;
+        throw new hamleEx_ParseError("Unable to parse line $this->lineNo\n\"$line\"");
+      $this->lineNo++;
     }
     $out = "";
-    foreach($root as $tag)
+    foreach($this->root as $tag)
       $out .= $tag->render();
     return $out;
   }
   
+  function consumeBlock($tag, $indent) {
+    while($this->lineNo + 1 < $this->lineCount &&
+            ( !trim($this->lines[$this->lineNo+1]) ||
+        preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
+                          $this->lines[$this->lineNo+1], $m))) {
+      if(trim($this->lines[$this->lineNo+1]))
+        $tag->addContent($m[2]);
+      $this->lineNo++;
+    }
+  }
   
-  static function indentLevel($indent) {
-    if(!isset(self::$indents)) self::$indents = array();
+  function indentLevel($indent) {
+    if(!isset($this->indents)) $this->indents = array();
     if($indent == 0) {
-      self::$indents = array(0=>0); // Key = indent, Value = Depth
+      $this->indents = array(0=>0); // Key = indent, Value = Depth
       return 0;
     }
-    foreach(self::$indents as $k=>$v) {
+    foreach($this->indents as $k=>$v) {
       if($v == $indent) {
-         array_slice(self::$indents,0,$k+1);
+         array_slice($this->indents,0,$k+1);
         return $k;
       }
     }
-    self::$indents[] = $indent;
-    return max(array_keys(self::$indents));
+    $this->indents[] = $indent;
+    return max(array_keys($this->indents));
   }
   
 }
