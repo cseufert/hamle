@@ -37,7 +37,7 @@ class hamleStr {
     return preg_replace_callback(self::REGEX_DOLLAR, array(get_class(),"dollarStr"),$s);
   }
   static function dollarStr($m) {
-    return "\".hamleScope::getVal('".$m[1]."').\"";
+    return $m[1]."\".hamleScope::getVal('".$m[2]."').\"";
   }
   
   static function native($s) {
