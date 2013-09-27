@@ -29,14 +29,27 @@ class hamle {
     hamleScope::add($baseModel);
   }
   
+  /**
+   * Return HTML Output from HAMLE string
+   * @param string $s HAMLE Template in string form
+   * @return string HTML Code
+   */
   function outputStr($s) {
     $out = "";
     self::$me = $this;
     $dir = $this->setup->getCacheDir();
-    file_put_contents("$dir/string.hamle.php", hamleParse::str($s));
+    $parse = new hamleParse();
+    file_put_contents("$dir/string.hamle.php", $parse->str($s));
     return $this->output("$dir/string.hamle.php");
   }
   
+  /**
+   * Return HTML Output from HAMLE File
+   * @see hamleSetup
+   * @param string $f Path to HAMLE File (Excluding 'base path')
+   * @return string HTML Code
+   * @throws hamleEx
+   */
   function outputFile($f) {
     self::$me = $this;
     $f = $this->setup->themePath($f);
@@ -48,10 +61,21 @@ class hamle {
     return $this->output($of);
   }
   
+  /**
+   * Helper for hamle |include command
+   * @param string $path Path to file to include
+   * @return string HTML Code
+   */
   static function includeFile($path) {
     return self::$me->outputFile($path);
   }
 
+  /**
+   * Capture output from compiled HAMLE Template
+   * @param string $f File Patch of compiled template
+   * @return string HTML Output
+   * @throws hamleEx
+   */
   protected function output($f) {
     try {
       ob_start();
@@ -59,14 +83,28 @@ class hamle {
       $out = ob_get_contents();
       ob_end_clean();
     } catch (hamleEx $e) {
+      ob_end_clean();
       throw $e;
     }
     return $out;
   }
   
+  /**
+   * Called from template by $() to find a specific model
+   * @param string $s name,id,class string from $() parameter
+   * @return hamleModel
+   */
   static function modelFind($s) {
     return self::$me->_modelFind($s);
   }
+  
+  /**
+   * Real model find method
+   * @see modelFind
+   * @param string $s name,id,class string
+   * @return hamleModel
+   * @throws hamleEx
+   */
   protected function _modelFind($s) {
     $idclass = array();
     $type = hamleStr::parseIDClass($s, $idclass);
@@ -86,9 +124,7 @@ class hamle {
                                   $idclass['class'], $idclass['id']);
       else
         return $this->setup->getSearchedModel($type, $idclass['class']);
-    throw new hamle("Unable to determine filter method for ($s)");
+    throw new hamleEx("Unable to determine filter method for ($s)");
   }
-  
-  
-  
+    
 }
