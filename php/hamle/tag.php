@@ -146,7 +146,8 @@ class hamleTag_Ctrl extends hamleTag {
       case "each";
         $out .= 'hamleScope::done(); ';
         $out .= '}';
-        $out .= "{$this->o}->rewind();\n";
+        if(!$this->var)
+          $out .= "hamleScope::get()->rewind();\n";
         break;
       case "with";
         $out .= 'hamleScope::done(); ';

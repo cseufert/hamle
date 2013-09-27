@@ -53,6 +53,12 @@ class basicTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
+  public function testAttrMultiDollar() {
+    $hamle = 'a[href=$url&class=$class] $title [$url]';
+    $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE [https://www.secure.com]</a>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
   public function testAttrEscDollars() {
     $hamle = "html\n  p.quote[data-ref=12\&3 and \\\$4]";
     $html = "<html><p class=\"quote\" data-ref=\"12&amp;3 and \$4\"></p></html>";

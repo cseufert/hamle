@@ -66,6 +66,14 @@ consideration at this stage.
   * To escape $ sign, use \$
  
 
+## Todo List
+  * Ace Editor Markup
+    * Code Hightlight
+    * Indents
+    * Code Folding
+  * More complete unit tests
+  * Better syntax debugging
+
 ## Example 
 ```haml
 html
