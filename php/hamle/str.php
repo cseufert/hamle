@@ -8,7 +8,7 @@
  */
 
 class hamleStr {
-  const REGEX_BARDOLLAR = '/{\$(.*?)}/';
+  const REGEX_BARDOLLAR = '/{\$([a-zA-Z0-9_]+)(.*?)}/';
   const REGEX_DOLLAR = '/(?:^|[^\\\\])\$([a-zA-Z0-9_]+)/';
   
   static function pass($s, $dollarOnly = false) {
@@ -24,8 +24,8 @@ class hamleStr {
    * @return type
    */
   static function barDollar($m) {
-    $o = addslashes($m[1]);
-    return "<?=hamleScope::eval(\"$o\")?>";
+    if($m[2]) throw new hamleEx_ParseError("Unsuppored access method");
+    return "<?=hamleScope::getVal(\"".$m[1]."\")?>";
   }
   
   static function dollar($m) {
