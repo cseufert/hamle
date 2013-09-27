@@ -34,10 +34,13 @@ consideration at this stage.
     * `$(cart#summary)
     * `$(#mainmenu > page,cat)` returns list of all children of #mainmenu that are pages, and cats
     * `$( > photo, image)` return list of all photos and images who are children of current scope
-    * `$( >g2 image)` return list of all imageswho are children group type 2
+    * `$( >@2,2 image)` return list of all imageswho are children group type 2, subgroup 2
     * `$( < cat)` returns all parents of type category within the current scope
-    * `$( <f manu)` returns first parents that is of type manu within the current scope
-    * `$( >l link)` returns last child link of current scope
+    * `$( <[:1] manu)` returns first parents that is of type manu within the current scope
+    * `$( >[5:10] link)` returns records 5 through 10
+    * `$( >^title manu)` sort child manufacturers by ascending title
+    * `$( >-code manu)` sort child manu by descending code
+    * `$( >[:1]? photo)` get a random child photos 
 * Iterateable model/controller list/array can use special methods
   * `|with $(#mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope
