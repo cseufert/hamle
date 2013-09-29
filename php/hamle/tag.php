@@ -113,23 +113,24 @@ class hamleTag_Ctrl extends hamleTag {
   function renderStTag() {
     $out = "<"."?php ";
     //var_dump($this->type);
+    $hsv = new hamleStrVar($this->var);
     switch($this->type) {
       case "each":
         if($this->var)
-          $out .= "foreach(".hamleStr::native($this->var)." as {$this->o}) { \n";
+          $out .= "foreach(".$hsv->toPHP()." as {$this->o}) { \n";
         else
           $out .= "foreach(hamleScope::get() as {$this->o}) { \n";
         $out .= "hamleScope::add({$this->o}); ";
         break;
       case "if":
-        $out .= "if()";
+        $out .= "if(".$hsv->toPHP().") {";
         break;
       case "with":
-        $out .= "if(({$this->o} = ".hamleStr::native($this->var).") && (is_array({$this->o}) || {$this->o}"."->valid())) {\n";
+        $out .= "if(({$this->o} = ".$hsv->toPHP().") && (is_array({$this->o}) || {$this->o}"."->valid())) {\n";
         $out .= "hamleScope::add({$this->o});\n;";
         break;
       case "include":
-        $out .= "echo hamle::includeFile(\"".hamleStr::passStr($this->var)."\");";
+        $out .= "echo hamleRun::includeFile(".$hsv->toPHP().");";
         break;
     }
     return $out.' ?>';
@@ -148,6 +149,9 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= '}';
         if(!$this->var)
           $out .= "hamleScope::get()->rewind();\n";
+        break;
+      case "if":
+        $out .= "}";
         break;
       case "with";
         $out .= 'hamleScope::done(); ';
