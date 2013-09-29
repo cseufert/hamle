@@ -39,29 +39,7 @@ class hamleStr {
   static function dollarStr($m) {
     return $m[1]."\".hamleScope::getVal('".$m[2]."').\"";
   }
-  
-  static function native($s) {
-    $code = "";
-    if(preg_match('/^\$\(([a-zA-Z0-9\.#,]+)?(?: *([\>]) *([a-zA-Z0-9\.#,]+))?\)\s*$/',$s, $m)) {
-      if(isset($m[1]) && $m[1])
-        $code .= 'hamle::modelFind("'.  addslashes($m[1]).'")';
-      else
-        $code .= "hamleScope::get()";
-      if(isset($m[2]) && $m[2] = ">") {
-        $code .= '->hamleChild("'.  addslashes($m[3]).'")';
-      }
-    } elseif(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
-      $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
-      if($m[2]) {
-        $code .= $m[2];
-      }
-    } else {
-      throw new hamleEx_ParseError("Unable to pass expression \"$s\"");
-    }
-    return $code;
     
-  }
-  
   static function parseIDClass($s, &$idclass = array()) {
     $m = array();
     preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $s, $m);
