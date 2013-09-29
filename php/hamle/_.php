@@ -8,7 +8,7 @@ class hamle {
   /**
    * @var hamleSetup instance of hamleSetup Object
    */
-  protected $setup;
+  public $setup;
   /**
    * @var hamle Instance of the 'current' hamle Engine 
    */
@@ -17,6 +17,10 @@ class hamle {
    * @var hamleParse Parser Instance
    */
   protected $parse;
+  
+  const REL_CHILD = 0x01;
+  const REL_PARENT = 0x02;
+  const REL_ANY = 0x03;
   /**
    * Create new HAMLE Parser
    * 
@@ -66,15 +70,6 @@ class hamle {
   }
   
   /**
-   * Helper for hamle |include command
-   * @param string $path Path to file to include
-   * @return string HTML Code
-   */
-  static function includeFile($path) {
-    return self::$me->outputFile($path);
-  }
-
-  /**
    * Capture output from compiled HAMLE Template
    * @param string $f File Patch of compiled template
    * @return string HTML Output
@@ -83,6 +78,7 @@ class hamle {
   protected function output($f) {
     try {
       ob_start();
+      hamleRun::addInstance($this);
       require $f;
       $out = ob_get_contents();
       ob_end_clean();
@@ -90,6 +86,7 @@ class hamle {
       ob_end_clean();
       throw $e;
     }
+    hamleRun::popInstance();
     return $out;
   }
   
