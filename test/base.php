@@ -13,7 +13,10 @@ class base extends PHPUnit_Framework_TestCase {
     $this->hamle = new hamle(new hamleModel_array(array(array(
                         'url'=>'https://www.secure.com',
                         'title'=>'This is My TITLE',
-                        'class'=>"colored"))),
+                        'class'=>"colored",
+                        'empty'=>"",
+                        'nottrue'=>false,
+                        'istrue'=>true))),
                 new baseTestSetup());
 	}
 

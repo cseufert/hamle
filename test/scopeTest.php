@@ -33,7 +33,7 @@ class scopeTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
-    public function testScopeAccessor2() {
+  public function testScopeAccessor2() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
              '    ul.menu'.PHP_EOL.
@@ -62,4 +62,24 @@ class scopeTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
+  public function testIf() {
+    $hamle = "html".PHP_EOL.
+             "  body".PHP_EOL.
+             '    |if $title'.PHP_EOL.
+             '      h2 $title'.PHP_EOL.
+             '    |if $istrue'.PHP_EOL.
+             '      .show This will be visible'.PHP_EOL.
+             '    |if $nottrue'.PHP_EOL.
+             '      .hide This will not be shown'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <h2>This is My TITLE</h2>
+    <div class="show">This will be visible</div>
+  </body>
+</html>';
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  
 }
