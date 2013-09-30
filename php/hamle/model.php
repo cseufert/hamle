@@ -39,7 +39,7 @@ class hamleModel_zero implements hamleModel {
   function hamleExec($func, $args) {
     throw new hamleEx_NoFunc("Cant find Func ($func)");
   }
-  function hamleRel($selector) {
+  function hamleRel($rel, $typeTags) {
     throw new hamleEx_NoFunc("Unable to retreive relations");
   }
   
