@@ -37,7 +37,7 @@ div#content.fun.midcol $content
 a[href=$url] $title
 p This is my $name, how are you today
 p.quote[data-ref=\[12\&3 and \$4\] \]] Hi There
-.welcome Hi {$_SITE->user->name}, how are you {$_TOOL->date->today}
+.welcome Hi {$(SITE)->user->name}, how are you {$(tool)->date->today}
 ```
 
 ### Filters
@@ -58,7 +58,7 @@ p.quote[data-ref=\[12\&3 and \$4\] \]] Hi There
 
 ### Control Stuctures
 ```
-|with $(mainmenu)->children()
+|with $(#mainmenu > page)
 |else
 |if $title = "test"
 |else
@@ -72,7 +72,7 @@ p.quote[data-ref=\[12\&3 and \$4\] \]] Hi There
 ### Commenting
 ```
 // THis is hidden
-/ Hello {$_SITE->user->name}, this is put in a html comment even with vars like ID=$id
+/ Hello {$(SITE)->user->name}, this is put in a html comment even with vars like ID=$id
 ```
 
 ### Plain Text
@@ -83,8 +83,9 @@ _ Hi there,  i like \$\$\$'s
 
 ### Plain Variable Substitution
 ```
-{$_TOOL->date->today}
-$(social_media)->children(�link�)
+{$(TOOL)->date->today}
+{$(#social_media > link)->url}
+
 ```
 
 ### All will parse with
@@ -92,4 +93,11 @@ $(social_media)->children(�link�)
 /^((([a-zA-Z]*)([\.#]\w*)*(\[[^\]]*[\]]*\])?)|([_\/][\/]?)|([\|:\$][\w]+)|({?\$[^}]+}?)|)( .*)?$/
 /^((([a-zA-Z]*)([\.#]\w*)*(\[([^\\\]]*(\\.)*)+\])?)|([_\/][\/]?)|([\|:\$][\w]+)|({?\$[^}]+}?)|)( .*)?$/
 /^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#]\w+)*)(\[(?:[^\\\]]*(?:\\.)*)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
+```
+
+### Output Modifiers
+```
+{$date|longdate}
+{$price|currency}
+{$title|upper}
 ```

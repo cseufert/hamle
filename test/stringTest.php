@@ -39,5 +39,24 @@ class stringTest extends base{
     $php = $hs->toPHP();
     $this->assertEquals('hamleRun::modelID("my_page")', $php);
   }
+  public function testDollarFuncChild1() {
+    $hs = new hamleStrVar("\$(#my_page > link)");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, "link", array ())', $php);
+  }  
+  public function testDollarFuncChild2() {
+    $hs = new hamleStrVar("\$(#my_page > .gallery)");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, "", array (  0 => \'gallery\',))', $php);
+  } 
+  /**
+   * @expectedException hamleEx_ParseError
+   * @expectedExceptionMessage Unable to specify child by ID
+   */
+  public function testDollarFuncChild3() {
+    $hs = new hamleStrVar("\$(#my_page > #me)");
+  }
   
 }

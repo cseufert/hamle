@@ -62,14 +62,15 @@ class hamleStrVar {
 
   protected function dollarFunc(&$s) {
     $out = ""; $m = array();
-    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([\>]) *([a-zA-Z0-9\.#_]+))?\)\s*$/',$s, $m)) {
+    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([\>\<]) *([a-zA-Z0-9\.#_]+))?\)\s*$/',$s, $m)) {
       $s = substr($s,strlen($m[0]));
       if(isset($m[1]) && $m[1])
         $out = new hamleStrVar_model($m[1]);
       else
         $out = new hamleStrVar_scope(0);
+      $rel = array(">"=>hamle::REL_CHILD, "<"=>hamle::REL_PARENT);
       if(isset($m[2]) && $m[2] == ">") {
-        $code .= '->hamleChild("'.  addslashes($m[3]).'")';
+        $out->addRel(new hamleStrVar_relfilt($rel[$m[2]], $m[3]));
       }
     } elseif(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
       $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
@@ -112,6 +113,9 @@ class hamleStrVar {
   static function fromString($s) {
     
   }
+  static function arrayToPHP($a) {
+      return str_replace(array("\n", "\r"),"",var_export($a, true));
+    }
 }
 
 interface hamleStrVar_int {
@@ -147,14 +151,13 @@ class hamleStrVar_var implements hamleStrVar_int {
 }
 
 abstract class hamleStrVar_intChild implements hamleStrVar_int {
-  protected $relType;
   protected $relModel;
-  function addRel($type, hamleStrVar_int $model) {
-    $this->relType = $type;
+  function addRel(hamleStrVar_int $model) {
     $this->relModel = $model;
   }
   function relPHP($out) {
-    var_dump($this);
+    if($this->relModel)
+      return $out.$this->relModel->toPHP();
     return $out;
   }
 }
@@ -189,9 +192,7 @@ class hamleStrVar_model extends hamleStrVar_intChild {
         throw new Exception("Unimplemented");
       elseif($this->type)
         $out = "hamleRun::modelType(\"$type\")";
-    if($this->relType)
-      $out = $this->relPHP($out);
-    return $out;
+    return $this->relPHP($out);
   }
 }
 
@@ -208,5 +209,27 @@ class hamleStrVar_scope extends hamleStrVar_intChild {
     if($this->relType)
       $out = $this->relPHP($out);
     return $out;
+  }
+}
+class hamleStrVar_relfilt implements hamleStrVar_int {
+  protected $type = NULL, $tags = array(), $rel;
+  function __construct($rel, $filter) {
+    $this->rel = $rel;
+    preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $filter, $m);
+    if(isset($m[0])) foreach($m[0] as $s) {
+      if($s[0] == "#")
+          throw new hamleEx_ParseError("Unable to specify child by ID");
+      if($s[0] == ".") $this->tags[] = substr($s,1);
+    }
+    if(preg_match('/^[a-zA-Z0-9\_]+/',$filter, $m))
+      $this->type = $m[0];
+  }
+  function toHTML() {
+
+  }
+  function toPHP() {
+
+    $tags = hamleStrVar::arrayToPHP($this->tags);
+    return "->hamleRel({$this->rel}, \"{$this->type}\", $tags)";
   }
 }
