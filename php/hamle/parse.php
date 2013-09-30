@@ -138,5 +138,8 @@ class hamleParse {
     $this->indents[] = $indent;
     return max(array_keys($this->indents));
   }
-  
+
+  function getLineNo() {
+    return $this->lineNo;
+  }
 }

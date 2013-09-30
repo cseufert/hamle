@@ -48,7 +48,7 @@ class basicTest extends base {
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrDollar() {
-    $hamle = "a[href=\$url&class=\$class] \$title";
+    $hamle = "a[href=\$url&class=\$class] {\$title}";
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);

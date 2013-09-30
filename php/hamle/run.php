@@ -65,4 +65,6 @@ class hamleRun {
   static function modelTypeID($type, $id) {
     return self::$hamle->setup->getNamedModel($type, $id);
   }
+  
+  
 }

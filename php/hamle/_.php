@@ -16,7 +16,7 @@ class hamle {
   /**
    * @var hamleParse Parser Instance
    */
-  protected $parse;
+  public $parse;
   
   const REL_CHILD = 0x01;
   const REL_PARENT = 0x02;
@@ -29,6 +29,7 @@ class hamle {
    * @throws hamleEx_Unsupported
    */
   function __construct($baseModel, $setup = NULL) {
+    self::$me = $this;
     if(!$setup)
       $setup = new hamleSetup();
     $this->parse = new hamleParse();
@@ -90,6 +91,11 @@ class hamle {
     }
     hamleRun::popInstance();
     return $out;
+  }
+  static function getLineNo() {
+    if(!isset(self::$me))
+      return 0;
+    return self::$me->parse->getLineNo();
   }
   
 }

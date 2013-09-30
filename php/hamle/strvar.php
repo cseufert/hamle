@@ -71,12 +71,16 @@ class hamleStrVar {
     if(strlen($buff))
       $this->nodes[] = new hamleStrVar_string($buff);
   }
-  
+  static function getCodeSnippet($s) {
+    $line = hamle::getLineNo()+1;
+
+    return "'".substr($s,0,20)."...' on line $line";
+  }
   protected function dollarStr(&$s) {
     $m = array();
     if(!preg_match('/\$('.self::REGEX_VARNAME.')/', $s, $m))
-      throw new hamleEx_ParseError("Unable to determine \$ substition in '".
-                                    substr($s,0,15)."...'");
+      throw new hamleEx_ParseError("Unable to determine \$ substition in ".
+                                    hamleStrVar::getCodeSnippet($s));
     $s = substr($s, 1 + strlen($m[1]));
     $this->nodes[] = new hamleStrVar_var($m[1]);
   }
@@ -94,8 +98,8 @@ class hamleStrVar {
         $out->addRel(new hamleStrVar_relfilt($rel[$m[2]], $m[3]));
       }
     } else
-      throw new hamleEx_ParseError("Unable to exec \$() in '".
-                                    substr($s,0,15)."...'");
+      throw new hamleEx_ParseError("Unable to exec \$() in ".
+                                    hamleStrVar::getCodeSnippet($s));
     $this->nodes[] = $out;
     return $out;
   }
@@ -123,13 +127,11 @@ class hamleStrVar {
         if($m[3])
           $n->getVar($m[3]);
         if($m[4])
-          throw new hamleEx_ParseError("Not sure what to do with {$m[4]} in '".
-                                    substr($s,0,25)."...");
-        var_dump($n);
-        
+          throw new hamleEx_ParseError("Not sure what to do with {$m[4]} in ".
+                                    hamleStrVar::getCodeSnippet($s));
       } else
-        throw new hamleEx_ParseError("Unable to determine \{\$ substition in '".
-                                    substr($s,0,15)."...");
+        throw new hamleEx_ParseError("Unable to determine \{\$ substition in ".
+                                    hamleStrVar::getCodeSnippet($s));
     }
   }
   
@@ -263,7 +265,8 @@ class hamleStrVar_relfilt implements hamleStrVar_int {
       preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $filter, $m);
       if(isset($m[0])) foreach($m[0] as $s) {
         if($s[0] == "#")
-            throw new hamleEx_ParseError("Unable to specify child by ID");
+            throw new hamleEx_ParseError("Unable to specify child by ID in ".
+                                   hamleStrVar::getCodeSnippet($s));
         if($s[0] == ".") $tags[] = substr($s,1);
       }
       if(preg_match('/^[a-zA-Z0-9\_]+/',$filter, $m))

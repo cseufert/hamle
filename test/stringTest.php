@@ -95,7 +95,7 @@ class stringTest extends base{
   } 
   /**
    * @expectedException hamleEx_ParseError
-   * @expectedExceptionMessage Unable to specify child by ID
+   * @expectedExceptionMessage Unable to specify child by ID in '#me...' on line 10
    */
   public function testDollarFuncChild4() {
     $hs = new hamleStrVar("\$(#my_page > #me)", hamleStrVar::TOKEN_CONTROL);
