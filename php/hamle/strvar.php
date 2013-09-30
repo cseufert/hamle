@@ -62,14 +62,14 @@ class hamleStrVar {
 
   protected function dollarFunc(&$s) {
     $out = ""; $m = array();
-    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([\>\<]) *([a-zA-Z0-9\.#_,]+))?\)\s*$/',$s, $m)) {
+    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([><]) *([a-zA-Z0-9\.#_,]+))?\)\s*$/',$s, $m)) {
       $s = substr($s,strlen($m[0]));
       if(isset($m[1]) && $m[1])
         $out = new hamleStrVar_model($m[1]);
       else
         $out = new hamleStrVar_scope(0);
       $rel = array(">"=>hamle::REL_CHILD, "<"=>hamle::REL_PARENT);
-      if(isset($m[2]) && $m[2] == ">") {
+      if(isset($m[2])) {
         $out->addRel(new hamleStrVar_relfilt($rel[$m[2]], $m[3]));
       }
     } elseif(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {

@@ -60,7 +60,6 @@ class stringTest extends base{
     $this->assertEquals('hamleRun::modelID("menu")->hamleRel(1, '.
           'array (  \'page\' =>   array (  ),  \'cat\' =>   array (  ),))', $php);
   } 
-  
   /**
    * @expectedException hamleEx_ParseError
    * @expectedExceptionMessage Unable to specify child by ID
@@ -68,5 +67,11 @@ class stringTest extends base{
   public function testDollarFuncChild4() {
     $hs = new hamleStrVar("\$(#my_page > #me)");
   }
-  
+  public function testDollarFuncParent1() {
+    $hs = new hamleStrVar("\$( < cat)");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('hamleScope::get("0")->hamleRel(2, '.
+          'array (  \'cat\' =>   array (  ),))', $php);
+  }   
 }
