@@ -62,7 +62,7 @@ class hamleStrVar {
 
   protected function dollarFunc(&$s) {
     $out = ""; $m = array();
-    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([\>\<]) *([a-zA-Z0-9\.#_]+))?\)\s*$/',$s, $m)) {
+    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([\>\<]) *([a-zA-Z0-9\.#_,]+))?\)\s*$/',$s, $m)) {
       $s = substr($s,strlen($m[0]));
       if(isset($m[1]) && $m[1])
         $out = new hamleStrVar_model($m[1]);
@@ -212,24 +212,33 @@ class hamleStrVar_scope extends hamleStrVar_intChild {
   }
 }
 class hamleStrVar_relfilt implements hamleStrVar_int {
-  protected $type = NULL, $tags = array(), $rel;
+  protected $typeTags = array(), $rel;
   function __construct($rel, $filter) {
     $this->rel = $rel;
-    preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $filter, $m);
-    if(isset($m[0])) foreach($m[0] as $s) {
-      if($s[0] == "#")
-          throw new hamleEx_ParseError("Unable to specify child by ID");
-      if($s[0] == ".") $this->tags[] = substr($s,1);
+    $filters = explode(",",$filter);
+    foreach($filters as $filter) {
+      $type = ""; $tags = array();
+      preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $filter, $m);
+      if(isset($m[0])) foreach($m[0] as $s) {
+        if($s[0] == "#")
+            throw new hamleEx_ParseError("Unable to specify child by ID");
+        if($s[0] == ".") $tags[] = substr($s,1);
+      }
+      if(preg_match('/^[a-zA-Z0-9\_]+/',$filter, $m))
+        $type = $m[0];
+      if(!$type) { 
+        $type = "*";
+        if(!$tags) continue;
+      }
+      $this->typeTags[$type] = $tags;
     }
-    if(preg_match('/^[a-zA-Z0-9\_]+/',$filter, $m))
-      $this->type = $m[0];
   }
   function toHTML() {
 
   }
   function toPHP() {
 
-    $tags = hamleStrVar::arrayToPHP($this->tags);
-    return "->hamleRel({$this->rel}, \"{$this->type}\", $tags)";
+    $tags = hamleStrVar::arrayToPHP($this->typeTags);
+    return "->hamleRel({$this->rel}, $tags)";
   }
 }

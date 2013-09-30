@@ -23,7 +23,13 @@ interface hamleModel extends Iterator {
    */
   function hamleExec($func, $args);
   
-  function hamleChild($selector);
+  /**
+   * Retreive an iterable result of relatives to the current object
+   * @param int $rel Relation to this object hamle::REL_CHILD, etc
+   * @param array $typeTags Array of types to search containing tags eg([photo->[landscape,wide]])
+   * @return hamleModel Return object must implmement hamleModel interface
+   */
+  function hamleRel($rel, $typeTags);
 }
 
 class hamleModel_zero implements hamleModel {
@@ -33,8 +39,8 @@ class hamleModel_zero implements hamleModel {
   function hamleExec($func, $args) {
     throw new hamleEx_NoFunc("Cant find Func ($func)");
   }
-  function hamleChild($selector) {
-    throw new hamleEx_NoFunc("Unable to find children");
+  function hamleRel($selector) {
+    throw new hamleEx_NoFunc("Unable to retreive relations");
   }
   
   function valid() { return false; }

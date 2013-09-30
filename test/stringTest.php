@@ -43,19 +43,29 @@ class stringTest extends base{
     $hs = new hamleStrVar("\$(#my_page > link)");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, "link", array ())', $php);
+    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, '.
+                              'array (  \'link\' =>   array (  ),))', $php);
   }  
   public function testDollarFuncChild2() {
     $hs = new hamleStrVar("\$(#my_page > .gallery)");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, "", array (  0 => \'gallery\',))', $php);
+    $this->assertEquals('hamleRun::modelID("my_page")->hamleRel(1, '.
+                'array (  \'*\' =>   array (    0 => \'gallery\',  ),))', $php);
   } 
+  public function testDollarFuncChild3() {
+    $hs = new hamleStrVar("\$(#menu > page,cat)");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('hamleRun::modelID("menu")->hamleRel(1, '.
+          'array (  \'page\' =>   array (  ),  \'cat\' =>   array (  ),))', $php);
+  } 
+  
   /**
    * @expectedException hamleEx_ParseError
    * @expectedExceptionMessage Unable to specify child by ID
    */
-  public function testDollarFuncChild3() {
+  public function testDollarFuncChild4() {
     $hs = new hamleStrVar("\$(#my_page > #me)");
   }
   
