@@ -8,9 +8,42 @@ class stringTest extends base{
     $hs = new hamleStrVar("Hello \$user");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hello <?=hamleScope::getVal(\"user\")?>", $html);
-    $this->assertEquals("\"Hello \".hamleScope::getVal(\"user\")", $php);
+    $this->assertEquals("Hello <?=hamleScope::get()->hamleGet(\"user\")?>", $html);
+    $this->assertEquals('"Hello ".hamleScope::get()->hamleGet("user")', $php);
   }
+  public function testDollarString2() {
+    $hs = new hamleStrVar("Hello {\$user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=hamleScope::get()->hamleGet(\"user\")?>", $html);
+    $this->assertEquals('"Hello ".hamleScope::get()->hamleGet("user")', $php);
+  }
+  public function testDollarString3() {
+    $hs = new hamleStrVar("Hello {\$[0]->user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=hamleScope::get(\"0\")->hamleGet(\"user\")?>", $html);
+    $this->assertEquals('"Hello ".hamleScope::get("0")->hamleGet("user")', $php);
+  }
+  public function testDollarString4() {
+    $hs = new hamleStrVar("Hello {\$(site)->user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('Hello <?=hamleRun::modelType("site")->hamleGet("user")?>', $html);
+    $this->assertEquals('"Hello ".hamleRun::modelType("site")->hamleGet("user")', $php);
+  }
+  public function testDollarString5() {
+    $hs = new hamleStrVar("Hello {\$(site > address.mail)->state}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=hamleRun::modelType(\"site\")".
+          "->hamleRel(1, array (  'address' =>   array (    0 => 'mail',  ),))".
+            "->hamleGet(\"state\")?>", $html);
+    $this->assertEquals("\"Hello \".hamleRun::modelType(\"site\")".
+          "->hamleRel(1, array (  'address' =>   array (    0 => 'mail',  ),))".
+            "->hamleGet(\"state\")", $php);
+  }
+  
   
   public function testDollarStringEscape1() {
     $hs = new hamleStrVar("I have \\\$10.00");

@@ -35,8 +35,5 @@ class hamleScope {
       throw new hamleEx_OutOfScope("Unable to find Scope ($id) or $key");
     return self::$scopes[$key];
   }
-  
-  static function getVal($key) {
-    return self::get()->hamleGet($key);
-  }
+
 }

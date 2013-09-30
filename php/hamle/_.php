@@ -34,6 +34,8 @@ class hamle {
     $this->parse = new hamleParse();
     if(!$setup instanceOf hamleSetup)
       throw new hamleEx_Unsupported("Unsupported Setup Helper was passed, it must extends hamleSetup");
+    if(!$baseModel instanceOf hamleModel)
+      throw new hamleEx_Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
     $this->setup = $setup;
     hamleScope::add($baseModel);
   }

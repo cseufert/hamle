@@ -21,6 +21,8 @@ class hamleStrVar {
   const FIND_DOLLARVAR = 0x02;
   const FIND_BARDOLLAR = 0x04;
 
+  const REGEX_VARNAME = '[a-zA-Z0-9_]+';
+  
   protected $nodes;
   protected $mode;
   
@@ -72,9 +74,9 @@ class hamleStrVar {
   
   protected function dollarStr(&$s) {
     $m = array();
-    if(!preg_match('/\$([a-zA-Z0-9_]+)/', $s, $m))
+    if(!preg_match('/\$('.self::REGEX_VARNAME.')/', $s, $m))
       throw new hamleEx_ParseError("Unable to determine \$ substition in '".
-                                    substr($s,0,15)."...");
+                                    substr($s,0,15)."...'");
     $s = substr($s, 1 + strlen($m[1]));
     $this->nodes[] = new hamleStrVar_var($m[1]);
   }
@@ -92,25 +94,43 @@ class hamleStrVar {
         $out->addRel(new hamleStrVar_relfilt($rel[$m[2]], $m[3]));
       }
     } else
-      throw new hamleEx_ParseError("Unable to pass expression \"$s\"");
+      throw new hamleEx_ParseError("Unable to exec \$() in '".
+                                    substr($s,0,15)."...'");
     $this->nodes[] = $out;
+    return $out;
   }
   protected function dollarScope(&$s) {
     if(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
-      $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
-      if($m[2])
-        return new hamleStrVar_scope($m[2]);
+      $out = new hamleStrVar_scope($m[1]);
+      $this->nodes[] = $out;
+      return $out;
     } else
       throw new hamleEx_ParseError("Unable to pass expression \"$s\"");
   }
 
   protected function bardollarStr(&$s) {
     $m = array();
-    if(!preg_match('/{\$([a-zA-Z0-9_]+)(.*?)}/', $s, $m))
-      throw new hamleEx_ParseError("Unable to determine \{\$ substition in '".
+    if(preg_match('/{\$('.self::REGEX_VARNAME.')(.*?)}/', $s, $m)) {
+      $s = substr($s, 3 + strlen($m[1]) + strlen($m[2]));
+      $this->nodes[] = new hamleStrVar_var($m[1], $m[2]); 
+    } else {
+      if(preg_match('/{(\$.*?)(->('.self::REGEX_VARNAME.')(.*?))?}/',$s,$m)) {
+        $s = substr($s, strlen($m[0]));
+        if($m[1][1] == "[")
+          $n = $this->dollarScope($m[1]);
+        else
+          $n = $this->dollarFunc($m[1]);
+        if($m[3])
+          $n->getVar($m[3]);
+        if($m[4])
+          throw new hamleEx_ParseError("Not sure what to do with {$m[4]} in '".
+                                    substr($s,0,25)."...");
+        var_dump($n);
+        
+      } else
+        throw new hamleEx_ParseError("Unable to determine \{\$ substition in '".
                                     substr($s,0,15)."...");
-    $s = substr($s, 3 + strlen($m[1]) + strlen($m[2]));
-    $this->nodes[] = new hamleStrVar_var($m[1], $m[2]);
+    }
   }
   
   function toHTML() {
@@ -127,12 +147,6 @@ class hamleStrVar {
     return implode(".",$out);
   }
   
-  static function fromCommand($s) {
-    
-  }
-  static function fromString($s) {
-    
-  }
   static function arrayToPHP($a) {
       return str_replace(array("\n", "\r"),"",var_export($a, true));
     }
@@ -168,24 +182,32 @@ class hamleStrVar_var implements hamleStrVar_int {
     return "<?=".$this->toPHP()."?>";
   }
   function toPHP() {
-    return "hamleScope::getVal(\"$this->var\")";
+    return "hamleScope::get()->hamleGet(\"$this->var\")";
   }
 }
 
 abstract class hamleStrVar_intChild implements hamleStrVar_int {
   protected $relModel;
+  protected $var = "";
   function addRel(hamleStrVar_int $model) {
     $this->relModel = $model;
   }
   function relPHP($out) {
     if($this->relModel)
-      return $out.$this->relModel->toPHP();
+      $out = $out.$this->relModel->toPHP();
+    if($this->var)
+      $out = $out."->hamleGet(\"{$this->var}\")";
     return $out;
   }
+  function getVar($var) {
+    $this->var = $var;
+  }
+
 }
 
 class hamleStrVar_model extends hamleStrVar_intChild {
   protected $id = NULL, $tags = array(), $type = NULL;
+
   function __construct($idclass) {
     preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $idclass, $m);
     if(isset($m[0])) foreach($m[0] as $s) {
@@ -254,7 +276,7 @@ class hamleStrVar_relfilt implements hamleStrVar_int {
     }
   }
   function toHTML() {
-
+    throw new hamleEx_Unsupported("Unable to do this");
   }
   function toPHP() {
 
