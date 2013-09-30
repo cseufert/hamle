@@ -206,9 +206,7 @@ class hamleStrVar_scope extends hamleStrVar_intChild {
   }
   function toPHP() {
     $out = "hamleScope::get(\"$this->id\")";
-    if($this->relType)
-      $out = $this->relPHP($out);
-    return $out;
+    return $this->relPHP($out);
   }
 }
 class hamleStrVar_relfilt implements hamleStrVar_int {
