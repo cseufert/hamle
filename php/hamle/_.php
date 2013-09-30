@@ -90,42 +90,4 @@ class hamle {
     return $out;
   }
   
-  /**
-   * Called from template by $() to find a specific model
-   * @param string $s name,id,class string from $() parameter
-   * @return hamleModel
-   */
-  static function modelFind($s) {
-    return self::$me->_modelFind($s);
-  }
-  
-  /**
-   * Real model find method
-   * @see modelFind
-   * @param string $s name,id,class string
-   * @return hamleModel
-   * @throws hamleEx
-   */
-  protected function _modelFind($s) {
-    $idclass = array();
-    $type = hamleStr::parseIDClass($s, $idclass);
-    if(!count($idclass))
-      if($type)
-        return $this->setup->getNamedModel($type);
-      else
-        throw new hamleEx("Unable to parse ($s)");
-    if(!isset($idclass['class']) && isset($idclass['id']))
-      if($type)
-        return $this->setup->getNamedModel($type, $idclass['id']);
-      else
-        return $this->setup->getDefaultModel($idclass['id']);
-    if($type && isset($idclass['class']))
-      if(isset($idclass['id']))
-        return $this->setup->getSearchedModel($type, 
-                                  $idclass['class'], $idclass['id']);
-      else
-        return $this->setup->getSearchedModel($type, $idclass['class']);
-    throw new hamleEx("Unable to determine filter method for ($s)");
-  }
-    
 }

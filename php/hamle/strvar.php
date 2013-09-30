@@ -13,55 +13,74 @@
  * Ex-Gst {$price->exgst}
  */
 class hamleStrVar {
+  const TOKEN_CONTROL = 0x07;
+  const TOKEN_HTML    = 0x06;
+  const TOKEN_CODE    = 0x04;
+  
+  const FIND_DOLLARFUNC = 0x01;
+  const FIND_DOLLARVAR = 0x02;
+  const FIND_BARDOLLAR = 0x04;
+
   protected $nodes;
-  function __construct($s) {
+  protected $mode;
+  
+  function __construct($s, $mode = self::TOKEN_HTML) {
     $this->nodes = array();
+    $this->mode = $mode;
     $lastchar = "";
     $buff = "";
-    while(strlen($s)) {
-      if($s[0] == '$') {
-        if($lastchar != '\\') {
-          if(strlen($buff))
-            $this->nodes[] = new hamleStrVar_string($buff);
-          if($lastchar == '{') {
-            //HandlebarDollar String
-            $this->bardollarStr($s);
-          } else {
-            //Dollar String
-            $this->dollarStr($s);
-          }
+    while(strlen($s) > 1)
+      if($s[0] == "\\" && $s[1] == "\$") {
+        $buff .= $s[0].$s[1];
+        $s = substr($s,2);
+      } elseif($s[0] == "{" && $s[1] == "\$") {
+        if($this->mode & self::FIND_BARDOLLAR) {
+          if(strlen($buff)) $this->nodes[] = new hamleStrVar_string($buff);
           $buff = "";
-          $lastchar = "";
-          continue;
+          $this->bardollarStr($s);
+        } else {
+          $buff .= $s[0];
+          $s = substr($s,1);
         }
+      } elseif($s[0] == "\$" && $s[1] == "(" ) {
+        if($this->mode & self::FIND_DOLLARFUNC) {
+          if(strlen($buff)) $this->nodes[] = new hamleStrVar_string($buff);
+          $buff = "";
+          $this->dollarFunc($s);
+        } else {
+          $buff .= $s[0];
+          $s = substr($s,1);
+        }
+      } elseif($s[0] == "\$") {
+        if($this->mode & self::FIND_DOLLARVAR) {
+          
+          if(strlen($buff)) $this->nodes[] = new hamleStrVar_string($buff);
+          $buff = "";
+          $this->dollarStr($s);
+        } else {
+          $buff .= $s[0];
+          $s = substr($s,1);
+        }
+      } else {
+          $buff .= $s[0];
+          $s = substr($s,1);
       }
-      $buff .= $lastchar = $s[0];
-      $s = substr($s, 1);
-    }
+    $buff .= $s;
     if(strlen($buff))
       $this->nodes[] = new hamleStrVar_string($buff);
   }
   
   protected function dollarStr(&$s) {
     $m = array();
-    if(!preg_match('/\$([a-zA-Z0-9_]+)/', $s, $m)) {
-      $f = NULL;
-      if(isset($s[1]) && $s[1] == "(" ) {
-        $f = $this->dollarFunc($s);
-      }
-      if($f) {
-        $this->nodes[] = $f;
-        return;
-      }
+    if(!preg_match('/\$([a-zA-Z0-9_]+)/', $s, $m))
       throw new hamleEx_ParseError("Unable to determine \$ substition in '".
                                     substr($s,0,15)."...");
-    }
     $s = substr($s, 1 + strlen($m[1]));
     $this->nodes[] = new hamleStrVar_var($m[1]);
   }
 
   protected function dollarFunc(&$s) {
-    $out = ""; $m = array();
+    $out = NULL; $m = array();
     if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([><]) *([a-zA-Z0-9\.#_,]+))?\)\s*$/',$s, $m)) {
       $s = substr($s,strlen($m[0]));
       if(isset($m[1]) && $m[1])
@@ -69,19 +88,20 @@ class hamleStrVar {
       else
         $out = new hamleStrVar_scope(0);
       $rel = array(">"=>hamle::REL_CHILD, "<"=>hamle::REL_PARENT);
-      if(isset($m[2])) {
+      if(isset($m[2]) && $m[3]) {
         $out->addRel(new hamleStrVar_relfilt($rel[$m[2]], $m[3]));
       }
-    } elseif(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
-      $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
-      if($m[2]) {
-        return new hamleStrVar_scope($m[2]);
-      }
-    } else {
+    } else
       throw new hamleEx_ParseError("Unable to pass expression \"$s\"");
-    }
-    return $out;
-    
+    $this->nodes[] = $out;
+  }
+  protected function dollarScope(&$s) {
+    if(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
+      $code .= 'hamleScope::get("'.addslashes($m[1]).'")';
+      if($m[2])
+        return new hamleStrVar_scope($m[2]);
+    } else
+      throw new hamleEx_ParseError("Unable to pass expression \"$s\"");
   }
 
   protected function bardollarStr(&$s) {
@@ -129,7 +149,9 @@ class hamleStrVar_string implements hamleStrVar_int {
     $this->s = $s;
   }
   function toHTML() {
-    return str_replace('\\$','$',$this->s);
+    return str_replace(
+              array('\\$', "&"    ,"\""    ),
+              array('$'  , "&amp;","&quot;"),$this->s);
   }
   function toPHP() {
     return '"'.$this->s.'"';

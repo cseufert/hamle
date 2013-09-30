@@ -11,7 +11,7 @@ class hamleStr {
   const REGEX_BARDOLLAR = '/{\$([a-zA-Z0-9_]+)(.*?)}/';
   const REGEX_DOLLAR = '/(^|[^\\\\])\$([a-zA-Z0-9_]+)/';
   
-  static function pass($s, $dollarOnly = false) {
+  static function pass2($s, $dollarOnly = false) {
     $out = preg_replace_callback(self::REGEX_BARDOLLAR,array(get_class(),"barDollar"),$s);
     if($dollarOnly)
       $out = preg_replace_callback(self::REGEX_DOLLAR, array(get_class(),"dollar"),$out);

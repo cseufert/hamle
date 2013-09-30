@@ -43,7 +43,7 @@ class basicTest extends base {
   }
   public function testAttrSquareBracket() {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
-    $html = "<a href=\"/special[10]\">Hello [Mate] [ ]</a>";
+    $html = '<a href="/special\[10\]">Hello [Mate] [ ]</a>';
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }

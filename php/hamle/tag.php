@@ -85,10 +85,10 @@ class hamleTag {
    * @param string $s One line of content
    */
   function addContent($s) {
-    if(trim($s))
-      $this->content[] = hamleStr::pass($s, true);
-    //else
-    //  throw new Exception("Blank Line");
+    if(trim($s)) {
+      $parse = new hamleStrVar($s);
+      $this->content[] = $parse->toHTML();
+    }
   }
   
 }
@@ -113,7 +113,7 @@ class hamleTag_Ctrl extends hamleTag {
   function renderStTag() {
     $out = "<"."?php ";
     //var_dump($this->type);
-    $hsv = new hamleStrVar($this->var);
+    $hsv = new hamleStrVar($this->var, hamleStrVar::TOKEN_CONTROL);
     switch($this->type) {
       case "each":
         if($this->var)
@@ -241,8 +241,9 @@ class hamleTag_HTML extends hamleTag {
   function optToTags() {
     $out = array();
     foreach($this->opt as $k=>$v) {
-      $val = str_replace(array('&','"'),array('&amp;','&quot;'),hamleStr::pass($v, true));
-      $out[] = " ".hamleStr::pass($k, true)."=\"".$val."\"";
+      $v = new hamleStrVar($v);
+      $k = new hamleStrVar($k);
+      $out[] = " ".$k->toHTML()."=\"".$v->toHTML()."\"";
     }
     return implode("", $out);
   }

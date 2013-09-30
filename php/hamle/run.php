@@ -39,14 +39,29 @@ class hamleRun {
     return self::$hamle->outputFile($path);
   }
   
+  /**
+   * Called from template by $() to find a specific model
+   * @param string $type type to filter by
+   * @return hamleModel
+   */  
   static function modelType($type) {
     return self::$hamle->setup->getNamedModel($type);
   }
-  
+  /**
+   * Called from template by $() to find a specific model
+   * @param string $id id to search for
+   * @return hamleModel
+   */  
   static function modelID($id) {
     return self::$hamle->setup->getDefaultModel ($id);
   }
 
+  /**
+   * Called from template by $() to find a specific model
+   * @param string $type type to filter by
+   * @param string $id id to search for
+   * @return hamleModel
+   */  
   static function modelTypeID($type, $id) {
     return self::$hamle->setup->getNamedModel($type, $id);
   }
