@@ -53,6 +53,7 @@ class fitlerTest extends base {
              '  :javascript'.PHP_EOL.
              '    $(document).ready(function() {'.PHP_EOL.
              '      console.log("{$title}");'.PHP_EOL.
+             "      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');".PHP_EOL.
              '    });'.PHP_EOL;
     $html = '
 <head>

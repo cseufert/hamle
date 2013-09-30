@@ -118,7 +118,7 @@ class hamleParse {
         preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
                           $this->lines[$this->lineNo+1], $m))) {
       if(trim($this->lines[$this->lineNo+1]))
-        $tag->addContent($m[2]);
+        $tag->addContent($m[2],hamleStrVar::TOKEN_CODE);
       $this->lineNo++;
     }
   }

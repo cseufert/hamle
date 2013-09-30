@@ -84,9 +84,9 @@ class hamleTag {
    * 
    * @param string $s One line of content
    */
-  function addContent($s) {
+  function addContent($s, $strtype = hamleStrVar::TOKEN_HTML) {
     if(trim($s)) {
-      $parse = new hamleStrVar($s);
+      $parse = new hamleStrVar($s, $strtype);
       $this->content[] = $parse->toHTML();
     }
   }
