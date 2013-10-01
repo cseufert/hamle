@@ -11,20 +11,43 @@ javascript, with a small json request to retreive the data to fill the template 
 focus for hamle is not on markup, but on page/document structure, so inline tags are not a
 consideration at this stage.
 
-* Indented Stucture (Python like), increased indents means inside parent element, decreased implies closing tag
-* HTML tags just go straigt in, no symbol required (eg `DIV`, `P`, `A`, etc)
-  * Tag attributes are specified in square brackets as url encoded string (eg `A[href=/]` or `.button[data-size=$id&class=$tags]`)
-  * Escape & with \&, ] with \], etc
 * CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
   * There is no specific order to the id and class, however the name, if specified must be first
-* All variable substitiution is PHP like, starts with $ (`$title`, `$text`, `{$_THIS[-1]->title}`, etc)
-  * `{$...}` over `$...` are required when accessing array/object.
+  * Multiple IDs (#one#two) will not be recognized, only one will be used
+  * Usage #1 `.one Text` becomes `<div class="one">Text</div>`
+  * Usage #2 `span.two Foo` becomes `<span class="two">Foo</span>`
+  * Usage #3 `#my.mine.ours` becomes `<div id="my" class="mine ours"></div>`
+* Indented Structure (Python like), increased indents means inside parent element, decreased implies closing tag
+```
+html
+  body
+    div#content
+      a[href=/] Home
+```
+becomes
+```
+<html>
+  <body>
+    <div id="content">
+      <a href="/">Home</a>
+    </div>
+  <body>
+</html>
+```
+* HTML tags just go straigt in, no symbol required (eg `DIV`, `P`, `A`, etc)
+  * Tag attributes are specified in square brackets as url encoded string
+  * Escape & with \\&, ] with \\], etc
+  * Usage #1 `A[href=/] Home` outputs `<a href="/">Home</a>`
+  * Usage #2 `.button[data-size=$id&class=$tags]` if $id is 10 and tags = Ten Submit output would be `<button data-size="10" class="Ten Submit />`
+  * Usage #3 `a[data-alt=Button \\[1\\&2]] Hi` becomes `<a data-alt="Button [1&amp;2]">Hi</a>`
+* All variable substitution is PHP like, starts with $ (`$title`, `$text`, `{$[-1]->title}`, etc)
+  * `{$...}` over `$...` are required when inside a filter block, or accessing a property.
   * Scope History
     * `$[0]` = current model/controller that is in scope
       * Usage #1 `|with $[-1]` - Switch back to last scope
       * Usage #2 `{$[1]->title} - read from initial scope
-    * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$_LAST[-2]` second last scope
+    * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$[-2]` second last scope
   * jQuery like magic `$` function 
     * `$(#1024)` opens id = 1024
     * `$(#mine)` opens object with id/alias = mine
@@ -34,36 +57,60 @@ consideration at this stage.
     * `$(cart#summary)
     * `$(#mainmenu > page,cat)` returns list of all children of #mainmenu that are pages, and cats
     * `$( > photo, image)` return list of all photos and images who are children of current scope
-    * `$( >@2,2 image)` return list of all imageswho are children group type 2, subgroup 2
     * `$( < cat)` returns all parents of type category within the current scope
-    * `$( <[:1] manu)` returns first parents that is of type manu within the current scope
-    * `$( >[5:10] link)` returns records 5 through 10
-    * `$( >^title manu)` sort child manufacturers by ascending title
-    * `$( >-code manu)` sort child manu by descending code
-    * `$( >[:1]? photo)` get a random child photos 
-* Iterateable model/controller list/array can use special methods
-  * `|with $(#mainmenu)->children()` - changes M/C scope to children of mainmenu, if no results skips section
-  * `|each` - iterates through each object in the current scope
-  * `|each $childred()` - iterate through returned data
-  * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
+    * Future implementation
+    * `$(page:1)` return 1 page from  pages
+    * `$(news^postdate)` returns all news posts sorted ascending by postdate
+    * `$(news^-postdate)` returns all news posts sorted descending by postdate
+    * `$(news^)` returns all news posts sorted in random order
+    * `$(link:5-10)` returns links starting at #5 through 10
+    * `$(news:4) return 4 news posts
+    * `$(product.featured:4^) Return 4 randomly selected products with featured tag
+    * `$(post:4^postdate) return first 4 blog posts
+    * `$(post^-postdate:1) return most recent blog post
+* Iterateable model/controller list can use special methods
+  * `|with $(#mainmenu > page)` - changes M/C scope to pages under mainmenu, if no results skips section
+  * `|each` - iterates through each object in the current scope (set by |with)
+  * `|each $(#social > icons)` - iterate through icons from social id
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
     * Variable substitution is active within the filename
   * Future Ideas
-    * `|if $id = $_VIEW->id` - include section if this id is the view id
-    * `|unless $title` - if not shortcut
+    * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
+    * `|if $id = $(view)->id` - include section if this id is the view id
+    * `|unless $title` - if not shortcut, show block if there is no title
     * `|else` - else for `|with`, and `|if`
     * `|switch $type` - switch based on $type
       * `|case page` - include section if case matches
       * `|default` - include section if none of the cases matches
-    * `|iterate` - iterate until end of list
+    * `|iterateend` - iterate until end of list
       * `|iterate 3` - iterate 3 times
-* `:filtername` - Use filter named filtername to process section (eg `:css a {color:red}` or `:javascript alert('hi');`)
-* `// Comment` - not included in output
-* `/ Comment` - included as HTML comment
+      * eg
+```
+  / Print a table with 3 column of all the products in the category
+  |with $( > products)
+    table
+      |iterateend
+        tr
+          |iterate 3
+            td
+              a[href=$url] $title
+                |with $( > photo)
+                  img[src=$url]
+          |else
+            td
+```
+* Filters
+  * `:filtername` - Use filter named filtername to process section)
+  * Usage #1 `:javascript alert('Hi {$(user)->name}');`
+  * Usage #2 `:css a {color:{$(site)->linkcolor}}`
+  * to use {$ sequence in css/javascript/etc, you just escape the dollar eg. {\\$
+* Comments
+  * `// Comment` - not included in output
+  * `/ Comment` - included as HTML comment
 * `_ This is just plain text`
   * Plain text, can be easily translated
   * `_` is only required when text is the first thing on a new line
-  * To escape $ sign, use \$
+  * To escape $ sign, use \\$
  
 
 ## Todo List
