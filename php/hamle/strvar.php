@@ -87,7 +87,7 @@ class hamleStrVar {
 
   protected function dollarFunc(&$s) {
     $out = NULL; $m = array();
-    if(preg_match('/^\$\(([a-zA-Z0-9\.#_]+)?(?: *([><]) *([a-zA-Z0-9\.#_,]+))?\)\s*$/',$s, $m)) {
+    if(preg_match('/^\$\(([a-zA-Z0-9\.,#_:\\^\\-]+)?(?: *([><]) *([a-zA-Z0-9\.,#_:\\^\\-]+))?\)\s*$/',$s, $m)) {
       $s = substr($s,strlen($m[0]));
       if(isset($m[1]) && $m[1])
         $out = new hamleStrVar_model($m[1]);
@@ -149,9 +149,24 @@ class hamleStrVar {
     return implode(".",$out);
   }
   
-  static function arrayToPHP($a) {
-      return str_replace(array("\n", "\r"),"",var_export($a, true));
+  static function arrayToPHP($var) {
+    if (is_array($var)) {
+        $code = 'Array(';
+        foreach ($var as $key => $value) {
+            $code .= "'".addslashes($key)."'=>".self::arrayToPHP($value).',';
+        }
+        $code = chop($code, ','); //remove unnecessary coma
+        $code .= ')';
+        return $code;
+    } else {
+        if (is_bool($var)) {
+            return ($var ? 'TRUE' : 'FALSE');
+        } else {
+            return "'".addslashes($var)."'";
+        }
     }
+    //  return str_replace(array("\n", "\r"),"",var_export($a, true));
+  }
 }
 
 interface hamleStrVar_int {
@@ -170,7 +185,7 @@ class hamleStrVar_string implements hamleStrVar_int {
               array('$'  , "&amp;","&quot;"),$this->s);
   }
   function toPHP() {
-    return '"'.$this->s.'"';
+    return hamleStrVar::arrayToPHP($this->s);
   }
 }
 
@@ -184,7 +199,7 @@ class hamleStrVar_var implements hamleStrVar_int {
     return "<?=".$this->toPHP()."?>";
   }
   function toPHP() {
-    return "hamleScope::get()->hamleGet(\"$this->var\")";
+    return "hamleScope::get()->hamleGet(".hamleStrVar::arrayToPHP($this->var).")";
   }
 }
 
@@ -198,7 +213,7 @@ abstract class hamleStrVar_intChild implements hamleStrVar_int {
     if($this->relModel)
       $out = $out.$this->relModel->toPHP();
     if($this->var)
-      $out = $out."->hamleGet(\"{$this->var}\")";
+      $out = $out."->hamleGet(".hamleStrVar::arrayToPHP($this->var).")";
     return $out;
   }
   function getVar($var) {
@@ -208,36 +223,70 @@ abstract class hamleStrVar_intChild implements hamleStrVar_int {
 }
 
 class hamleStrVar_model extends hamleStrVar_intChild {
-  protected $id = NULL, $tags = array(), $type = NULL;
-
-  function __construct($idclass) {
-    preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $idclass, $m);
-    if(isset($m[0])) foreach($m[0] as $s) {
-      if($s[0] == "#") $this->id = substr($s,1);
-      if($s[0] == ".") $this->tags[] = substr($s,1);
+  protected $typeId = array(), $typeTags = array();
+  protected $limit, $offset, $sortBy = "", $sortDir;
+  const REGEX_SELECTOR = '/[#\.\^\:][a-zA-Z0-9\-\_]*/m';
+  function __construct($selector) {
+    $this->limit = $this->offset = 0;
+    $this->sortDir = hamle::SORT_NATURAL;
+    $type = "";
+    $selectors = explode(",",$selector);
+    foreach($selectors as $idclass) {
+      $set = false;
+      if(preg_match('/^[a-zA-Z0-9\_]+/',$idclass, $m))
+        $type = $m[0];
+      else
+        $type = "*";
+      preg_match_all(self::REGEX_SELECTOR, $idclass, $m);
+      if(isset($m[0])) foreach($m[0] as $s) {
+        if($s[0] == "#") {
+          $this->typeId[$type] = substr($s,1);
+          $set = true;
+        }
+        if($s[0] == ".") {
+          $this->typeTags[$type][] = substr($s,1);
+          $set = true;
+        }
+        if($s[0] == ":" && preg_match('/^\:(?:([0-9]+)\-)?([0-9]+)$/',$s,$mLimit)) {
+          $this->limit = $mLimit[2];
+          $this->offset = $mLimit[1]?$mLimit[1]:0;
+        }
+        if($s[0] == "^") {
+          if(strlen($s) == 1) $this->sortDir = hamle::SORT_RANDOM;
+          elseif($s[1] == "-") {
+            $this->sortDir = hamle::SORT_DESCENDING;
+            $this->sortBy = substr($s,2);
+          } else {
+            $this->sortDir = hamle::SORT_ASCENDING;
+            $this->search = substr($s,1);
+          }
+        }
+      }
+      if(!$set && $type != "*")
+        $this->typeTags[$type] = array();
     }
-    if(preg_match('/^[a-zA-Z0-9\_]+/',$idclass, $m))
-      $this->type = $m[0];
+    if(!($this->typeId xor $this->typeTags) || 
+              (isset($this->typeId['*']) && count($this->typeId) > 1)) {
+        throw new hamleEx_ParseError("Unable to search by both id, and tags in".
+                                    hamleStrVar::getCodeSnippet($selector).
+                          hamleStrVar::arrayToPHP($this->typeTags, true).
+                          hamleStrVar::arrayToPHP($this->typeId, true));
+              }
   }
   function toHTML() {
     return "<?=".$this->toPHP()."?>";
   }
   function toPHP() {
     $out = "";
-    $id = addslashes($this->id);
-    $type = addslashes($this->type);
-    if($this->id)
-      if($this->type)
-        $out = "hamleRun::modelTypeID(\"$type\",\"$id\")";
+    $flags = ",{$this->sortDir},".hamleStrVar::arrayToPHP($this->sortBy).
+                                ",{$this->limit},{$this->offset}";
+    if($this->typeId)
+      if(isset($this->typeId['*']))
+        $out = "hamleRun::modelID(".hamleStrVar::arrayToPHP($this->typeId['*'])."$flags)";
       else
-        $out = "hamleRun::modelID(\"$id\")";
-    else
-      if($this->tags && $this->type)
-        throw new Exception("Unimplemented");
-      elseif($this->tags)
-        throw new Exception("Unimplemented");
-      elseif($this->type)
-        $out = "hamleRun::modelType(\"$type\")";
+        $out = "hamleRun::modelTypeID(".hamleStrVar::arrayToPHP($this->typeId)."$flags)";
+    elseif($this->typeTags)
+        $out = "hamleRun::modelTypeTags(".hamleStrVar::arrayToPHP($this->typeTags)."$flags)";
     return $this->relPHP($out);
   }
 }
@@ -251,23 +300,38 @@ class hamleStrVar_scope extends hamleStrVar_intChild {
     return "<?=".$this->toPHP()."?>";
   }
   function toPHP() {
-    $out = "hamleScope::get(\"$this->id\")";
+    $out = "hamleScope::get(".hamleStrVar::arrayToPHP($this->id).")";
     return $this->relPHP($out);
   }
 }
 class hamleStrVar_relfilt implements hamleStrVar_int {
   protected $typeTags = array(), $rel;
+  protected $limit = 0, $offset = 0, $sortBy = "", $sortDir = 0;
   function __construct($rel, $filter) {
     $this->rel = $rel;
     $filters = explode(",",$filter);
     foreach($filters as $filter) {
       $type = ""; $tags = array();
-      preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $filter, $m);
+      preg_match_all(hamleStrVar_model::REGEX_SELECTOR, $filter, $m);
       if(isset($m[0])) foreach($m[0] as $s) {
         if($s[0] == "#")
             throw new hamleEx_ParseError("Unable to specify child by ID in ".
                                    hamleStrVar::getCodeSnippet($s));
         if($s[0] == ".") $tags[] = substr($s,1);
+        if($s[0] == ":" && preg_match('/^\:(?:([0-9]+)\-)?([0-9]+)$/',$s,$mLimit)) {
+          $this->limit = $mLimit[2];
+          $this->offset = $mLimit[1]?$mLimit[1]:0;
+        }
+        if($s[0] == "^") {
+          if(strlen($s) == 1) $this->sortDir = hamle::SORT_RANDOM;
+          elseif($s[1] == "-") {
+            $this->sortDir = hamle::SORT_DESCENDING;
+            $this->sortBy = substr($s,2);
+          } else {
+            $this->sortDir = hamle::SORT_ASCENDING;
+            $this->search = substr($s,1);
+          }
+        }
       }
       if(preg_match('/^[a-zA-Z0-9\_]+/',$filter, $m))
         $type = $m[0];
@@ -282,8 +346,9 @@ class hamleStrVar_relfilt implements hamleStrVar_int {
     throw new hamleEx_Unsupported("Unable to do this");
   }
   function toPHP() {
-
+    $flags = ",{$this->sortDir},".hamleStrVar::arrayToPHP($this->sortBy).
+                                ",{$this->limit},{$this->offset}";
     $tags = hamleStrVar::arrayToPHP($this->typeTags);
-    return "->hamleRel({$this->rel}, $tags)";
+    return "->hamleRel({$this->rel},$tags$flags)";
   }
 }

@@ -41,19 +41,25 @@ class hamleRun {
   
   /**
    * Called from template by $() to find a specific model
-   * @param string $type type to filter by
+   * @param array $typeTags array of tags with types as key eg ['page'=>[]] or ['product'=>['featured]]
+   * @param int $sortDir Sort Direction see hamle::SORT_NATURAL...
+   * @param string $sortBy Field name to sort by
+   * @param int $limit Limit results to this number
+   * @param int $offset
    * @return hamleModel
    */  
-  static function modelType($type) {
-    return self::$hamle->setup->getNamedModel($type);
+  static function modelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    return self::$hamle->setup->getModelTypeTags($typeTags,
+                                  $sortDir, $sortField, $limit, $offset);
   }
   /**
    * Called from template by $() to find a specific model
    * @param string $id id to search for
    * @return hamleModel
    */  
-  static function modelID($id) {
-    return self::$hamle->setup->getDefaultModel ($id);
+  static function modelID($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    return self::$hamle->setup->getModelDefault($id, 
+                                  $sortDir, $sortField, $limit, $offset);
   }
 
   /**
@@ -62,8 +68,9 @@ class hamleRun {
    * @param string $id id to search for
    * @return hamleModel
    */  
-  static function modelTypeID($type, $id) {
-    return self::$hamle->setup->getNamedModel($type, $id);
+  static function modelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    return self::$hamle->setup->getModelTypeId($typeId, 
+                                $sortDir, $sortField, $limit, $offset);
   }
   
   

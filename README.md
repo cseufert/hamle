@@ -49,6 +49,14 @@ becomes
       * Usage #2 `{$[1]->title} - read from initial scope
     * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$[-2]` second last scope
   * jQuery like magic `$` function 
+    * `$({<type>}{#<id>}{.<tags>}{^<sort>}{:{<offset>-}<limit>})`
+      * <type> is a type that hamleSetup->modelType($type) can find
+      * <id> is a unique id, either combined with a type, or globally unique
+      * <tags> are user defined tags that can be used to help find find data
+      * <sort> field to sort on, by default ascending, prefix with - for descending, nothing after for random
+      * <limit> Limit results to n
+      * <offset> Number of results to skip before return
+      * The only required fields are <type> or <id>, depending on implementation of modelFind
     * `$(#1024)` opens id = 1024
     * `$(#mine)` opens object with id/alias = mine
     * `$(page#3)` opens page type with id = 3
@@ -58,7 +66,6 @@ becomes
     * `$(#mainmenu > page,cat)` returns list of all children of #mainmenu that are pages, and cats
     * `$( > photo, image)` return list of all photos and images who are children of current scope
     * `$( < cat)` returns all parents of type category within the current scope
-    * Future implementation
     * `$(page:1)` return 1 page from  pages
     * `$( > page,cat:3)` return 3 pages or cats (in total) that are children of whats in scope
     * `$(news^postdate)` returns all news posts sorted ascending by postdate

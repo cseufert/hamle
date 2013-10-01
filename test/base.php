@@ -53,8 +53,8 @@ class base extends PHPUnit_Framework_TestCase {
 }
 
 class baseTestSetup extends hamleSetup {
-  function getNamedModel($name, $id = NULL) {
-    if($name == "basetest")
+  function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    if(in_array("basetest",array_keys($typeTags)))
       return new hamleModel_array(array(
               array('url'=>'http://www.test.com',  'title'=>'Test.com'),
               array('url'=>'http://www.test2.com', 'title'=>'Test2.com'),

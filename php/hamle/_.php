@@ -21,6 +21,11 @@ class hamle {
   const REL_CHILD = 0x01;
   const REL_PARENT = 0x02;
   const REL_ANY = 0x03;
+  
+  const SORT_NATURAL = 0x00;
+  const SORT_ASCENDING = 0x02;
+  const SORT_DESCENDING = 0x03;
+  const SORT_RANDOM = 0x04;
   /**
    * Create new HAMLE Parser
    * 

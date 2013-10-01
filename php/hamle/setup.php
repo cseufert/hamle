@@ -22,7 +22,7 @@ class hamleSetup {
    * @param mixed $id Identifier when no type is passed
    * @return hamleModel Instance of model class that implements hamleModel
    */
-  function getDefaultModel($id) { return new hamleDemoModel($id); }
+  function getModelDefault($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) { return new hamleDemoModel($id); }
   
   /**
    * Open a specific model type with id
@@ -31,8 +31,11 @@ class hamleSetup {
    * @param mixed $id Identifier for Model
    * @return hamleModel Instance of model class that implements hamleModel
    */
-  function getNamedModel($name, $id = NULL) { 
-    return hamleDemoModel::findId($name, $id); 
+  function getModelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    if(count($typeId) > 1)
+      throw new hamleEx_Runtime("Unable to open more than one ID at a time");
+    foreach($typeId as $type=>$id)
+      return hamleDemoModel::findId($name, current($id)); 
   }
   
   /**
@@ -42,8 +45,8 @@ class hamleSetup {
    * @param array $tags Array of Tags to search for (Default Logic is AND)
    * @return hamleModel Instance of Iteratable model class
    */
-  function getSearchedModel($name, $tags, $id = NULL) {
-    return hamleDemoModel::findTag($name, $tags, $id);
+  function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    return hamleDemoModel::findTag($typeTags);
   }
   /**
    * Give you the ability to adjust paths to template files
