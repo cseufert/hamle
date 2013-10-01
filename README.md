@@ -62,7 +62,7 @@ becomes
     * `$(page#3)` opens page type with id = 3
     * `$(cat)` opens a list of all category objects
     * `$(product.onsale)` opens a list of all products with onsale tag
-    * `$(cart#summary)
+    * `$(cart#summary)`
     * `$(#mainmenu > page,cat)` returns list of all children of #mainmenu that are pages, and cats
     * `$( > photo, image)` return list of all photos and images who are children of current scope
     * `$( < cat)` returns all parents of type category within the current scope
