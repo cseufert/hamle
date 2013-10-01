@@ -68,13 +68,13 @@ class hamle {
    */
   function outputFile($f) {
     self::$me = $this;
-    $f = $this->setup->themePath($f);
-    $dir = $this->setup->getCacheDir();
-    $tpl = file_get_contents($f);
-    if(!$tpl) throw new hamleEx("Unable to open file [$f]");
-    $of = $dir."/".str_replace("/","-",$f).".php";
-    file_put_contents($of, $this->parse->str($tpl));
-    return $this->output($of);
+    $inFile = $this->setup->themePath($f);
+    $cacheDir = $this->setup->getCacheDir();
+    $tpl = file_get_contents($inFile);
+    if(!$tpl) throw new hamleEx("Unable to open file [$inFile]");
+    $outFile = $cacheDir."/".str_replace("/","-",$f).".php";
+    file_put_contents($outFile, $this->parse->str($tpl));
+    return $this->output($outFile);
   }
   
   /**
