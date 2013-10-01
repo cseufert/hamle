@@ -60,14 +60,15 @@ becomes
     * `$( < cat)` returns all parents of type category within the current scope
     * Future implementation
     * `$(page:1)` return 1 page from  pages
+    * `$( > page,cat:3)` return 3 pages or cats (in total) that are children of whats in scope
     * `$(news^postdate)` returns all news posts sorted ascending by postdate
     * `$(news^-postdate)` returns all news posts sorted descending by postdate
     * `$(news^)` returns all news posts sorted in random order
     * `$(link:5-10)` returns links starting at #5 through 10
-    * `$(news:4) return 4 news posts
-    * `$(product.featured:4^) Return 4 randomly selected products with featured tag
-    * `$(post:4^postdate) return first 4 blog posts
-    * `$(post^-postdate:1) return most recent blog post
+    * `$(news:4)` return 4 news posts
+    * `$(product.featured:4^)` Return 4 randomly selected products with featured tag
+    * `$(post:4^postdate)` return first 4 blog posts
+    * `$(post^-postdate:1)` return most recent blog post
 * Iterateable model/controller list can use special methods
   * `|with $(#mainmenu > page)` - changes M/C scope to pages under mainmenu, if no results skips section
   * `|each` - iterates through each object in the current scope (set by |with)
@@ -76,7 +77,17 @@ becomes
     * Variable substitution is active within the filename
   * Future Ideas
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
-    * `|if $id = $(view)->id` - include section if this id is the view id
+    * `|if $id equals $(view)->id` - include section if this id is the view id
+      * `if $title equals "a"`
+      * `if $tags has "sale"`
+      * `if $title starts "Hi"`
+      * `if $title ends "s"`
+      * `if $title has "Hi"`
+      * `if $price greater 10`
+      * `if $price less 10`
+      * `if $price greater 10`
+      * `if $price less 10 OR $price greater 20`
+
     * `|unless $title` - if not shortcut, show block if there is no title
     * `|else` - else for `|with`, and `|if`
     * `|switch $type` - switch based on $type
