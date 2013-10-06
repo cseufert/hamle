@@ -1,8 +1,47 @@
 <?php
-require_once("../php/autoload.php");
+require_once("../../php/autoload.php");
+
+class snippetSetup extends hamleSetup {
+  function themePath($f) {
+    return __DIR__."/hamle/$f";
+  }
+  function getSnippets() {
+    return array(__DIR__."/hamle/snippets/replace-img.hamle-snip");
+  }
+  
+}
+
+$ho = new hamle(new hamleModel_array(array(array(
+                        'url'=>'/img/1',
+                        'title'=>'The TITLE',
+                        'titlebar'=>"My Page",
+                        'alt'=>'My Image #1'),array(
+                        'url'=>'/img/2',
+                        'title'=>'The TITLE',
+                        'titlebar'=>"My Page",
+                        'alt'=>'My Image #2'),
+    )),
+                new snippetSetup());
 
 
+    $hamle = "html\n".
+             "  head\n".
+             "    title \$titlebar\n".
+             "  body\n".
+             "    |each\n".
+             "      .enlarge\n".
+             "        img[src={\$url}/thumb&alt=\$alt]\n";
+    $html = "<html><head>\n".
+            "   <title>The TITLE</title>\n".
+            "   <title>The TITLE</title>\n".
+            "   <title>The TITLE</title>\n".
+            "</head><body>".
+            "<div class=\"content\"></div>".
+            "</body></html>";
+    echo $ho->outputStr($hamle);
 
+
+exit();
 class mySetup extends hamleSetup {
   function getNamedModel($name, $id = NULL) {
     if($name == "basetest")

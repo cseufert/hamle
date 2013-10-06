@@ -1,0 +1,2 @@
+|snippet append body #new .test
+  div#newtest New Div Box

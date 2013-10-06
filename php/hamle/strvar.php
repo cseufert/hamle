@@ -167,6 +167,21 @@ class hamleStrVar {
     }
     //  return str_replace(array("\n", "\r"),"",var_export($a, true));
   }
+  
+  static function getTIC($s) {
+    $m = $tic = array();
+    if(preg_match('/^[a-zA-Z0-9\_]+/', $s, $m))
+      $tic['type'] = $m[0];
+    preg_match_all(hamleStrVar_model::REGEX_SELECTOR,$s,$m);
+    foreach($m[0] as $n) {
+      if($n[0] == ".")
+        $tic['class'][] = substr($n,1);
+      if($n[0] == "#")
+        $tic['id'] = substr($n,1);
+    }
+    return $tic;
+  }
+
 }
 
 interface hamleStrVar_int {
@@ -223,9 +238,9 @@ abstract class hamleStrVar_intChild implements hamleStrVar_int {
 }
 
 class hamleStrVar_model extends hamleStrVar_intChild {
+  const REGEX_SELECTOR = '/[#\.\^\:][a-zA-Z0-9\-\_]*/m';
   protected $typeId = array(), $typeTags = array();
   protected $limit, $offset, $sortBy = "", $sortDir;
-  const REGEX_SELECTOR = '/[#\.\^\:][a-zA-Z0-9\-\_]*/m';
   function __construct($selector) {
     $this->limit = $this->offset = 0;
     $this->sortDir = hamle::SORT_NATURAL;

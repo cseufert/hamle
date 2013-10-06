@@ -10,7 +10,7 @@ class hamleTag {
   /**
    * @var array Array of children tag elements 
    */
-  protected $tags;
+  protected $tags = array();
   /**
    * @var string Tag Type for Printable Tags 
    */
@@ -31,13 +31,65 @@ class hamleTag {
     $this->tags = array();
     $this->content = array();
   }
+  /**
+   @param array $path array of arrays[type/class/id]
+   */
+  function find($path) {
+    //var_dump($this->type, json_encode($path), $this->compare($path[0]));
+    $list = array();
+    if($this->compare($path[0]))
+      array_shift($path);
+    if(count($path))
+      foreach($this->tags as $tag)
+        $list = array_merge($list, $tag->find($path));
+    else
+      $list[] = $this;
+    return $list;
+  }
+  function replace($path, $newTag) {
+    $r = false;
+    if($this->compare($path[0]))
+      array_shift($path);
+    if(!count($path))
+      $r = true;
+    foreach($this->tags as $k=>$tag)
+      if($tag->replace($path, $newTag)) {
+        $inner = $this->tags[$k];
+        array_splice($this->tags, $k, 1, $newTag->tags);
+        $newTag->addSnipContent($inner);
+      }
+    return $r;
+  }
+  
+  function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
+    foreach($this->tags as $k => $tag)
+      $tag->addSnipContent($contentTag, $this->tags, $k);
+  }
+  
+  function compare($tic) {
+    $class = array();
+    if(isset($tic['type']) && $this->type != $tic['type'])
+      return false; 
+    if(isset($tic['id']) && 
+            !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
+      return false;
+    if(isset($this->opt['class']))
+      $class = explode(' ',$this->opt['class']);
+    if(isset($tic['class']) && 
+            count($tic['class']) && array_diff($tic['class'],$class))
+      return false;      
+    return true;
+  }
   
   /**
    * Add a child tag to this tag
    * @param hamleTag $tag Tag to add as child
    */
-  function addChild($tag) {
-    $this->tags[] = $tag;
+  function addChild($tag, $mode = "append") {
+    if($mode == "prepend")
+      array_unshift($this->tags,$tag);
+    else
+      $this->tags[] = $tag;
   }
   
   /**
@@ -126,7 +178,8 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= "if(".$hsv->toPHP().") {";
         break;
       case "with":
-        $out .= "if(({$this->o} = ".$hsv->toPHP().") && (is_array({$this->o}) || {$this->o}"."->valid())) {\n";
+        $out .= "if(({$this->o} = ".$hsv->toPHP().") && ".
+                    "(is_array({$this->o}) || {$this->o}"."->valid())) {\n";
         $out .= "hamleScope::add({$this->o});\n;";
         break;
       case "include":
@@ -249,6 +302,42 @@ class hamleTag_HTML extends hamleTag {
   }
 }
 
+class hamleTag_Snippet extends hamleTag {
+  protected $path;
+  function __construct($params) {
+    parent::__construct();
+    if(!preg_match('/^(append|content|prepend|replace)(?: (.*))?$/', $params,$m))
+      throw new hamleEx_ParseError("Unable to parse Snippet($params)");
+    $this->type = $m[1];
+    if(isset($m[2]))
+      $this->path = explode(" ",$m[2]);
+    else
+      $this->path = array();
+    foreach($this->path as $k=>$v)
+      $this->path[$k] = hamleStrVar::getTIC($v);
+  }
+
+  function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
+    if($this->type == "content") {
+      $tagArray[$key] = $contentTag;
+    } else
+      parent::addSnipContent ($contentTag, $tagArray, $key);
+  }
+
+  function apply(hamleTag $rootTag) {
+    if($this->type == "append" or $this->type == "prepend") {
+      $matchTags = $rootTag->find($this->path);
+    foreach($matchTags as $tag)
+      foreach($this->tags as $t) {
+        $tag->addChild($t, $this->type);
+      }
+    } elseif($this->type == "replace") {
+      $rootTag->replace($this->path, $this);
+    } else
+      throw new Exception("Cant Apply snippet to document '{$this->type}'");
+  }
+  
+}
 /**
  * String Tag
  */

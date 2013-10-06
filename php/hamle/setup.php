@@ -57,4 +57,12 @@ class hamleSetup {
   function themePath($f) {
     return $f;
   }
+  /**
+   * Rerturns an array of snippets paths for application to the current template
+   * 
+   * @return array Array of file names
+   */
+  function getSnippets() {
+    return array();
+  }
 }

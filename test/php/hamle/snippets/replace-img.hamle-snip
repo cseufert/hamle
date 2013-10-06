@@ -1,0 +1,5 @@
+|snippet append html head
+  script[type=text/javascript&src=/js/lightbox]
+|snippet replace .enlarge img
+  a[href=#&onclick=enlarge('imgid')&data-img=$url]
+    |snippet content

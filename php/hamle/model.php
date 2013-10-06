@@ -13,16 +13,7 @@ interface hamleModel extends Iterator {
    * @throws hamleEx_NoKey
    */
   function hamleGet($key);
-  /**
-   * hamleExec Must also be implemented to exec functions on the model
-   * 
-   * @param string $func Name of function hamle wants to call
-   * @param array $args Arguments passed to function
-   * @return hamleModel Must return another object that implements hamleModel
-   * @throws hamleEx_NoFunc
-   */
-  function hamleExec($func, $args);
-  
+
   /**
    * Retreive an iterable result of relatives to the current object
    * @param int $rel Relation to this object hamle::REL_CHILD, etc
@@ -35,9 +26,6 @@ interface hamleModel extends Iterator {
 class hamleModel_zero implements hamleModel {
   function hamleGet($key) {
     throw new hamleEx_NoKey("Cant find Key ($key)");
-  }
-  function hamleExec($func, $args) {
-    throw new hamleEx_NoFunc("Cant find Func ($func)");
   }
   function hamleRel($rel, $typeTags) {
     throw new hamleEx_NoFunc("Unable to retreive relations");

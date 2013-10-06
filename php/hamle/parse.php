@@ -47,7 +47,60 @@ class hamleParse {
     $heir = array();
     $this->root = array();
   }
+  protected function loadLines($s) {
+    $this->lines = explode("\n", str_replace("\r","",$s));
+    $this->lineCount = count($this->lines);
+    $this->lineNo = 0;
+  }
   
+  function parseSnip($s) {
+    //save root tags
+    $roots = $this->root; $this->root = array();
+    $this->loadLines($s);
+    $this->procLines();
+    foreach($this->root as $tag) {
+      if(! $tag instanceOf hamleTag_Snippet)
+        throw new hamleEx_ParseError("Illegal Tag in snippet file, parent most tag has to be |snippet");
+      foreach($roots as $root)
+        $tag->apply($root);
+    }
+    $this->root = $roots;
+  }
+  function oldParseSnip($s) {
+    echo "Parsing Snipppet\n";
+    $m = array(); $tags = array();
+    $this->loadLines($s);
+    while($this->lineNo < $this->lineCount) {
+      if(!preg_match('/^( *)\\|snippet (\w+) (.*)$/', $this->lines[$this->lineNo],$m))
+        throw new hamleEx_ParseError("Unable to parse Snippet $name, on line {$this->lineNo}. Expecting |snippet not '{$this->lines[$this->lineNo]}'");
+      $indent = strlen($m[1]);
+      $mode = $m[2];
+      if(!in_array($mode, array("prepend","append","replace")))
+        throw new hamleEx_ParseError("Unknown snippet type $mode");
+      $path = explode(" ",$m[3]);
+      if(!$path) throw new hamleEx_ParseError("No path is specified for snippet on line {$this->lineNo}.");
+      foreach($path as $k=>$p)
+        $path[$k] = $this->getTIC($p);
+      $block = $this->consumeBlock(strlen($m[1]));
+      foreach($this->root as $tag)
+        $tags = array_merge($tags, $tag->find($path));
+      $lineState = array($this->lines, $this->lineCount, $this->lineNo, $this->root, $this->indents);
+      foreach($tags as $tag) {
+        $this->lines = $block;
+        $this->lineCount = count($block);
+        $this->lineNo = 0;
+        $this->root = $tag;
+        $this->indents = array();
+        $this->indentLevel($indent);
+        $this->procLines($heir = array($tag));
+      }
+      list($this->lines, $this->lineCount, $this->lineNo, $this->root, $this->indents) = $lineState;
+//      var_dump($tags[0]->render());
+//      throw new hamleEx(print_r($tags[0]->renderStTag(),true));
+      $this->lineNo++;
+    }
+  }
+ 
   /**
    * Parse HAMLE template, from a string
    * @param string $s String to parse
@@ -55,15 +108,18 @@ class hamleParse {
    */
   function str($s) {
     $this->init();
-    $this->lines = explode("\n", str_replace("\r","",$s));
-    $this->lineCount = count($this->lines);
+    $this->loadLines($s);
+    $this->procLines();
+  }
+
+  function procLines() {
     while($this->lineNo < $this->lineCount) {
       $line = $this->lines[$this->lineNo];
       if(trim($line)) if(preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
         unset($m[0]);
-        $indent = strlen($m[1]);
-        if(FALSE !== strpos($indent, "\t"))
+        if(FALSE !== strpos($m[1], "\t"))
           throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
+        $indent = strlen($m[1]);
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
         $params = str_replace('\\&','%26',isset($m[4])?$m[4]:"");
@@ -73,13 +129,18 @@ class hamleParse {
         //var_dump($m);
         switch(strlen($code)?$code[0]:($textcode?$textcode:"")) {
           case "|": //Control Tag
-            $hTag = new hamleTag_Ctrl(substr($code,1));
-            $hTag->setVar($text);
+            if($code == "|snippet")
+              $hTag = new hamleTag_snippet ($text);
+            else {
+              $hTag = new hamleTag_Ctrl(substr($code,1));
+              $hTag->setVar($text);
+            }
             break;
           case ":": //Filter Tag
             $hTag = new hamleTag_Filter(substr($code,1));
             $hTag->addContent($text);
-            $this->consumeBlock($hTag, $indent);
+            foreach($this->consumeBlock($indent) as $l)
+              $hTag->addContent($l,hamleStrVar::TOKEN_CODE);
             break;
           case "_": //String Tag
             $hTag = new hamleTag_String();
@@ -89,7 +150,8 @@ class hamleParse {
           case "//":
             $hTag = new hamleTag_Comment($textcode);
             $hTag->addContent($text);
-            $this->consumeBlock($hTag, $indent);
+            foreach($this->consumeBlock($indent) as $l)
+              $hTag->addContent($l,hamleStrVar::TOKEN_CODE);
             break;
           default:
             $hTag = new hamleTag_HTML($tag, $classid, $params);
@@ -106,21 +168,25 @@ class hamleParse {
         throw new hamleEx_ParseError("Unable to parse line $this->lineNo\n\"$line\"");
       $this->lineNo++;
     }
+  }
+  function output() {
     $out = "";
     foreach($this->root as $tag)
       $out .= $tag->render();
     return $out;
+
   }
-  
-  function consumeBlock($tag, $indent) {
+  function consumeBlock($indent) {
+    $out = array();
     while($this->lineNo + 1 < $this->lineCount &&
             ( !trim($this->lines[$this->lineNo+1]) ||
         preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 
                           $this->lines[$this->lineNo+1], $m))) {
       if(trim($this->lines[$this->lineNo+1]))
-        $tag->addContent($m[2],hamleStrVar::TOKEN_CODE);
+        $out[] = $m[2];
       $this->lineNo++;
     }
+    return $out;
   }
   
   function indentLevel($indent) {

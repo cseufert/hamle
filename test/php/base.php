@@ -1,7 +1,7 @@
 <?php
 
 require_once 'XmlDiff/src/XmlDiff.php';
-require_once("../php/autoload.php");
+require_once("../../php/autoload.php");
 
 class base extends PHPUnit_Framework_TestCase {
 	/**

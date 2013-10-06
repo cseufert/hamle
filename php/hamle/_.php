@@ -55,7 +55,12 @@ class hamle {
     $out = "";
     self::$me = $this;
     $dir = $this->setup->getCacheDir();
-    file_put_contents("$dir/string.hamle.php", $this->parse->str($s));
+    $this->parse->str($s);
+    $snips = $this->setup->getSnippets();
+    foreach($snips as $snip) {
+      $this->parse->parseSnip(file_get_contents($snip));
+    }
+    file_put_contents("$dir/string.hamle.php", $this->parse->output());
     return $this->output("$dir/string.hamle.php");
   }
   
@@ -73,7 +78,8 @@ class hamle {
     $tpl = file_get_contents($inFile);
     if(!$tpl) throw new hamleEx("Unable to open file [$inFile]");
     $outFile = $cacheDir."/".str_replace("/","-",$f).".php";
-    file_put_contents($outFile, $this->parse->str($tpl));
+    $this->parse->str($tpl);
+    file_put_contents($outFile, $this->parse->output());
     return $this->output($outFile);
   }
   
