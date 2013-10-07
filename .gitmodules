@@ -1,3 +1,6 @@
 [submodule "test/xmldiff"]
 	path = test/xmldiff
 	url = https://github.com/mmacia/XMLdiff.git
+[submodule "test/php/xmldiff"]
+	path = test/php/xmldiff
+	url = https://github.com/cseufert/XMLdiff.git
