@@ -127,11 +127,15 @@ class hamleParse {
         $text = isset($m[8])?$m[8]:"";
         $code = isset($m[6])?$m[6]:"";
         //var_dump($m);
+        $i = self::indentLevel($indent);
         switch(strlen($code)?$code[0]:($textcode?$textcode:"")) {
           case "|": //Control Tag
             if($code == "|snippet")
-              $hTag = new hamleTag_snippet ($text);
-            else {
+              $hTag = new hamleTag_snippet($text);
+            elseif($code == "|else") {
+              $hTag = new hamleTag_Ctrl(substr($code,1), $heir[$i - 1]);
+              $hTag->setVar($text);
+            } else {
               $hTag = new hamleTag_Ctrl(substr($code,1));
               $hTag->setVar($text);
             }
@@ -158,7 +162,6 @@ class hamleParse {
             $hTag->addContent($text);
             break;
         }
-        $i = self::indentLevel($indent);
         $heir[$i] = $hTag;
         if($indent > 0)
           $heir[$i - 1]->addChild($hTag);

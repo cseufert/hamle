@@ -91,12 +91,11 @@ becomes
     * `if $price greater 10`
     * `if $price less 10`
     * `if $price greater 10`
+  * `|else` - else for `|with`, and `|if`
   * Future Ideas
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
       * `if $price less 10 OR $price greater 20`
-
     * `|unless $title` - if not shortcut, show block if there is no title
-    * `|else` - else for `|with`, and `|if`
     * `|switch $type` - switch based on $type
       * `|case page` - include section if case matches
       * `|default` - include section if none of the cases matches

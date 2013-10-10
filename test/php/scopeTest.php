@@ -106,4 +106,26 @@ class scopeTest extends base {
     $this->compareXmlStrings($html, $out);
   }
   
+  public function testIf3() {
+    $hamle = "html".PHP_EOL.
+             "  body".PHP_EOL.
+             '    |if $title starts This'.PHP_EOL.
+             '      h2 Title starts with This'.PHP_EOL.
+             '    |else'.PHP_EOL.
+             '      .show Title else starts with This'.PHP_EOL.
+             '    |if $title contains Jabber'.PHP_EOL.
+             '      .show title contains Jabber'.PHP_EOL.
+             '    |else'.PHP_EOL.
+             '      .hide title else contains Jabber'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <h2>Title starts with This</h2>
+    <div class="hide">title else contains Jabber</div>
+  </body>
+</html>';
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+  
 }

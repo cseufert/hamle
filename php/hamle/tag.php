@@ -153,13 +153,23 @@ class hamleTag_Ctrl extends hamleTag {
    * @var string Variable passed to Control Tag 
    */
   protected $var;
-  protected $o;
+  protected $o, $else = false;
   static $instCount = 1;
-  function __construct($tag) {
+  function __construct($tag, $parentTag = null) {
     parent::__construct();
     $this->o = "\$o".self::$instCount++;
     $this->type = strtolower($tag);
     $this->var = "";
+    if($parentTag) {
+      $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
+      if($this->type == "else") {
+        if(!$elseTag instanceOf hamleTag)
+          throw new hamleEx_ParseError("Unable to use else here");
+        if(!in_array($elseTag->type, array('with','if')))
+          throw new hamleEx_ParseError("You can only use else with |with and |if, you tried |{$parentTag->type}");
+        $elseTag->else = true;
+      }
+    }
   }
     
   function renderStTag() {
@@ -183,6 +193,9 @@ class hamleTag_Ctrl extends hamleTag {
                     "(is_array({$this->o}) || {$this->o}"."->valid())) {\n";
         $out .= "hamleScope::add({$this->o});\n;";
         break;
+      case "else":
+        $out .= "/* else */";
+        break;
       case "include":
         $out .= "echo hamleRun::includeFile(".$hsv->toPHP().");";
         break;
@@ -205,6 +218,7 @@ class hamleTag_Ctrl extends hamleTag {
           $out .= "hamleScope::get()->rewind();\n";
         break;
       case "if":
+      case "else":
         $out .= "}";
         break;
       case "with";
@@ -215,6 +229,7 @@ class hamleTag_Ctrl extends hamleTag {
         return "";
         break;
     }
+    if($this->else) $out .= "else{";
     return $out.' ?>';
   }
   function render($indent = 0, $doIndent = true) {
