@@ -62,7 +62,7 @@ class scopeTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
-  public function testIf() {
+  public function testIf1() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
              '    |if $title'.PHP_EOL.
@@ -76,6 +76,30 @@ class scopeTest extends base {
   <body>
     <h2>This is My TITLE</h2>
     <div class="show">This will be visible</div>
+  </body>
+</html>';
+    $out = $this->hamle->outputStr($hamle);
+    $this->compareXmlStrings($html, $out);
+  }
+
+  public function testIf2() {
+    $hamle = "html".PHP_EOL.
+             "  body".PHP_EOL.
+             '    |if $title starts This'.PHP_EOL.
+             '      h2 Title starts with This'.PHP_EOL.
+             '    |if $class ends red'.PHP_EOL.
+             '      .show class ends with red'.PHP_EOL.
+             '    |if $title contains is My'.PHP_EOL.
+             '      .show title has "is my"'.PHP_EOL.
+             '    |if $class equals colored'.PHP_EOL.
+             '      .hide class = colored'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <h2>Title starts with This</h2>
+    <div class="show">class ends with red</div>
+    <div class="show">title has "is my"</div>
+    <div class="hide">class = colored</div>
   </body>
 </html>';
     $out = $this->hamle->outputStr($hamle);

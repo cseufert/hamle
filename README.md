@@ -82,17 +82,17 @@ becomes
   * `|each $(#social > icons)` - iterate through icons from social id
   * `|include "block/$type/list.hamle"` - bring another hamle file into the doc, with the current M/C scope
     * Variable substitution is active within the filename
+  * `|if $id equals $(view)->id` - include section if this id is the view id
+    * `if $title equals a`
+    * `if $tags has sale` - has sale in array
+    * `if $title starts Hi`
+    * `if $title ends s`
+    * `if $title contains Hi` - Contains the string Hi
+    * `if $price greater 10`
+    * `if $price less 10`
+    * `if $price greater 10`
   * Future Ideas
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
-    * `|if $id equals $(view)->id` - include section if this id is the view id
-      * `if $title equals "a"`
-      * `if $tags has "sale"`
-      * `if $title starts "Hi"`
-      * `if $title ends "s"`
-      * `if $title has "Hi"`
-      * `if $price greater 10`
-      * `if $price less 10`
-      * `if $price greater 10`
       * `if $price less 10 OR $price greater 20`
 
     * `|unless $title` - if not shortcut, show block if there is no title

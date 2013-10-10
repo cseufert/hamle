@@ -175,7 +175,8 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= "hamleScope::add({$this->o}); ";
         break;
       case "if":
-        $out .= "if(".$hsv->toPHP().") {";
+        $hsvcomp = hamleStrVar::comparison($this->var);
+        $out .= "if(".$hsvcomp->toPHP().") {";
         break;
       case "with":
         $out .= "if(({$this->o} = ".$hsv->toPHP().") && ".
