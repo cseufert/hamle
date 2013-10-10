@@ -57,3 +57,13 @@ class hamleModel_array extends hamleModel_zero {
   function next() { ++$this->pos; }
     
 }
+
+class hamleModel_arrayObj extends hamleModel_array {
+  function hamleGet($key) {
+    return $this->data[$this->pos]->hamleGet($key);
+  }
+  function hamleRel($rel, $typeTags) {
+    return $this->data[$this->pos]->hamleRel($rel, $typeTags);
+  }
+  function current() { return $this->data[$this->pos]; }
+}
