@@ -1,0 +1,78 @@
+
+|with (page#3)
+  body
+    |form myHameForm $commentform
+      .errors
+        |formhint
+      table
+        tr
+          td[colspan=2]
+            hint!name
+        tr
+          td
+            label!name
+          td 
+            input#mydragimage.myclass!name[onclick=myCallback()]
+        tr
+          td[colspan=2]
+            hint!address
+        tr 
+          td
+            label!address
+          td
+            input!address[onblur=myCallback()]
+        tr
+          td
+            label!state
+          td
+            |options state
+              radio!state[id=opt$val]
+          td
+            select!state
+              |options state
+                option!state[data-myid=$val]
+      :javascript
+        function myCallback() {
+          alert('Hi');
+        }
+      ul
+        |with (pages)
+          li[id=pagelist_$pageid&class=$tags] $title
+
+<?php
+  class myHamleForm extends hamleForm {
+    function setup() {
+      $this->fields = array(
+        new hamleFieldText("name", "Users First Name", array('regex'=>'/[a-z]{3,}/','error'=>'You must enter a name',
+        'help'=>"You put your name here", 'required'=>true, 'default'=>"Bob")),
+        new hamleFieldMemo("address","Shipping Address", array('required'=>true, 'error'=>"Please Enter your address")),
+        $state = new hamleFieldSelect("state", "State", array("required"=>true), "test"=>function($field, $form){return $form->pass1->val() == $form->pass2->val();})->options(address::getAllStates()),
+        new hamleFieldSubmit("save","Save", array('default'=>true)),
+        new hamleFieldSubmit('cancel',"Cancel"),
+        $f = new hamleFieldMemo("comment")->label("Comments:")->required(false)->default("")->test(function() {return true})->help("You can comment by putting a comment here")->error("Comments are not required");
+        $f->val = 1; return $f->val;
+      );
+      $state
+    }
+    //Before onSubmit test formkey[classname] == "$classname;$now;$fieldcount;".sha1("$str$key");
+    function onSubmit($button) {
+      if($button->label == "Save" && !$this->isValid())
+        throw new hamleForm_ValidError("Unable to save, form is not valid");
+      if($button->label == "Save") {
+        //Save Data here
+        $saveData = array();
+        foreach($this->fields as $k=>$v)
+          $saveData[$k] = $v->val;
+        myFormModel::create($saveData);
+      } elseif($button->label == "Cancel") {
+        header('Location: /home');
+        exit;
+      }
+    }
+
+  }
+
+  function($title, $opt) {
+    $opt += ['id' => 0, 'sort'=>'ascending'];
+
+  }
