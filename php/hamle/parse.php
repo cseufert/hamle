@@ -66,40 +66,6 @@ class hamleParse {
     }
     $this->root = $roots;
   }
-  function oldParseSnip($s) {
-    echo "Parsing Snipppet\n";
-    $m = array(); $tags = array();
-    $this->loadLines($s);
-    while($this->lineNo < $this->lineCount) {
-      if(!preg_match('/^( *)\\|snippet (\w+) (.*)$/', $this->lines[$this->lineNo],$m))
-        throw new hamleEx_ParseError("Unable to parse Snippet $name, on line {$this->lineNo}. Expecting |snippet not '{$this->lines[$this->lineNo]}'");
-      $indent = strlen($m[1]);
-      $mode = $m[2];
-      if(!in_array($mode, array("prepend","append","replace")))
-        throw new hamleEx_ParseError("Unknown snippet type $mode");
-      $path = explode(" ",$m[3]);
-      if(!$path) throw new hamleEx_ParseError("No path is specified for snippet on line {$this->lineNo}.");
-      foreach($path as $k=>$p)
-        $path[$k] = $this->getTIC($p);
-      $block = $this->consumeBlock(strlen($m[1]));
-      foreach($this->root as $tag)
-        $tags = array_merge($tags, $tag->find($path));
-      $lineState = array($this->lines, $this->lineCount, $this->lineNo, $this->root, $this->indents);
-      foreach($tags as $tag) {
-        $this->lines = $block;
-        $this->lineCount = count($block);
-        $this->lineNo = 0;
-        $this->root = $tag;
-        $this->indents = array();
-        $this->indentLevel($indent);
-        $this->procLines($heir = array($tag));
-      }
-      list($this->lines, $this->lineCount, $this->lineNo, $this->root, $this->indents) = $lineState;
-//      var_dump($tags[0]->render());
-//      throw new hamleEx(print_r($tags[0]->renderStTag(),true));
-      $this->lineNo++;
-    }
-  }
  
   /**
    * Parse HAMLE template, from a string
