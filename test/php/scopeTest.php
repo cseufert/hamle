@@ -67,7 +67,7 @@ class scopeTest extends base {
              "  body".PHP_EOL.
              '    |if $title'.PHP_EOL.
              '      h2 $title'.PHP_EOL.
-             '    |if $istrue'.PHP_EOL.
+             '    |if {$[0]->istrue}'.PHP_EOL.
              '      .show This will be visible'.PHP_EOL.
              '    |if $nottrue'.PHP_EOL.
              '      .hide This will not be shown'.PHP_EOL;

@@ -348,6 +348,34 @@ class hamleTag_String extends hamleTag {
 class hamleTag_Comment extends hamleTag {
   function render($indent = 0, $doIndent = true) {
     return "";
+  }  
+}
+
+class hamleTag_Form extends hamleTag {
+  protected static $sForm, $sCount;
+  protected $var, $form;
+  
+  function __construct($param) {
+    parent::__construct();
+    $param = explode(' ',$param);
+    if(count($param) < 2) throw new hamleEx_ParseError("|form required 2 arguments, form type, and instance");
+    $this->var = new hamleStrVar($param[1]);
+    $this->form = new $param[0];
   }
-    
+  function renderStTag() {
+    self::$sForm[] = $this;
+    self::$sCount = count(self::$sForm);
+    $out = array();
+    foreach($this->form->getHTMLProp() as $k=>$v) {
+      $v = $v; $k = $k;
+      $out[] = "$k=\"$v\"";
+    }
+    return "<form ".implode(" ", $out).">";
+  }
+
+  function renderEnTag() {
+    return "</form>";
+    array_pop(self::$sForm);
+    self::$sCount = count(self::$sForm);
+  }
 }

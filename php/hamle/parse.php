@@ -97,6 +97,8 @@ class hamleParse {
           case "|": //Control Tag
             if($code == "|snippet")
               $hTag = new hamleTag_snippet ($text);
+            elseif($code == "|form")
+              $hTag = new hamleTag_Form($text);
             else {
               $hTag = new hamleTag_Ctrl(substr($code,1));
               $hTag->setVar($text);

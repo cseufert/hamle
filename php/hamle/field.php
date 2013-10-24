@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * HAMLE Form Field
+ * Basic form field to extend
  * @author Chris Seufert <chris@seufert.id.au>
  * @package hamle
  */
@@ -15,12 +17,14 @@ class hamleField {
   function __construct($name, $options = array()) {
     $this->value = null;
     $this->name = $name;
-    $this->opt = $options + array("label"=>"", "regex"=>"", "required"=>"false",
+    $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
          "default"=>"", "error"=>"Field is Required", "help"=>"", "test"=>null,
         "form"=>"noForm", "readonly"=>false);
   }
   
-  function __call($name, $val) {
+  function __call($name, $valarray) {
+    if(count($valarray) < 1) return $this->__get($name);
+    $val = count($valarray) == 1?current($valarray):$valarray;
     switch($name) {
       case "name":
       case "valid":

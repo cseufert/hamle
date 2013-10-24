@@ -48,10 +48,16 @@ class hamleForm {
    */
   function onSubmit($button) { }
   
-}
-
-
-
-class hamleForm_NoSetup extends hamleEx {
+  function getFields() {
+    return $this->fields;
+  }
+  function getHTMLProp() {
+    return array('action'=>'','method'=>'post','name'=>$this->name,
+                                        'enctype'=>'multipart/form-data');
+  }
   
 }
+
+
+
+class hamleForm_NoSetup extends hamleEx { }
