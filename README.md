@@ -157,7 +157,7 @@ html
                   ul.submenu
                     |each
                       li.menuitem
-                        |if $[0]->id = $id
+                        |if {$[1]->id} = $id
                           a.highlight[href=$url] $title
                         |else
                           a[href=$url] $title
