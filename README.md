@@ -152,15 +152,18 @@ html
         ul#mainmenu
           |each
             li.menuitem
-              a[href=$url] $title
-                |with $( > text)
-                  ul.submenu
-                    |each
-                      li.menuitem
-                        |if {$[1]->id} = $id
-                          a.highlight[href=$url] $title
-                        |else
-                          a[href=$url] $title
+              |if {$[1]->id} = $id
+                a.highlight[href=$url] $title
+              |else
+                a[href=$url] $title
+              |with $( > text)
+                ul.submenu
+                  |each
+                    li.menuitem
+                      |if {$[1]->id} = $id
+                        a.highlight[href=$url] $title
+                      |else
+                        a[href=$url] $title
       .body
         |if $text
           $text
