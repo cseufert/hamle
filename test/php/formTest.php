@@ -14,25 +14,32 @@ class formTestForm extends hamleForm {
 class formTest extends base {
   public function testStyle() {
     $hamle = "html".PHP_EOL.
-             "  head".PHP_EOL.
+             "  body".PHP_EOL.
              '    |form formTestForm $testform'.PHP_EOL.
              '      div.ftitle'.PHP_EOL.
              '        label!title'.PHP_EOL.
-             '        input!title'.PHP_EOL.
+             '        input!title[tabindex=1]'.PHP_EOL.
              '      div.fmessage'.PHP_EOL.
              '        label!message'.PHP_EOL.
-             '        input!message'.PHP_EOL;
+             '        input!message[tabindex=2]'.PHP_EOL;
     $html = '
 <html>
-  <head>
-    <style>
-      div#id.class { color: red; }
-      div#id2.class { padding: 5px; }
-    </style>
-  </head>
+  <body>
+    <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
+      <div class="ftitle">
+        <label for="formTestForm_title" >title</label>
+        <input type="text" name="formTestForm_title" value="" tabindex="1" />
+      </div>
+      <div class="fmessage">
+        <label for="formTestForm_message">message</label>
+        <input type="text" name="formTestForm_message" value="Message goes here" tabindex="2" />
+      </div>
+    </form>
+  </body>
 </html>
 ';
     $out = $this->hamle->outputStr($hamle);
+    var_dump($out);
     $this->compareXmlStrings($html, $out);
   }
 

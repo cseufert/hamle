@@ -24,7 +24,7 @@ class hamleForm {
     $this->fields = array();
     foreach($fields as $v) {
       $this->fields[$v->name] = $v;
-      $v->form = $this->name;
+      $v->form($this->name);
     }
     $this->process();
   }

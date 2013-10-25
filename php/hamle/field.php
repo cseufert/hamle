@@ -73,6 +73,16 @@ class hamleField {
     } else 
       return is_null($this->value)?$this->opt['default']:$this->value;
   }
+  function getInputAttrib($atts, &$type = "input") {
+    $atts['value'] = "{\$form->getField({$this->name})->val}";
+    $atts['name'] = $this->form."_".$this->name;
+    $atts['type'] = "text";
+    return $atts;
+  }
+  function getLabelAttrib($atts) {
+    $atts["for"] = $this->form."_".$this->name;
+    return $atts;
+  }
   
   function doProcess() {
     $value = $this->getValue();

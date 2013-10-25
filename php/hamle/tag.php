@@ -19,6 +19,11 @@ class hamleTag {
    * @var array Array of lines of Content 
    */
   protected $content;
+  
+  protected $opt;
+  
+  protected $source; //
+
   /**
    * Number of spaces for each Indent when doing pretty format of output
    */
@@ -254,25 +259,27 @@ class hamleTag_HTML extends hamleTag {
   /**
    * @var array Options for html tags (eg, href, class, style, etc) 
    */
-  protected $opt;
   static protected $selfCloseTags = array("area","base","br","col","command",
                               "embed","hr","img","input","keygen","link",
                                 "meta","param","source","track","wbr");
 
   function __construct($tag, $classid, $param=array()) {
     parent::__construct();
+    $this->opt = array();
+    $this->source = array();
     $this->type = $tag?$tag:"div";
     /// todo: variable substitution
     if(isset($param[0]) && $param[0] == "[") {
       $param = substr($param, 1, strlen($param)-2);
       parse_str($param, $this->opt); 
     }
-    if(!isset($this->opt['class']))
-      $this->opt['class'] = "";
-    preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $classid, $m);
+    $this->opt += array("class"=>"");
+    
+    preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $m);
     if(isset($m[0])) foreach($m[0] as $s) {
       if($s[0] == "#") $this->opt['id'] = substr($s,1);
       if($s[0] == ".") $this->opt['class'] .= " ".substr($s,1);
+      if($s[0] == "!") $this->source[] = substr($s,1);
     }
     $this->opt['class'] = trim($this->opt['class']);
     if(!$this->opt['class']) unset($this->opt['class']);
@@ -353,12 +360,16 @@ class hamleTag_Comment extends hamleTag {
 
 class hamleTag_Form extends hamleTag {
   protected static $sForm, $sCount;
-  protected $var, $form;
+  protected $var;
+  /**
+   * @var hamleForm  Hamle Form Instance for configuring template
+   */
+  protected $form;
   
   function __construct($param) {
     parent::__construct();
     $param = explode(' ',$param);
-    if(count($param) < 2) throw new hamleEx_ParseError("|form required 2 arguments, form type, and instance");
+    if(count($param) < 2) throw new hamleEx_ParseError("|form requires 2 arguments, form type, and instance");
     $this->var = new hamleStrVar($param[1]);
     $this->form = new $param[0];
   }
@@ -370,11 +381,33 @@ class hamleTag_Form extends hamleTag {
       $v = $v; $k = $k;
       $out[] = "$k=\"$v\"";
     }
-    return "<form ".implode(" ", $out).">";
+    $fields = $this->form->getFields();
+    $labelTags = $this->find(array(array("type"=>"label")));
+     foreach($labelTags as $tag) 
+      if($tag instanceOf hamleTag_HTML)
+        foreach($tag->source as $source) {
+          $tag->opt = $fields[$source]->getLabelAttrib($tag->opt);
+          $tag->addContent($fields[$source]->label);
+        }
+    $inputTags = $this->find(array(array("type"=>"input")));
+    foreach($inputTags as $tag) 
+      if($tag instanceOf hamleTag_HTML)
+        foreach($tag->source as $source) {
+          $tag->opt = $fields[$source]->getInputAttrib($tag->opt);
+          unset($fields[$source]);
+        }
+    foreach($fields as $n=>$f) {
+      $this->addChild($label = new hamleTag_HTML("label","!$n"));
+      $this->addChild($input = new hamleTag_HTML("input","!$n"));
+      $label->opt = $f->getLabelAttrib($label->opt);
+      $input->opt = $f->getLabelAttrib($input->opt);
+      $label->addChild(new hamleTag_String($f->label));
+    }
+    return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; ?>";
   }
 
   function renderEnTag() {
-    return "</form>";
+    return "<?php unset(\$form); ?></form>";
     array_pop(self::$sForm);
     self::$sCount = count(self::$sForm);
   }
