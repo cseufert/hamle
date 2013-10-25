@@ -22,8 +22,7 @@ class hamleTag {
   
   protected $opt;
   
-  protected $source; //
-
+  protected $source;
   /**
    * Number of spaces for each Indent when doing pretty format of output
    */
@@ -400,8 +399,8 @@ class hamleTag_Form extends hamleTag {
       $this->addChild($label = new hamleTag_HTML("label","!$n"));
       $this->addChild($input = new hamleTag_HTML("input","!$n"));
       $label->opt = $f->getLabelAttrib($label->opt);
-      $input->opt = $f->getLabelAttrib($input->opt);
-      $label->addChild(new hamleTag_String($f->label));
+      $input->opt = $f->getInputAttrib($input->opt);
+      $label->addContent($f->label);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; ?>";
   }
