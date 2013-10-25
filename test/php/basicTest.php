@@ -92,7 +92,7 @@ class basicTest extends base {
              "  / Just a Comment\n";
     $html = "<html>\n".
             "  <!-- Just a Comment -->\n".
-            "</html>";
+            "</html>\n";
     $out = $this->hamle->outputStr($hamle);
     $this->assertEquals($html, $out);
   }
@@ -101,9 +101,11 @@ class basicTest extends base {
              "  / Just a Comment\n".
              "    Next line of Comment\n";
     $html = "<html>\n".
-            "  <!-- Just a Comment\n".
-            "       Next line of Comment -->\n".
-            "</html>";
+            "  <!-- \n".
+            "    Just a Comment\n".
+            "    Next line of Comment\n".
+            "   -->\n".
+            "</html>\n";
     $out = $this->hamle->outputStr($hamle);
     $this->assertEquals($html, $out);
   }
