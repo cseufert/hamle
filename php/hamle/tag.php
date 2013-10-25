@@ -372,7 +372,6 @@ class hamleTag_Comment extends hamleTag {
       return "<!-- ";
   }
   function renderContent($pad = "", $oneliner = false) {
-    var_dump($this->content);
     if($this->commentstyle == "HTML")
       if(count($this->content) > 1)
         return $pad."  ".implode("\n$pad",$this->content)."\n";
