@@ -87,6 +87,26 @@ class basicTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
+  public function testCommentHTML() {
+    $hamle = "html\n".
+             "  / Just a Comment\n";
+    $html = "<html>\n".
+            "  <!-- Just a Comment -->\n".
+            "</html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->assertEquals($html, $out);
+  }
+  public function testCommentHTMLMultiLine() {
+    $hamle = "html\n".
+             "  / Just a Comment\n".
+             "    Next line of Comment\n";
+    $html = "<html>\n".
+            "  <!-- Just a Comment\n".
+            "       Next line of Comment -->\n".
+            "</html>";
+    $out = $this->hamle->outputStr($hamle);
+    $this->assertEquals($html, $out);
+  }
   public function testTextLine() {
     $hamle = "html\n".
              "   #box Content Line 1\n".
