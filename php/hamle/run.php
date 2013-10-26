@@ -57,7 +57,7 @@ class hamleRun {
    * @param string $id id to search for
    * @return hamleModel
    */  
-  static function modelID($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+  static function modelId($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     return self::$hamle->setup->getModelDefault($id, 
                                   $sortDir, $sortField, $limit, $offset);
   }

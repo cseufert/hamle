@@ -1,6 +1,8 @@
 <?php
 require_once("../../php/autoload.php");
 
+echo (new hamleString("Hello {\$( > page,cat)->user}"))->toPHP();
+exit();
 class snippetSetup extends hamleSetup {
   function themePath($f) {
     return __DIR__."/hamle/$f";
