@@ -61,7 +61,7 @@ class scopeTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
-
+/*
   public function testIf() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
@@ -81,5 +81,5 @@ class scopeTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
-  
+  */
 }

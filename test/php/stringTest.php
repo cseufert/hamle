@@ -64,58 +64,58 @@ class stringTest extends base{
   }
 
   public function testDollarFunc1() {
-    $hs = new hamleString("\$(user)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(user)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('user'=>array()),0,'',0,0)", $php);
   }
   
   public function testDollarFunc2() {
-    $hs = new hamleString("\$(user#3)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(user#3)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeId(array('user'=>array(0=>3)),0,'',0,0)", $php);
   }
   public function testDollarFunc3() {
-    $hs = new hamleString("\$(#my_page)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#my_page)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('my_page',0,'',0,0)", $php);
   }
   public function testDollarFunc4() {
-    $hs = new hamleString("\$(page:4)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(page:4)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),0,'',4,0)", $php);
   }
   public function testDollarFunc5() {
-    $hs = new hamleString("\$(page^title:1-3)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(page^title:1-3)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),2,'',3,1)", $php);
   }
   public function testDollarFunc6() {
-    $hs = new hamleString("\$(photo.heroimage^:1)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(photo.heroimage^:1)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('photo'=>array(0=>'heroimage')),4,'',1,0)", $php);
   }
   public function testDollarFuncChild1() {
-    $hs = new hamleString("\$(#my_page > link)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#my_page > link)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('my_page',0,'',0,0)".
                       "->hamleRel(1,array('link'=>array()),0,'',0,0)", $php);
   }  
   public function testDollarFuncChild2() {
-    $hs = new hamleString("\$(#my_page > .gallery)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#my_page > .gallery)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('my_page',0,'',0,0)".
                     "->hamleRel(1,array('*'=>array(0=>'gallery')),0,'',0,0)", $php);
   } 
   public function testDollarFuncChild3() {
-    $hs = new hamleString("\$(#menu > page,cat)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#menu > page,cat)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('menu',0,'',0,0)".
@@ -126,17 +126,17 @@ class stringTest extends base{
    * @aexpectedExceptionMessage Unable to specify child by ID in '#me...' 
    */
   public function testDollarFuncChild4() {
-    $hs = new hamleString("\$(#my_page > #me)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#my_page > #me)", hamleString::TOKEN_CONTROL);
   }
   public function testDollarFuncChild5() {
-    $hs = new hamleString("\$(#heroimage > photo:4^)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$(#heroimage > photo:4^)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('heroimage',0,'',0,0)".
                     "->hamleRel(1,array('photo'=>array()),4,'',4,0)", $php);
   } 
   public function testDollarFuncParent1() {
-    $hs = new hamleString("\$( < cat)", hamleStrVar::TOKEN_CONTROL);
+    $hs = new hamleString("\$( < cat)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleScope::get(0)->hamleRel(2,array('cat'=>array()),0,'',0,0)", $php);

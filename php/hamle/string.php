@@ -116,6 +116,7 @@ class hamleString_Complex extends hamleString {
   protected $sel = null;
   function __construct($s) {
     $s = explode("->",$s);
+    if(!$s[0]) throw new hamleEx_ParseError("Unable to parse Complex Expression");
     if($s[0][1] == "(")
       $this->func = new hamleString_Func($s[0]);
     elseif($s[0][1] == "[")
@@ -181,7 +182,7 @@ class hamleString_Func extends hamleString_SimpleVar {
                                   $att['tag'][$type][] = $m[1];
       else $att['tag'][$type] = array();
     }
-    var_dump($att);
+    //var_dump($att);
     if(!(count($att['id']) xor count($att['tag'])))
       throw new hamleEx_ParseError("Only tag, type or id can be combined");
     return $att;
@@ -255,7 +256,7 @@ class hamleString_Scope extends hamleString_SimpleVar {
   protected $scope = 0;
   function __construct($s) {
     $m = array();
-    var_dump($s);
+    //var_dump($s);
     if(!preg_match('/\$\[(-?[0-9]+)\]/', $s, $m))
       throw new hamleEx_ParseError("Unable to match scope");
     $this->scope = $m[1];
@@ -265,4 +266,17 @@ class hamleString_Scope extends hamleString_SimpleVar {
   }
   function toHTML() { throw new 
           hamleEx_ParseError("Unable to use Scope operator in HTML Code"); }
+}
+
+class hamleString_FormField extends hamleString {
+  protected $var;
+  function __construct($var) {
+    $this->var = $var;
+  }
+  function toPHP() {
+
+  }
+  function toHTML() {
+    return '<?=$form->getField('.hamleString::varToCode($this->var).')->var?>';
+  }
 }

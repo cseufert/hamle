@@ -140,9 +140,9 @@ class hamleTag {
    * 
    * @param string $s One line of content
    */
-  function addContent($s, $strtype = hamleStrVar::TOKEN_HTML) {
+  function addContent($s, $strtype = hamleString::TOKEN_HTML) {
     if(trim($s)) {
-      $parse = new hamleStrVar($s, $strtype);
+      $parse = new hamleString($s, $strtype);
       $this->content[] = $parse->toHTML();
     }
   }
@@ -169,7 +169,7 @@ class hamleTag_Ctrl extends hamleTag {
   function renderStTag() {
     $out = "<"."?php ";
     //var_dump($this->type);
-    $hsv = new hamleStrVar($this->var, hamleStrVar::TOKEN_CONTROL);
+    $hsv = new hamleString($this->var, hamleString::TOKEN_CONTROL);
     switch($this->type) {
       case "each":
         if($this->var)
@@ -270,7 +270,7 @@ class hamleTag_HTML extends hamleTag {
     /// todo: variable substitution
     if(isset($param[0]) && $param[0] == "[") {
       $param = substr($param, 1, strlen($param)-2);
-      parse_str($param, $this->opt); 
+      parse_str($param, $this->opt);
     }
     $this->opt += array("class"=>"");
     
@@ -300,8 +300,9 @@ class hamleTag_HTML extends hamleTag {
   function optToTags() {
     $out = array();
     foreach($this->opt as $k=>$v) {
-      $v = new hamleStrVar($v);
-      $k = new hamleStrVar($k);
+      if(!$v instanceof hamleString)
+        $v = new hamleString($v);
+      $k = new hamleString($k);
       $out[] = " ".$k->toHTML()."=\"".$v->toHTML()."\"";
     }
     return implode("", $out);
@@ -369,7 +370,7 @@ class hamleTag_Form extends hamleTag {
     parent::__construct();
     $param = explode(' ',$param);
     if(count($param) < 2) throw new hamleEx_ParseError("|form requires 2 arguments, form type, and instance");
-    $this->var = new hamleStrVar($param[1]);
+    $this->var = new hamleString($param[1]);
     $this->form = new $param[0];
   }
   function renderStTag() {

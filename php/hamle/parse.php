@@ -108,7 +108,7 @@ class hamleParse {
             $hTag = new hamleTag_Filter(substr($code,1));
             $hTag->addContent($text);
             foreach($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l,hamleStrVar::TOKEN_CODE);
+              $hTag->addContent($l,hamleString::TOKEN_CODE);
             break;
           case "_": //String Tag
             $hTag = new hamleTag_String();
@@ -119,7 +119,7 @@ class hamleParse {
             $hTag = new hamleTag_Comment($textcode);
             $hTag->addContent($text);
             foreach($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l,hamleStrVar::TOKEN_CODE);
+              $hTag->addContent($l,hamleString::TOKEN_CODE);
             break;
           default:
             $hTag = new hamleTag_HTML($tag, $classid, $params);

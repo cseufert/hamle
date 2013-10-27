@@ -2,26 +2,18 @@
 
 require_once "base.php";
 
-class formTestForm extends hamleForm {
-  function setup() {
-    $this->fields = array(
-      (new hamleField("title"))->required(true),
-      (new hamleField("message"))->default("Message goes here"),
-    );
-  }
-}
-
 class formTest extends base {
   public function testFormBasic1() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
-             '    |form formTestForm $testform'.PHP_EOL.
-             '      div.ftitle'.PHP_EOL.
-             '        label!title'.PHP_EOL.
-             '        input!title[tabindex=1]'.PHP_EOL.
-             '      div.fmessage'.PHP_EOL.
-             '        label!message'.PHP_EOL.
-             '        input!message[tabindex=2]'.PHP_EOL;
+             "    |with $(formtest)".PHP_EOL.
+             '      |form formTestForm $testform'.PHP_EOL.
+             '        div.ftitle'.PHP_EOL.
+             '          label!title'.PHP_EOL.
+             '          input!title[tabindex=1]'.PHP_EOL.
+             '        div.fmessage'.PHP_EOL.
+             '          label!message'.PHP_EOL.
+             '          input!message[tabindex=2]'.PHP_EOL;
     $html = '
 <html>
   <body>
@@ -45,10 +37,11 @@ class formTest extends base {
   public function testFormBasic2() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
-             '    |form formTestForm $testform'.PHP_EOL.
-             '      div.fmessage'.PHP_EOL.
-             '        label!message'.PHP_EOL.
-             '        input!message[tabindex=2]'.PHP_EOL;
+             "    |with $(formtest)".PHP_EOL.
+             '      |form formTestForm $testform'.PHP_EOL.
+             '        div.fmessage'.PHP_EOL.
+             '          label!message'.PHP_EOL.
+             '          input!message[tabindex=2]'.PHP_EOL;
     $html = '
 <html>
   <body>
@@ -67,7 +60,7 @@ class formTest extends base {
     $this->compareXmlStrings($html, $out);
   }
  
-    public function testJavascriptVars() {
+  public function testJavascriptVars() {
     $hamle = "head".PHP_EOL.
              '  :javascript'.PHP_EOL.
              '    $(document).ready(function() {'.PHP_EOL.

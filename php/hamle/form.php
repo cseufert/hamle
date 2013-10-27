@@ -51,6 +51,9 @@ class hamleForm {
   function getFields() {
     return $this->fields;
   }
+  function getField($n) {
+    return $this->fields[$n];
+  }
   function getHTMLProp() {
     return array('action'=>'','method'=>'post','name'=>$this->name,
                                         'enctype'=>'multipart/form-data');

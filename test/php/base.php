@@ -59,6 +59,19 @@ class baseTestSetup extends hamleSetup {
               array('url'=>'http://www.test.com',  'title'=>'Test.com'),
               array('url'=>'http://www.test2.com', 'title'=>'Test2.com'),
               array('url'=>'http://www.test3.com', 'title'=>'Test3.com')));
+    if(in_array("formtest",array_keys($typeTags)))
+      return new hamleModel_array(array(
+              array('title'=>'The Title',  'testform'=>new formTestForm())));
     return parent::getNamedModel($name, $id);
   }
 }
+
+class formTestForm extends hamleForm {
+  function setup() {
+    $this->fields = array(
+      (new hamleField("title"))->required(true),
+      (new hamleField("message"))->default("Message goes here"),
+    );
+  }
+}
+

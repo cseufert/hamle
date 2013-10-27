@@ -74,7 +74,7 @@ class hamleField {
       return is_null($this->value)?$this->opt['default']:$this->value;
   }
   function getInputAttrib($atts, &$type = "input") {
-    $atts['value'] = "{\$form->getField({$this->name})->val}";
+    $atts['value'] = new hamleString_FormField($this->name);
     $atts['name'] = $this->form."_".$this->name;
     $atts['type'] = "text";
     return $atts;
