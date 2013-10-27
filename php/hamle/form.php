@@ -52,6 +52,8 @@ class hamleForm {
     return $this->fields;
   }
   function getField($n) {
+    if(!isset($this->fields[$n]))
+      throw new hamleEx_NoKey("unable to find form field ($n)");
     return $this->fields[$n];
   }
   function getHTMLProp() {

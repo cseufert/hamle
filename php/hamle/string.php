@@ -24,34 +24,30 @@ class hamleString {
   function __construct($s, $mode = self::TOKEN_HTML) {
     $m = array(); $pos = 0; $this->nodes = array();
     $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
-    switch($mode) {
-      case self::TOKEN_HTML:
-        preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
-//        var_dump($m);
-        foreach($m as $match) {
-          if(isset($match[2])) {
-            if($match[2][1] != $pos)
-              $this->nodes[] = new hamleString_Plain(
-                                        substr($s, $pos, $match[2][1] - $pos));
-            $this->nodes[] = new hamleString_Complex(substr($match[2][0],1,-1));
-            $pos = $match[2][1] + strlen($match[2][0]);
-          } else {
-            if($match[1][1] > 0 && $s[$match[1][1]-1] == '\\') continue;
-            if($match[1][1] != $pos)
-              $this->nodes[] = new hamleString_Plain(
-                                        substr($s, $pos, $match[1][1] - $pos));
-            $this->nodes[] = new hamleString_SimpleVar($match[1][0]);
-            $pos = $match[1][1] + strlen($match[1][0]);
-          }
-        }
-        if($pos != strlen($s))
-          $this->nodes[] = new hamleString_Plain(substr($s, $pos));
-//        var_dump($this->nodes);
-        break;
-      case self::TOKEN_CONTROL:
-        $this->nodes[] = new hamleString_Complex(trim($s));
-        break;
+    if(!trim($s)) return;
+    if($mode == self::TOKEN_CONTROL) {
+      $this->nodes[] = new hamleString_Complex(trim($s));
+      return;
     }
+    preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
+    foreach($m as $match) {
+      if($mode & self::FIND_BARDOLLAR && isset($match[2])) {
+        if($match[2][1] != $pos)
+          $this->nodes[] = new hamleString_Plain(
+                                    substr($s, $pos, $match[2][1] - $pos));
+        $this->nodes[] = new hamleString_Complex(substr($match[2][0],1,-1));
+        $pos = $match[2][1] + strlen($match[2][0]);
+      } elseif($mode & self::FIND_DOLLARVAR) {
+        if($match[1][1] > 0 && $s[$match[1][1]-1] == '\\') continue;
+        if($match[1][1] != $pos)
+          $this->nodes[] = new hamleString_Plain(
+                                    substr($s, $pos, $match[1][1] - $pos));
+        $this->nodes[] = new hamleString_SimpleVar($match[1][0]);
+        $pos = $match[1][1] + strlen($match[1][0]);
+      }
+    }
+    if($pos != strlen($s))
+      $this->nodes[] = new hamleString_Plain(substr($s, $pos));
   }
   
   function toHTML() {
@@ -277,6 +273,6 @@ class hamleString_FormField extends hamleString {
 
   }
   function toHTML() {
-    return '<?=$form->getField('.hamleString::varToCode($this->var).')->var?>';
+    return '<?=$form->getField('.hamleString::varToCode($this->var).')->getValue()?>';
   }
 }

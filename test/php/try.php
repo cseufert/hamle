@@ -1,7 +1,7 @@
 <?php
 require_once("../../php/autoload.php");
 
-echo (new hamleString("Hello {\$( > page,cat)->user}"))->toPHP();
+echo (new hamleString("      div#id.class { color: red; }", hamleString::TOKEN_CODE))->toHTML();
 exit();
 class snippetSetup extends hamleSetup {
   function themePath($f) {

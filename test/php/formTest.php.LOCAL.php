@@ -2,23 +2,44 @@
 
 require_once "base.php";
 
-class fitlerTest extends base {
+class formTestForm extends hamleForm {
+  function setup() {
+    $this->fields = array(
+      (new hamleField("title"))->required(true),
+      (new hamleField("message"))->default("Message goes here"),
+    );
+  }
+}
+
+class formTest extends base {
   public function testStyle() {
     $hamle = "html".PHP_EOL.
-             "  head".PHP_EOL.
-             '    :css'.PHP_EOL.
-             '      div#id.class { color: red; }'.PHP_EOL.
-             '      div#id2.class { padding: 5px; }'.PHP_EOL;
-    $html = '<html>
-  <head>
-    <style>
-      div#id.class { color: red; }
-      div#id2.class { padding: 5px; }
-    </style>
-  </head>
+             "  body".PHP_EOL.
+             '    |form formTestForm $testform'.PHP_EOL.
+             '      div.ftitle'.PHP_EOL.
+             '        label!title'.PHP_EOL.
+             '        input!title[tabindex=1]'.PHP_EOL.
+             '      div.fmessage'.PHP_EOL.
+             '        label!message'.PHP_EOL.
+             '        input!message[tabindex=2]'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
+      <div class="ftitle">
+        <label for="formTestForm_title" >title</label>
+        <input type="text" name="formTestForm_title" value="" tabindex="1" />
+      </div>
+      <div class="fmessage">
+        <label for="formTestForm_message">message</label>
+        <input type="text" name="formTestForm_message" value="Message goes here" tabindex="2" />
+      </div>
+    </form>
+  </body>
 </html>
 ';
     $out = $this->hamle->outputStr($hamle);
+    var_dump($out);
     $this->compareXmlStrings($html, $out);
   }
 

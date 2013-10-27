@@ -40,7 +40,7 @@ class hamleField {
   }
   
   function __get($name) {
-    switch($name) {
+     switch($name) {
       case "name":
         return $this->name;
       case "val":
