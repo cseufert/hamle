@@ -12,26 +12,43 @@ Example HAMLE Implementation
 `index.php`
 ```php
 <?php
+// Includ the HAMLE Autoload for the library
 require_once("php/autoload.php");
+// Set the default page to page id = 0
 $_REQUEST += array('page'=>0);
 
+// The Page content, this could be loaded more dynamically in a real site
 $pages = array(
     0=>array('id'=>0,'title'=>"Home",'body'=>'This is the Home Page','bgcolor'=>'#f2f2f2'),
     1=>array('id'=>1,'title'=>"About",'body'=>'This is the about page','bgcolor'=>'#f2f2ff'),
     2=>array('id'=>2,'title'=>"What is This",'body'=>'This is a hamle demo','bgcolor'=>'#fff2f2'),
   );
+//The HAMLE Setup Class, this is where you customise the behaviour of HAMLE
 class siteHamleSetup extends hamleSetup {
-  function themePath($f) { return __DIR__."/$f"; }
-  function getSnippets() { return array(__DIR__."/bootstrap.hamle-snip"); }
+
+  // Tell HAMLE where to find template files, for this example the root dir is fine
+  function themePath($f) { 
+    return __DIR__."/$f";
+  }
+  
+  // Tell HAMLE what Snippets to load
+  function getSnippets() { 
+    return array(__DIR__."/bootstrap.hamle-snip");
+  }
+  
+  // Tell HAMLE how to get all Pages Model, this would nominalyl be much more implemneted
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     global $pages;
+    // I am using a wrapper class, which makes any array a valid model
     if(in_array("pages",array_keys($typeTags))) 
       return new hamleModel_Array($pages);
   }
 }
-
+// Create a new model for the current view (the initial model)
 $myModel = new hamleModel_Array(array($pages[$_REQUEST['page']]));
+// Create a new HAMLE parser instance for the site
 $hamle = new hamle($myModel, new siteHamleSetup());
+// Output the template file
 echo $hamle->outputFile("index.hamle");
 
 ```
