@@ -1,5 +1,11 @@
 Example HAMLE Implementation
 ============================
+1. Basic Website Example Implementation
+  1. index.php
+  2. index.hamle
+  3. bootstrap.hamle-snip
+2. HTML Output
+
 
 #### Very Basic Website Example
 
@@ -13,7 +19,6 @@ $pages = array(
     0=>array('id'=>0,'title'=>"Home",'body'=>'This is the Home Page','bgcolor'=>'#f2f2f2'),
     1=>array('id'=>1,'title'=>"About",'body'=>'This is the about page','bgcolor'=>'#f2f2ff'),
     2=>array('id'=>2,'title'=>"What is This",'body'=>'This is a hamle demo','bgcolor'=>'#fff2f2'),
-
   );
 
 class siteHamleSetup extends hamleSetup() {
@@ -24,6 +29,10 @@ class siteHamleSetup extends hamleSetup() {
       return new hamleModel_Array($pages);
   }
 }
+
+$myModel = new hamleModel_Array(array($pages[$_REQEST['id']]));
+$hamle = new hamle($myModel, new siteHamleSetup());
+$hamle->outputFile("index.hamle");
 
 ```
 
@@ -46,7 +55,10 @@ html
         ul
           |each
             li
-              a[href=?page=$id] $title
+              |if $id equals $[1]->id
+                a.active[href=?page=$id] $title
+              |else
+                a[href=?page=$id] $title
     .content
       $body
     .foot
