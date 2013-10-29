@@ -362,8 +362,25 @@ class hamleTag_String extends hamleTag {
 }
 
 class hamleTag_Comment extends hamleTag {
-  function render($indent = 0, $doIndent = true) {
+  protected $commentstyle;
+  function __construct($type) {
+    if($type == "/")
+      $this->commentstyle = "HTML";
+  }
+  function renderStTag() {
+    if($this->commentstyle == "HTML")
+      return "<!-- ";
+  }
+  function renderContent($pad = "", $oneliner = false) {
+    if($this->commentstyle == "HTML")
+      if(count($this->content) > 1)
+        return $pad."  ".implode("\n$pad",$this->content)."\n";
+      else
+        return current($this->content);
     return "";
   }
-    
+  function renderEnTag() {
+    if($this->commentstyle == "HTML")
+      return " -->";
+  }
 }

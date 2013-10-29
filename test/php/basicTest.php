@@ -41,6 +41,20 @@ class basicTest extends base {
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
   }
+  public function testWeirdStartIndent() {
+    $hamle= " div\n".
+            "html\n".
+            "  meta[name=viewport&content=user-scalable=no,width=device-width,maximum-scale=1.0]\n".
+            "  link[href=/css&type=text/css]\n";
+    $html = "<div></div>\n".
+            "<html>\n".
+            '  <meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.PHP_EOL.
+            '  <link href="/css" type="text/css" />'.PHP_EOL.
+            "</html>".PHP_EOL;
+    $out = $this->hamle->outputStr($hamle);
+    //$this->assertEquals($html, $out);
+    $this->compareXmlStrings("<r>".$html."</r>", "<r>".$out."</r>");
+  }
   public function testAttrSquareBracket() {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
     $html = '<a href="/special\[10\]">Hello [Mate] [ ]</a>';
@@ -86,6 +100,28 @@ class basicTest extends base {
     $html = "<html></html>";
     $out = $this->hamle->outputStr($hamle);
     $this->compareXmlStrings($html, $out);
+  }
+  public function testCommentHTML() {
+    $hamle = "html\n".
+             "  / Just a Comment\n";
+    $html = "<html>\n".
+            "  <!-- Just a Comment -->\n".
+            "</html>\n";
+    $out = $this->hamle->outputStr($hamle);
+    $this->assertEquals($html, $out);
+  }
+  public function testCommentHTMLMultiLine() {
+    $hamle = "html\n".
+             "  / Just a Comment\n".
+             "    Next line of Comment\n";
+    $html = "<html>\n".
+            "  <!-- \n".
+            "    Just a Comment\n".
+            "    Next line of Comment\n".
+            "   -->\n".
+            "</html>\n";
+    $out = $this->hamle->outputStr($hamle);
+    $this->assertEquals($html, $out);
   }
   public function testTextLine() {
     $hamle = "html\n".

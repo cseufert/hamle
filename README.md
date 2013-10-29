@@ -1,6 +1,8 @@
 HAMLE
 =====
 
+* [Example Implementation](doc/example.md)
+
 ### Enhanced Version of HAML - HAMLE
 
 This haml port uses slightly different syntax to the haml standard format. The main idea
