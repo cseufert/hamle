@@ -163,7 +163,7 @@ class hamleParse {
             break;
         }
         $heir[$i] = $hTag;
-        if($indent > 0)
+        if($i > 0)
           $heir[$i - 1]->addChild($hTag);
         else
           $this->root[] = $hTag;
@@ -196,6 +196,10 @@ class hamleParse {
     if(!isset($this->indents)) $this->indents = array();
     if($indent == 0) {
       $this->indents = array(0=>0); // Key = indent, Value = Depth
+      return 0;
+    }
+    if(!count($this->indents)) {
+      $this->indents = array(0=>$indent);
       return 0;
     }
     foreach($this->indents as $k=>$v) {
