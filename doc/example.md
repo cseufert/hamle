@@ -12,27 +12,27 @@ Example HAMLE Implementation
 `index.php`
 ```php
 <?php
-require_once("/hamle/php/autoload.php");
-$_REQUEST += array('id'=>0);
+require_once("php/autoload.php");
+$_REQUEST += array('page'=>0);
 
 $pages = array(
     0=>array('id'=>0,'title'=>"Home",'body'=>'This is the Home Page','bgcolor'=>'#f2f2f2'),
     1=>array('id'=>1,'title'=>"About",'body'=>'This is the about page','bgcolor'=>'#f2f2ff'),
     2=>array('id'=>2,'title'=>"What is This",'body'=>'This is a hamle demo','bgcolor'=>'#fff2f2'),
   );
-
-class siteHamleSetup extends hamleSetup() {
+class siteHamleSetup extends hamleSetup {
   function themePath($f) { return __DIR__."/$f"; }
   function getSnippets() { return array(__DIR__."/bootstrap.hamle-snip"); }
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+    global $pages;
     if(in_array("pages",array_keys($typeTags))) 
       return new hamleModel_Array($pages);
   }
 }
 
-$myModel = new hamleModel_Array(array($pages[$_REQEST['id']]));
+$myModel = new hamleModel_Array(array($pages[$_REQUEST['page']]));
 $hamle = new hamle($myModel, new siteHamleSetup());
-$hamle->outputFile("index.hamle");
+echo $hamle->outputFile("index.hamle");
 
 ```
 
@@ -55,12 +55,11 @@ html
         ul
           |each
             li
-              |if $id equals $[1]->id
+              |if $id equals {$[1]->id}
                 a.active[href=?page=$id] $title
               |else
                 a[href=?page=$id] $title
-    .content
-      $body
+    .content $body
     .foot
       _ Designed by Chris to show what HAMLE can do
 ```
@@ -70,4 +69,80 @@ html
 |snippet append html head
   link[rel=stylesheet&type=text/css&href=/css/bootstrap.css]
   script[src=/js/bootstrap.js]
+```
+
+#### HTML Output
+`?page=0`
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <link src="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      h1 {color:olive;}
+      body {background-color: #f2f2f2}
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <img src="/headimg" />
+      <div class="headtext">Home</div>
+    </div>
+    <div class="mainmenu">
+      <ul>
+        <li>
+          <a href="?page=0" class="active">Home</a>
+        </li>
+        <li>
+          <a href="?page=1">About</a>
+        </li>
+        <li>
+          <a href="?page=2">What is This</a>
+        </li>
+      </ul>
+    </div>
+    <div class="content">This is the Home Page</div>
+    <div class="foot">
+      Designed by Chris to show what HAMLE can do
+    </div>
+  </body>
+</html>
+```
+`?page=1`
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>About</title>
+    <link src="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      h1 {color:olive;}
+      body {background-color: #f2f2ff}
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <img src="/headimg" />
+      <div class="headtext">About</div>
+    </div>
+    <div class="mainmenu">
+      <ul>
+        <li>
+          <a href="?page=0">Home</a>
+        </li>
+        <li>
+          <a href="?page=1" class="active">About</a>
+        </li>
+        <li>
+          <a href="?page=2">What is This</a>
+        </li>
+      </ul>
+    </div>
+    <div class="content">This is the about page</div>
+    <div class="foot">
+      Designed by Chris to show what HAMLE can do
+    </div>
+  </body>
+</html>
 ```
