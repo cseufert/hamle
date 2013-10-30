@@ -9,12 +9,13 @@
  */
 class hamleSetup {
   /**
-   * Returns the Dir to store cached hamle templates in
+   * Returns the full file path to the cache file
    * 
+   * @param string $file Filename of cache file
    * @return string Directory to store cache in
    */
-  function getCacheDir() { 
-    return __DIR__."/../../cache"; }
+  function cachePath($f) {
+    return __DIR__."/../../cache/$f"; }
   
   /**
    * Open the default model when only an ID is specified in the template
@@ -49,20 +50,30 @@ class hamleSetup {
     return hamleDemoModel::findTag($typeTags);
   }
   /**
-   * Give you the ability to adjust paths to template files
+   * Give you the ability to adjust paths to template files, this includes files
+   * loaded using '|include'.
    * 
    * @param string $f File Name and Path requested
    * @return string File Path to actual template file
    */
-  function themePath($f) {
+  function templatePath($f) {
     return $f;
   }
   /**
-   * Rerturns an array of snippets paths for application to the current template
+   * Returns an array of snippets paths for application to the current template
+   * These snippets will be applied to tempaltes |included as well as the 
+   * initial template.
    * 
    * @return array Array of file names
    */
-  function getSnippets() {
+  function snippetFiles() {
     return array();
+  }
+  /**
+   * Function to write debug logs out
+   * @param $s string Debug Message String
+   */
+  function debugLog($s) {
+    //var_dump($s);
   }
 }

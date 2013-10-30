@@ -37,7 +37,8 @@ class snippetTest extends base {
             "</head><body>".
             "<div class=\"content\"></div>".
             "</body></html>";
-    $out = $he->outputStr($hamle);
+    $he->parse($hamle);
+    $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
   function testTypeClassIDSnippet() {
@@ -56,7 +57,8 @@ class snippetTest extends base {
             "<div id=\"newtest\">New Div Box</div>".
             "</div></div></div>".
             "</body></html>";
-    $out = $he->outputStr($hamle);
+    $he->parse($hamle);
+    $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
   function testReplaceImgSnippet() {
@@ -88,20 +90,21 @@ class snippetTest extends base {
   </body>
 </html>
 TESTHTML;
-    $out = $he->outputStr($hamle);
+    $he->parse($hamle);
+    $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
 }
 
 class snippetHeadSetup extends hamleSetup {
-  function themePath($f) { return __DIR__."/hamle/$f"; }
-  function getSnippets() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip"); }
+  function templatePath($f) { return __DIR__."/hamle/$f"; }
+  function snippetFiles() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip"); }
 }
 class snippetTypeClassIDSetup extends hamleSetup {
-  function themePath($f) { return __DIR__."/hamle/$f"; }
-  function getSnippets() { return array(__DIR__."/hamle/snippets/typeclassid.hamle-snip"); }
+  function templatePath($f) { return __DIR__."/hamle/$f"; }
+  function snippetFiles() { return array(__DIR__."/hamle/snippets/typeclassid.hamle-snip"); }
 }
 class snippetReplaceImgSetup extends hamleSetup {
-  function themePath($f) { return __DIR__."/hamle/$f"; }
-  function getSnippets() { return array(__DIR__."/hamle/snippets/replace-img.hamle-snip"); }
+  function templatePath($f) { return __DIR__."/hamle/$f"; }
+  function snippetFiles() { return array(__DIR__."/hamle/snippets/replace-img.hamle-snip"); }
 }

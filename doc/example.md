@@ -27,12 +27,12 @@ $pages = array(
 class siteHamleSetup extends hamleSetup {
 
   // Tell HAMLE where to find template files, for this example the root dir is fine
-  function themePath($f) { 
+  function templatePath($f) { 
     return __DIR__."/$f";
   }
   
   // Tell HAMLE what Snippets to load
-  function getSnippets() { 
+  function snippetFiles() { 
     return array(__DIR__."/bootstrap.hamle-snip");
   }
   
@@ -49,8 +49,9 @@ $myModel = new hamleModel_Array(array($pages[$_REQUEST['page']]));
 // Create a new HAMLE parser instance for the site
 $hamle = new hamle($myModel, new siteHamleSetup());
 // Output the template file
-echo $hamle->outputFile("index.hamle");
-
+$hamle->load("index.hamle");
+echo $hamle->output();
+?>
 ```
 
 `index.hamle`
@@ -100,6 +101,8 @@ html
       h1 {color:olive;}
       body {background-color: #f2f2f2}
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <script src="/js/bootstrap.js"></script>
   </head>
   <body>
     <div class="head">
@@ -137,6 +140,8 @@ html
       h1 {color:olive;}
       body {background-color: #f2f2ff}
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <script src="/js/bootstrap.js"></script>
   </head>
   <body>
     <div class="head">

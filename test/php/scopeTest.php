@@ -29,7 +29,8 @@ class scopeTest extends base {
     <span>Test.com</span>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
@@ -58,7 +59,8 @@ class scopeTest extends base {
     <span>This is My TITLE</span>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
@@ -78,7 +80,8 @@ class scopeTest extends base {
     <div class="show">This will be visible</div>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
@@ -102,7 +105,8 @@ class scopeTest extends base {
     <div class="hide">class = colored</div>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   
@@ -124,7 +128,8 @@ class scopeTest extends base {
     <div class="hide">title else contains Jabber</div>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   

@@ -19,14 +19,16 @@ class basicTest extends base {
             "</li>".
             "</ul>".
             "</div></body></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   
   public function testShortTags() {
     $hamle = "html\n  meta\n  link\n";
     $html = "<html><meta /><link /></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   
@@ -38,7 +40,8 @@ class basicTest extends base {
             '<meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.
             '<link href="/css" type="text/css" />'.
             "</html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testWeirdStartIndent() {
@@ -51,38 +54,44 @@ class basicTest extends base {
             '  <meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.PHP_EOL.
             '  <link href="/css" type="text/css" />'.PHP_EOL.
             "</html>".PHP_EOL;
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     //$this->assertEquals($html, $out);
     $this->compareXmlStrings("<r>".$html."</r>", "<r>".$out."</r>");
   }
   public function testAttrSquareBracket() {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
     $html = '<a href="/special\[10\]">Hello [Mate] [ ]</a>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrDollar() {
     $hamle = "a[href=\$url&class=\$class] {\$title}";
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrMultiDollar() {
     $hamle = 'a[href=$url&class=$class] $title [$url]';
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE [https://www.secure.com]</a>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrEscDollars() {
     $hamle = "html\n  p.quote[data-ref=12\&3 and \\\$4]";
     $html = "<html><p class=\"quote\" data-ref=\"12&amp;3 and \$4\"></p></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrQuotes() {
     $hamle = "html\n  p.quote[data-ref=My Quote \"]";
     $html = "<html><p class=\"quote\" data-ref=\"My Quote &quot;\"></p></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testCommentSingle() {
@@ -90,7 +99,8 @@ class basicTest extends base {
              "  #box\n".
              "    // Comment is Hidden";
     $html = "<html><div id=\"box\"></div></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testCommentBlock() {
@@ -98,7 +108,8 @@ class basicTest extends base {
              "  // #box\n".
              "    .message Comment is Hidden";
     $html = "<html></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testCommentHTML() {
@@ -107,7 +118,8 @@ class basicTest extends base {
     $html = "<html>\n".
             "  <!-- Just a Comment -->\n".
             "</html>\n";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
   public function testCommentHTMLMultiLine() {
@@ -120,7 +132,8 @@ class basicTest extends base {
             "    Next line of Comment\n".
             "   -->\n".
             "</html>\n";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
   public function testTextLine() {
@@ -129,47 +142,9 @@ class basicTest extends base {
              "     br\n".
              "      _ Box Content Line 2";
     $html = "<html><div id=\"box\">Content Line 1<br />Box Content Line 2</div></html>";
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   
 }
-
-/*
-$hamle1 = <<<ENDHAMLE
-html
-  head
-    :javascript //Hi
-      console.log("Testing");
-    :css
-      h1 { color:darkblue; text-decoration:underline;}
-  body.test1
-    h1 Hello World
-    .content
-      p.googlelink#special
-        a[href=http://www.google.com.au] Try Google
-        :javascript document.write("[!]");
-      |each $(links)
-        p
-          a[href=\$url] \$name
-      p
-        a[href=\$link] \$website
-ENDHAMLE;
-
-class mySetup extends hamleSetup {
-  function getNamedModel($name, $id = NULL) {
-    if($name == "links")
-      return new hamleModel_array(array(
-              array('url'=>'http://www.test.com',  'name'=>'Test.com'),
-              array('url'=>'http://www.test2.com', 'name'=>'Test2.com'),
-              array('url'=>'http://www.test3.com', 'name'=>'Test3.com')));
-    return parent::getNamedModel($name, $id);
-  }
-}
-
-$h = new hamle(new hamleModel_array(array(array(
-                        'link'=>'https://www.secure.com',
-                        'website'=>'Secure.com'))),
-                new mySetup());
-$h->outputStr($hamle1);
-*/
