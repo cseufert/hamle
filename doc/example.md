@@ -36,7 +36,7 @@ class siteHamleSetup extends hamleSetup {
     return array(__DIR__."/bootstrap.hamle-snip");
   }
   
-  // Tell HAMLE how to get all Pages Model, this would nominalyl be much more implemneted
+  // Tell HAMLE how to get all Pages Model, this would normally be much more implemented
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     global $pages;
     // I am using a wrapper class, which makes any array a valid model
