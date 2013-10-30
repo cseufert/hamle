@@ -94,47 +94,12 @@ class hamle {
                       "Unable to write to cache file ({$this->cacheFile})");
   }
   
-  
-  
   /**
-   * Return HTML Output from HAMLE string
-   * @param string $s HAMLE Template in string form
-   * @return string HTML Code
+   * Deprected Function, do not use
+   * @deprecated since version 2013-10-03
    */
-  function _outputStr($s) {
-    $out = "";
-    self::$me = $this;
-    $dir = $this->setup->getCacheDir();
-    $this->parse->str($s);
-    $snips = $this->setup->getSnippets();
-    foreach($snips as $snip) {
-      $this->parse->parseSnip(file_get_contents($snip));
-    }
-    file_put_contents("$dir/string.hamle.php", $this->parse->output());
-    return $this->output("$dir/string.hamle.php");
-  }
-  
-  /**
-   * Return HTML Output from HAMLE File
-   * @see hamleSetup
-   * @param string $f Path to HAMLE File (Excluding 'base path')
-   * @return string HTML Code
-   * @throws hamleEx
-   */
-  function _outputFile($f) {
-    self::$me = $this;
-    $inFile = $this->setup->themePath($f);
-    $cacheDir = $this->setup->getCacheDir();
-    $tpl = file_get_contents($inFile);
-    if(!$tpl) throw new hamleEx("Unable to open file [$inFile]");
-    $outFile = $cacheDir."/".str_replace("/","-",$f).".php";
-    $this->parse->str($tpl);
-    $snips = $this->setup->getSnippets();
-    foreach($snips as $snip) {
-      $this->parse->parseSnip(file_get_contents($snip));
-    }
-    file_put_contents($outFile, $this->parse->output());
-    return $this->output($outFile);
+  function outputFile($f) {
+    throw new hamleEx_Unsupported("Please use load() and output() methods rather than outputFile");
   }
   
   /**
