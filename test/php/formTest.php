@@ -60,7 +60,6 @@ class formTest extends base {
       </div>
       <label for="formTestForm_title" >title</label>
       <input type="text" name="formTestForm_title" value="" />
-      <label for="formTestForm_save">save</label>
       <input type="submit" name="formTestForm_save" value="" />
     </form>
   </body>

@@ -423,6 +423,14 @@ class hamleTag_Form extends hamleTag {
           $tag->opt = $fields[$source]->getLabelAttrib($tag->opt);
           $tag->addContent($fields[$source]->label);
         }
+    $inputTags = $this->find(array(array("type"=>"hint")));
+    foreach($inputTags as $tag) 
+      if($tag instanceOf hamleTag_HTML)
+        foreach($tag->source as $source) {
+          $tag->opt = $fields[$source]->getHintAttrib($tag->opt);
+          if($field[$source]->hinttext)
+            $tag->addContent($field[$source]->hinttext);
+        }
     $inputTags = $this->find(array(array("type"=>"input")));
     foreach($inputTags as $tag) 
       if($tag instanceOf hamleTag_HTML)
@@ -431,11 +439,13 @@ class hamleTag_Form extends hamleTag {
           unset($fields[$source]);
         }
     foreach($fields as $n=>$f) {
-      $this->addChild($label = new hamleTag_HTML("label","!$n"));
+      if(!$f instanceOf hamleField_Button) {
+        $this->addChild($label = new hamleTag_HTML("label","!$n"));
+        $label->opt = $f->getLabelAttrib($label->opt);
+        $label->addContent($f->label);
+      }
       $this->addChild($input = new hamleTag_HTML("input","!$n"));
-      $label->opt = $f->getLabelAttrib($label->opt);
       $input->opt = $f->getInputAttrib($input->opt);
-      $label->addContent($f->label);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";
   }

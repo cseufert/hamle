@@ -17,9 +17,10 @@ class hamleField {
   function __construct($name, $options = array()) {
     $this->value = null;
     $this->name = $name;
+    $this->hint = "";
     $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
          "default"=>"", "error"=>"Field is Required", "help"=>"", "test"=>null,
-        "form"=>"noForm", "readonly"=>false);
+        "form"=>"noForm", "readonly"=>false, 'hinttext'=>'');
   }
   
   function __call($name, $valarray) {
@@ -77,13 +78,19 @@ class hamleField {
     $atts['value'] = new hamleString_FormField($this->name);
     $atts['name'] = $this->form."_".$this->name;
     $atts['type'] = "text";
+    $atts['class'][] = get_class($this);
     return $atts;
   }
   function getLabelAttrib($atts) {
+    $atts['class'][] = get_class($this);
     $atts["for"] = $this->form."_".$this->name;
     return $atts;
   }
-  
+  function getHintAttrib($atts) {
+    $atts['class'][] = get_class($this);
+    $atts['class'][] = "hamleFormHint";
+    return $atts;
+  }
   function doProcess() {
     $value = $this->getValue();
     if($this->opt['required'])
