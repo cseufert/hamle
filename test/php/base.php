@@ -1,7 +1,7 @@
 <?php
 
 require_once 'XmlDiff/src/XmlDiff.php';
-require_once("../../php/autoload.php");
+require_once(__DIR__."/../../php/autoload.php");
 
 class base extends PHPUnit_Framework_TestCase {
 	/**
@@ -62,7 +62,7 @@ class baseTestSetup extends hamleSetup {
     if(in_array("formtest",array_keys($typeTags)))
       return new hamleModel_array(array(
               array('title'=>'The Title',  'testform'=>new formTestForm())));
-    return parent::getNamedModel($name, $id);
+    return parent::getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0);
   }
 }
 
