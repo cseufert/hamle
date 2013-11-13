@@ -26,7 +26,7 @@ class hamleForm {
       $this->fields[$v->name] = $v;
       $v->form($this->name);
     }
-    $this->process();
+    //$this->process();
   }
   
   function process() {
@@ -56,6 +56,10 @@ class hamleForm {
       throw new hamleEx_NoKey("unable to find form field ($n)");
     return $this->fields[$n];
   }
+  function __get($n) {
+    return $this->getFIeld($n);
+  }
+  
   function getHTMLProp() {
     return array('action'=>'','method'=>'post','name'=>$this->name,
                                         'enctype'=>'multipart/form-data');

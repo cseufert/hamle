@@ -101,4 +101,8 @@ class hamleField_Button extends hamleField {
     $atts['type'] = "submit";
     return $atts;
   }
+  
+  function isClicked() {
+    return isset($_REQUEST[$this->form."_".$this->name]);
+  }
 }
