@@ -13,7 +13,10 @@ class formTest extends base {
              '          input!title[tabindex=1]'.PHP_EOL.
              '        div.fmessage'.PHP_EOL.
              '          label!message'.PHP_EOL.
-             '          input!message[tabindex=2]'.PHP_EOL;
+             '          input!message[tabindex=2]'.PHP_EOL.
+             '        div.fsave'.PHP_EOL.
+             '          label!save[style=display:none;]'.PHP_EOL.
+             '          input!save[tabindex=3]'.PHP_EOL;
     $html = '
 <html>
   <body>
@@ -25,6 +28,10 @@ class formTest extends base {
       <div class="fmessage">
         <label for="formTestForm_message">message</label>
         <input type="text" name="formTestForm_message" value="Message goes here" tabindex="2" />
+      </div>
+      <div class="fsave">
+        <label for="formTestForm_save" style="display:none;">save</label>
+        <input type="submit" name="formTestForm_save" value="" tabindex="3" />
       </div>
     </form>
   </body>
@@ -53,6 +60,8 @@ class formTest extends base {
       </div>
       <label for="formTestForm_title" >title</label>
       <input type="text" name="formTestForm_title" value="" />
+      <label for="formTestForm_save">save</label>
+      <input type="submit" name="formTestForm_save" value="" />
     </form>
   </body>
 </html>

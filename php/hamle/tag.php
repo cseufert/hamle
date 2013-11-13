@@ -437,7 +437,7 @@ class hamleTag_Form extends hamleTag {
       $input->opt = $f->getInputAttrib($input->opt);
       $label->addContent($f->label);
     }
-    return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; ?>";
+    return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";
   }
 
   function renderEnTag() {

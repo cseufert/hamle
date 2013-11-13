@@ -71,6 +71,7 @@ class formTestForm extends hamleForm {
     $this->fields = array(
       (new hamleField("title"))->required(true),
       (new hamleField("message"))->default("Message goes here"),
+      (new hamleField_Button("save"))
     );
   }
 }

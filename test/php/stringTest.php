@@ -92,7 +92,7 @@ class stringTest extends base{
     $hs = new hamleString("\$(page^title:1-3)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),2,'',3,1)", $php);
+    $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),2,'title',3,1)", $php);
   }
   public function testDollarFunc6() {
     $hs = new hamleString("\$(photo.heroimage^:1)", hamleString::TOKEN_CONTROL);
