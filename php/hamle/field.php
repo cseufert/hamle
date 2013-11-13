@@ -94,3 +94,11 @@ class hamleField {
   }
   
 }
+
+class hamleField_Button extends hamleField {
+  function getInputAttrib($atts, &$type = "input") {
+    $atts = parent::getInputAttrib($atts, $type);
+    $atts['type'] = "submit";
+    return $atts;
+  }
+}

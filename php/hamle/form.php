@@ -31,7 +31,7 @@ class hamleForm {
   
   function process() {
     foreach($this->fields as $f)
-      if($f instanceOf hamleFieldButton)
+      if($f instanceOf hamleField_Button)
         if($f->isClicked())
           $this->onSubmit($f);
   }

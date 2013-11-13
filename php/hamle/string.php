@@ -18,8 +18,11 @@ class hamleString {
   const FIND_DOLLARFUNC = 0x01;
   const FIND_DOLLARVAR = 0x02;
   const FIND_BARDOLLAR = 0x04;
-  
-  protected $nodes;
+
+    /**
+     * @var hamleString[] Array of Child String Objects
+     */
+    protected $nodes;
 
   function __construct($s, $mode = self::TOKEN_HTML) {
     $m = array(); $pos = 0; $this->nodes = array();
@@ -193,7 +196,7 @@ class hamleString_Func extends hamleString_SimpleVar {
     }
     if(preg_match('/\\^(-?)([a-zA-Z0-9\_]*)/', $s, $m)) {
       if($m[2]) {
-        $att['field'] == $m[2];
+        $att['field'] = $m[2];
         if($m[1] == "-") $att['dir'] = hamle::SORT_DESCENDING;
         else $att['dir'] = hamle::SORT_ASCENDING;
       } else $att['dir'] = hamle::SORT_RANDOM;
