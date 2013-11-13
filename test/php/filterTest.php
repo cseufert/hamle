@@ -18,7 +18,8 @@ class fitlerTest extends base {
   </head>
 </html>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
@@ -43,7 +44,8 @@ class fitlerTest extends base {
   <body></body>
 </html>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
  
@@ -64,7 +66,8 @@ class fitlerTest extends base {
 /*]]>*/    </script>
 </head>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 

@@ -30,14 +30,15 @@ class formTest extends base {
   </body>
 </html>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
   public function testFormBasic2() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
-             "    |with $(formtest)".PHP_EOL.
+             '    |with $(formtest)'.PHP_EOL.
              '      |form formTestForm $testform'.PHP_EOL.
              '        div.fmessage'.PHP_EOL.
              '          label!message'.PHP_EOL.
@@ -56,11 +57,12 @@ class formTest extends base {
   </body>
 </html>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
  
-  public function testJavascriptVars() {
+    public function testJavascriptVars() {
     $hamle = "head".PHP_EOL.
              '  :javascript'.PHP_EOL.
              '    $(document).ready(function() {'.PHP_EOL.
@@ -77,7 +79,8 @@ class formTest extends base {
 /*]]>*/    </script>
 </head>
 ';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 

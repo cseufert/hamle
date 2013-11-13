@@ -40,7 +40,7 @@ plugins/imggal/hamle/imggal.hamle
     |snippet content
 ```
 
-Outpt will go soemthing like this with 2 imeages
+Output will go something like this with 2 images
 ```html
   <div class="content">
     ...
@@ -64,7 +64,7 @@ Outpt will go soemthing like this with 2 imeages
 
 
 ### Example #2
-I need to add google analytics to all pages generated, but dont want it in my individual template
+I need to add google analytics to all pages generated, but don't want it in every individual template
 
 fancyskin/index.hamle
 ```hamle

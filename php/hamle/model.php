@@ -38,6 +38,22 @@ class hamleModel_zero implements hamleModel {
   function next() { }
 }
 
+class hamleModel_one implements hamleModel {
+  protected $hamleIndex = 0;
+  function hamleGet($key) {
+    throw new hamleEx_NoKey("Cant find Key ($key)");
+  }
+  function hamleRel($rel, $typeTags) {
+    throw new hamleEx_NoFunc("Unable to retreive relations");
+  }
+  
+  function valid() { return $this->hamleIndex == 0; }
+  function key() { return $this->hamleIndex; }
+  function current() {return $this; }
+  function rewind() { $this->hamleIndex = 0; }
+  function next() { $this->hamleIndex++; }
+}
+
 class hamleModel_array extends hamleModel_zero {
   protected $data;
   protected $pos;
@@ -56,4 +72,14 @@ class hamleModel_array extends hamleModel_zero {
   function rewind() { $this->pos = 0; }
   function next() { ++$this->pos; }
     
+}
+
+class hamleModel_arrayObj extends hamleModel_array {
+  function hamleGet($key) {
+    return $this->data[$this->pos]->hamleGet($key);
+  }
+  function hamleRel($rel, $typeTags) {
+    return $this->data[$this->pos]->hamleRel($rel, $typeTags);
+  }
+  function current() { return $this->data[$this->pos]; }
 }

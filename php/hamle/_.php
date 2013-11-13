@@ -17,6 +17,16 @@ class hamle {
    * @var hamleParse Parser Instance
    */
   public $parse;
+  /**
+   * @var string Filename for Cache file 
+   */
+  protected $cacheFile;
+  
+  /**
+   * @var array Array of Files required $files[0] is the template file
+   *            The rest of the files are Snippets 
+   */
+  protected $snipFiles;
   
   const REL_CHILD = 0x01;
   const REL_PARENT = 0x02;
@@ -44,56 +54,64 @@ class hamle {
       throw new hamleEx_Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
     $this->setup = $setup;
     hamleScope::add($baseModel);
+    $this->cacheFile = $this->setup->cachePath("string.hamle.php");
+    $this->snipFiles = $this->setup->snippetFiles();
+    foreach($this->snipFiles as $f)
+      if(!file_exists($f)) throw new hamleEx_NotFound("Unable to find Snippet File ($f)");
   }
-  
   /**
-   * Return HTML Output from HAMLE string
-   * @param string $s HAMLE Template in string form
-   * @return string HTML Code
+   * Parse a HAMLE Template File
+   * @param type $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
+   * @throws hamleEx_NotFound If tempalte file cannot be found
    */
-  function outputStr($s) {
-    $out = "";
-    self::$me = $this;
-    $dir = $this->setup->getCacheDir();
-    $this->parse->str($s);
-    $snips = $this->setup->getSnippets();
-    foreach($snips as $snip) {
+  function load($hamleFile) {
+    $template = $this->setup->templatePath($hamleFile);
+      if(!file_exists($template)) 
+        throw new hamleEx_NotFound("Unable to find HAMLE Template ($template)");
+    $this->cacheFile = $this->setup->cachePath(
+                  str_replace("/","-",$hamleFile).".php");
+    $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
+    $cacheFileAge = @filemtime($this->cacheFile);
+    foreach(array_merge(array($template),$this->snipFiles) as $f)
+      if($cacheFileAge < filemtime($f))
+        return $this->parse(file_get_contents($template));
+    $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+  }
+  /**
+   * Parse a HAMLE tempalte from a string 
+   * _WARNING_ Template Sting will *NOT* be cached, it will be parsed every time
+   * 
+   * @param string $hamleCode Hamle Template as string
+   * @throws hamleEx_ParseError if unable to write to the cache file
+   */
+  function parse($hamleCode) {
+    $this->parse->str($hamleCode);
+    foreach($this->snipFiles as $snip)
       $this->parse->parseSnip(file_get_contents($snip));
-    }
-    file_put_contents("$dir/string.hamle.php", $this->parse->output());
-    return $this->output("$dir/string.hamle.php");
+    $this->setup->debugLog("Updating Cache File ({$this->cacheFile})");
+    if(FALSE === file_put_contents($this->cacheFile, $this->parse->output()))
+      throw new hamleEx_ParseError(
+                      "Unable to write to cache file ({$this->cacheFile})");
   }
   
   /**
-   * Return HTML Output from HAMLE File
-   * @see hamleSetup
-   * @param string $f Path to HAMLE File (Excluding 'base path')
-   * @return string HTML Code
-   * @throws hamleEx
+   * Deprected Function, do not use
+   * @deprecated since version 2013-10-03
    */
   function outputFile($f) {
-    self::$me = $this;
-    $inFile = $this->setup->themePath($f);
-    $cacheDir = $this->setup->getCacheDir();
-    $tpl = file_get_contents($inFile);
-    if(!$tpl) throw new hamleEx("Unable to open file [$inFile]");
-    $outFile = $cacheDir."/".str_replace("/","-",$f).".php";
-    $this->parse->str($tpl);
-    file_put_contents($outFile, $this->parse->output());
-    return $this->output($outFile);
+    throw new hamleEx_Unsupported("Please use load() and output() methods rather than outputFile");
   }
   
   /**
-   * Capture output from compiled HAMLE Template
-   * @param string $f File Patch of compiled template
-   * @return string HTML Output
+   * Produce HTML Output from hamle Template file
+   * @return string HTML Output as String
    * @throws hamleEx
    */
-  protected function output($f) {
+  function output() {
     try {
       ob_start();
       hamleRun::addInstance($this);
-      require $f;
+      require $this->cacheFile;
       $out = ob_get_contents();
       ob_end_clean();
     } catch (hamleEx $e) {
@@ -103,6 +121,7 @@ class hamle {
     hamleRun::popInstance();
     return $out;
   }
+  
   static function getLineNo() {
     if(!isset(self::$me))
       return 0;

@@ -29,7 +29,8 @@ class scopeTest extends base {
     <span>Test.com</span>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
 
@@ -58,11 +59,12 @@ class scopeTest extends base {
     <span>This is My TITLE</span>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-/*
-  public function testIf() {
+  
+  public function testIf1() {
     $hamle = "html".PHP_EOL.
              "  body".PHP_EOL.
              '    |if $title'.PHP_EOL.
@@ -78,8 +80,57 @@ class scopeTest extends base {
     <div class="show">This will be visible</div>
   </body>
 </html>';
-    $out = $this->hamle->outputStr($hamle);
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-  */
+
+  public function testIf2() {
+    $hamle = "html".PHP_EOL.
+             "  body".PHP_EOL.
+             '    |if $title starts This'.PHP_EOL.
+             '      h2 Title starts with This'.PHP_EOL.
+             '    |if $class ends red'.PHP_EOL.
+             '      .show class ends with red'.PHP_EOL.
+             '    |if $title contains is My'.PHP_EOL.
+             '      .show title has "is my"'.PHP_EOL.
+             '    |if $class equals colored'.PHP_EOL.
+             '      .hide class = colored'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <h2>Title starts with This</h2>
+    <div class="show">class ends with red</div>
+    <div class="show">title has "is my"</div>
+    <div class="hide">class = colored</div>
+  </body>
+</html>';
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+  
+  public function testIf3() {
+    $hamle = "html".PHP_EOL.
+             "  body".PHP_EOL.
+             '    |if $title starts This'.PHP_EOL.
+             '      h2 Title starts with This'.PHP_EOL.
+             '    |else'.PHP_EOL.
+             '      .show Title else starts with This'.PHP_EOL.
+             '    |if $title contains Jabber'.PHP_EOL.
+             '      .show title contains Jabber'.PHP_EOL.
+             '    |else'.PHP_EOL.
+             '      .hide title else contains Jabber'.PHP_EOL;
+    $html = '
+<html>
+  <body>
+    <h2>Title starts with This</h2>
+    <div class="hide">title else contains Jabber</div>
+  </body>
+</html>';
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+  
 }

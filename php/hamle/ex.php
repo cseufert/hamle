@@ -12,6 +12,10 @@ class hamleEx extends Exception {
 }
 
 class hamleEx_ParseError extends hamleEx { }
+/**
+ * HAMLE Exception - File Not Found
+ */
+class hamleEx_NotFound extends hamleEx { }
 
 class hamleEx_Filter extends hamleEx { }
 class hamleEx_NoFilter extends hamleEx_Filter { }

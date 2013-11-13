@@ -12,19 +12,30 @@
  * How many \$ have u got $user
  * Ex-Gst {$price->exgst}
  */
-class hamleStrVar {
+class hamleStrVar implements hamleStrVar_int {
   const TOKEN_CONTROL = 0x07;
   const TOKEN_HTML    = 0x06;
   const TOKEN_CODE    = 0x04;
+  const TOKEN_COMPARE = 0x0f;
   
   const FIND_DOLLARFUNC = 0x01;
   const FIND_DOLLARVAR = 0x02;
   const FIND_BARDOLLAR = 0x04;
+  const FIND_COMPARISON = 0x08;
 
   const REGEX_VARNAME = '[a-zA-Z0-9_]+';
   
   protected $nodes;
   protected $mode;
+  
+  static function comparison($s) {
+    $m = array(); $t = self::TOKEN_COMPARE;
+    if(preg_match('/^(.*) '.hamleStrVar_Comp::REGEX_COMP_OPER.' (.*)$/', $s, $m))
+      return new hamleStrVar_Comp(new self($m[1], $t),
+                                  new self($m[3], $t), $m[2]);
+    else
+      return new self($s);
+  }
   
   function __construct($s, $mode = self::TOKEN_HTML) {
     $this->nodes = array();
@@ -365,5 +376,46 @@ class hamleStrVar_relfilt implements hamleStrVar_int {
                                 ",{$this->limit},{$this->offset}";
     $tags = hamleStrVar::arrayToPHP($this->typeTags);
     return "->hamleRel({$this->rel},$tags$flags)";
+  }
+}
+
+class hamleStrVar_Comp implements hamleStrVar_int {
+  protected $param1, $param2, $operator;
+  const REGEX_COMP_OPER = '(equals|less|greater|has|starts|contains|ends)';
+  function __construct(hamleStrVar_int $p1, hamleStrVar_int $p2, $operator) {
+    $this->param1 = $p1;
+    $this->param2 = $p2;
+    $this->operator = $operator;
+  }
+  function toPHP() {
+    $p1 = $this->param1->toPHP();
+    $p2 = $this->param2->toPHP();
+    switch($this->operator) {
+      case "equals":
+        return $p1." == ".$p2;
+      case "less":
+        return $p1." < ".$p2;
+      case "greater":
+        return $p1." > ".$p2;
+      case "has":
+        return "in_array($p2, $p1)";
+      case "starts":
+        return "strpos($p1, $p2) === 0";
+      case "contains":
+        return "strpos($p1, $p2) !== FALSE";
+      case "ends":
+        return "substr($p1, -strlen($p2)) === $p2";
+      case "or":
+      case "and":
+      case "xor":
+        throw new hamleEx_Unimplemented("OR/AND/XOR Unimplmented at this time");
+        return "($p1) OR ($p2)";
+        return "($p1) AND ($p2)";
+        return "($p1) XOR ($p2)";
+    }
+    return "";
+  }
+  function toHTML() {
+    throw new hamleEx_Unimplemented("Unable to output comparison results to HTML");
   }
 }
