@@ -22,16 +22,16 @@ class formTest extends base {
   <body>
     <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
       <div class="ftitle">
-        <label for="formTestForm_title" >title</label>
-        <input type="text" name="formTestForm_title" value="" tabindex="1" />
+        <label for="formTestForm_title" class="hamleField">title</label>
+        <input type="text" name="formTestForm_title" class="hamleField" value="" tabindex="1" />
       </div>
       <div class="fmessage">
-        <label for="formTestForm_message">message</label>
-        <input type="text" name="formTestForm_message" value="Message goes here" tabindex="2" />
+        <label for="formTestForm_message" class="hamleField">message</label>
+        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
       <div class="fsave">
-        <label for="formTestForm_save" style="display:none;">save</label>
-        <input type="submit" name="formTestForm_save" value="" tabindex="3" />
+        <label for="formTestForm_save" style="display:none;" class="hamleField_Button">save</label>
+        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="3" />
       </div>
     </form>
   </body>
@@ -55,12 +55,12 @@ class formTest extends base {
   <body>
     <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
       <div class="fmessage">
-        <label for="formTestForm_message">message</label>
-        <input type="text" name="formTestForm_message" value="Message goes here" tabindex="2" />
+        <label for="formTestForm_message" class="hamleField">message</label>
+        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
-      <label for="formTestForm_title" >title</label>
-      <input type="text" name="formTestForm_title" value="" />
-      <input type="submit" name="formTestForm_save" value="" />
+      <label for="formTestForm_title" class="hamleField" >title</label>
+      <input type="text" name="formTestForm_title" class="hamleField" value="" />
+      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
     </form>
   </body>
 </html>

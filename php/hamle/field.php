@@ -86,9 +86,10 @@ class hamleField {
     $atts["for"] = $this->form."_".$this->name;
     return $atts;
   }
-  function getHintAttrib($atts) {
+  function getHintAttrib($atts, &$type = "div") {
     $atts['class'][] = get_class($this);
     $atts['class'][] = "hamleFormHint";
+    $type = "div";
     return $atts;
   }
   function doProcess() {

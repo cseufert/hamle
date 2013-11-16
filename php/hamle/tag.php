@@ -77,10 +77,8 @@ class hamleTag {
     if(isset($tic['id']) && 
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
       return false;
-    if(isset($this->opt['class']))
-      $class = explode(' ',$this->opt['class']);
-    if(isset($tic['class']) && 
-            count($tic['class']) && array_diff($tic['class'],$class))
+    if(isset($tic['class']) && isset($this->opt['class']) &&
+            count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
       return false;      
     return true;
   }
@@ -288,16 +286,16 @@ class hamleTag_HTML extends hamleTag {
       $param = substr($param, 1, strlen($param)-2);
       parse_str($param, $this->opt);
     }
-    $this->opt += array("class"=>"");
+    if(isset($this->opt['class']) && !is_array($this->opt['class']))
+      $this->opt['class'] = explode(" ",$this->opt['class']);
+    $this->opt += array('class'=>array());
     
     preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $m);
     if(isset($m[0])) foreach($m[0] as $s) {
       if($s[0] == "#") $this->opt['id'] = substr($s,1);
-      if($s[0] == ".") $this->opt['class'] .= " ".substr($s,1);
+      if($s[0] == ".") $this->opt['class'][] = substr($s,1);
       if($s[0] == "!") $this->source[] = substr($s,1);
     }
-    $this->opt['class'] = trim($this->opt['class']);
-    if(!$this->opt['class']) unset($this->opt['class']);
   }
   function renderStTag() {
     $close = in_array($this->type,self::$selfCloseTags)?" />":">";
@@ -306,6 +304,8 @@ class hamleTag_HTML extends hamleTag {
   function renderEnTag() {
     if(in_array($this->type,self::$selfCloseTags))
             return "";
+        var_dump($this->opt['class']);
+
     return "</{$this->type}>";
   }
   /**
@@ -316,6 +316,8 @@ class hamleTag_HTML extends hamleTag {
   function optToTags() {
     $out = array();
     foreach($this->opt as $k=>$v) {
+      if($k == "class" && !$v) continue;
+      if(is_array($v)) $v = implode(" ",$v);
       if(!$v instanceof hamleString)
         $v = new hamleString($v);
       $k = new hamleString($k);
@@ -427,7 +429,7 @@ class hamleTag_Form extends hamleTag {
     foreach($inputTags as $tag) 
       if($tag instanceOf hamleTag_HTML)
         foreach($tag->source as $source) {
-          $tag->opt = $fields[$source]->getHintAttrib($tag->opt);
+          $tag->opt = $fields[$source]->getHintAttrib($tag->opt, $tag->type);
           if($field[$source]->hinttext)
             $tag->addContent($field[$source]->hinttext);
         }
