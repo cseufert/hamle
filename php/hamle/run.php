@@ -58,8 +58,10 @@ class hamleRun {
    * @return hamleModel
    */  
   static function modelId($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
-    return self::$hamle->setup->getModelDefault($id, 
+    $o = self::$hamle->setup->getModelDefault($id,
                                   $sortDir, $sortField, $limit, $offset);
+    if(!$o instanceOf hamleModel) throw new hamleEx("Application must return hamleModel");
+    return $o;
   }
 
   /**
