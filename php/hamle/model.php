@@ -20,15 +20,15 @@ interface hamleModel extends Iterator {
    * @param array $typeTags Array of types to search containing tags eg([photo->[landscape,wide]])
    * @return hamleModel Return object must implmement hamleModel interface
    */
-  function hamleRel($rel, $typeTags);
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0);
 }
 
-class hamleModel_zero implements hamleModel {
+class hamleModel_Zero implements hamleModel {
   function hamleGet($key) {
-    throw new hamleEx_NoKey("Cant find Key ($key)");
+    return new hamleModel_Zero();
   }
-  function hamleRel($rel, $typeTags) {
-    throw new hamleEx_NoFunc("Unable to retreive relations");
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
+    return new hamleModel_Zero();
   }
   
   function valid() { return false; }
@@ -43,8 +43,8 @@ class hamleModel_one implements hamleModel {
   function hamleGet($key) {
     throw new hamleEx_NoKey("Cant find Key ($key)");
   }
-  function hamleRel($rel, $typeTags) {
-    throw new hamleEx_NoFunc("Unable to retreive relations");
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
+    return new hamleModel_Zero();
   }
   
   function valid() { return $this->hamleIndex == 0; }
@@ -78,7 +78,7 @@ class hamleModel_arrayObj extends hamleModel_array {
   function hamleGet($key) {
     return $this->data[$this->pos]->hamleGet($key);
   }
-  function hamleRel($rel, $typeTags) {
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
     return $this->data[$this->pos]->hamleRel($rel, $typeTags);
   }
   function current() { return $this->data[$this->pos]; }

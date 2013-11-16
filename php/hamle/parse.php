@@ -82,7 +82,6 @@ class hamleParse {
     while($this->lineNo < $this->lineCount) {
       $line = $this->lines[$this->lineNo];
       if(trim($line)) if(preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
-        unset($m[0]);
         if(FALSE !== strpos($m[1], "\t"))
           throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
         $indent = strlen($m[1]);
@@ -92,8 +91,8 @@ class hamleParse {
         $textcode = isset($m[5])?$m[5]:"";
         $text = isset($m[8])?$m[8]:"";
         $code = isset($m[6])?$m[6]:"";
-        //var_dump($m);
         $i = self::indentLevel($indent);
+        unset($m[0]);
         switch(strlen($code)?$code[0]:($textcode?$textcode:"")) {
           case "|": //Control Tag
             if($code == "|snippet")
@@ -162,17 +161,14 @@ class hamleParse {
   
   function indentLevel($indent) {
     if(!isset($this->indents)) $this->indents = array();
-    if($indent == 0) {
-      $this->indents = array(0=>0); // Key = indent, Value = Depth
-      return 0;
-    }
     if(!count($this->indents)) {
       $this->indents = array(0=>$indent);
+          // Key = indent level, Value = Depth in spaces
       return 0;
     }
     foreach($this->indents as $k=>$v) {
       if($v == $indent) {
-         array_slice($this->indents,0,$k+1);
+         $this->indents = array_slice($this->indents,0,$k+1);
         return $k;
       }
     }
