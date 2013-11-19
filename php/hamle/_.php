@@ -21,7 +21,10 @@ class hamle {
    * @var string Filename for Cache file 
    */
   protected $cacheFile;
-  
+  /**
+   * @var bool Enable cacheing of templates
+   */
+  protected $cache = true;
   /**
    * @var array Array of Files required $files[0] is the template file
    *            The rest of the files are Snippets 
@@ -61,7 +64,7 @@ class hamle {
   }
   /**
    * Parse a HAMLE Template File
-   * @param type $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
+   * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws hamleEx_NotFound If tempalte file cannot be found
    */
   function load($hamleFile) {
@@ -73,7 +76,7 @@ class hamle {
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
     $cacheFileAge = @filemtime($this->cacheFile);
     foreach(array_merge(array($template),$this->snipFiles) as $f)
-      if($cacheFileAge < filemtime($f))
+      if((!$this->cache) || $cacheFileAge < filemtime($f))
         return $this->parse(file_get_contents($template));
     $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
   }
@@ -99,7 +102,7 @@ class hamle {
    * @deprecated since version 2013-10-03
    */
   function outputFile($f) {
-    throw new hamleEx_Unsupported("Please use load() and output() methods rather than outputFile");
+    throw new hamleEx_Unsupported("Please use load($f); and output() methods rather than outputFile");
   }
   
   /**
@@ -126,6 +129,10 @@ class hamle {
     if(!isset(self::$me))
       return 0;
     return self::$me->parse->getLineNo();
+  }
+
+  function disableCache() {
+    $this->cache = false;
   }
   
 }
