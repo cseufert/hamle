@@ -13,13 +13,15 @@ class hamleField {
   protected $name;
   
   protected $value;
+
+  protected $valid = true;
   
   function __construct($name, $options = array()) {
     $this->value = null;
     $this->name = $name;
     $this->hint = "";
     $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
-         "default"=>"", "error"=>"Field is Required", "help"=>"", "test"=>null,
+         "default"=>"", "error"=>"$name is Required", "help"=>"", "test"=>null,
         "form"=>"noForm", "readonly"=>false, 'hinttext'=>'');
   }
   
@@ -66,48 +68,69 @@ class hamleField {
   }
   
   function getValue() {
-    if(isset($_POST[$this->form."_".$this->name])) {
-      $this->value = $_POST[$this->form."_".$this->name];
+    if(isset($_REQUEST[$this->form."_".$this->name])) {
+      $this->value = $_REQUEST[$this->form."_".$this->name];
       if(get_magic_quotes_runtime())
         $this->value = stripslashes($this->value);
       return $this->value;
     } else 
       return is_null($this->value)?$this->opt['default']:$this->value;
   }
-  function getInputAttrib($atts, &$type = "input") {
-    $atts['value'] = new hamleString_FormField($this->name);
+  function getInputAttStatic(&$atts, &$type, &$content) {
     $atts['name'] = $this->form."_".$this->name;
     $atts['type'] = "text";
     $atts['class'][] = get_class($this);
-    return $atts;
   }
-  function getLabelAttrib($atts) {
+  function getInputAttDynamic(&$atts, &$type, &$content) {
+    $type = "input";
+    $atts['value'] = new hamleString_FormField($this->name);
+    if(!$this->valid) {
+      $atts['class'][] = "hamleFormError";
+    }
+  }
+  function getLabelAttStatic(&$atts, &$type, &$content) {
     $atts['class'][] = get_class($this);
     $atts["for"] = $this->form."_".$this->name;
-    return $atts;
+    $content = array($this->opt['label']);
   }
-  function getHintAttrib($atts, &$type = "div") {
+  function getLabelAttDynamic(&$atts, &$type, &$content) {
+  }
+  function getHintAttStatic(&$atts, &$type, &$content) {
     $atts['class'][] = get_class($this);
     $atts['class'][] = "hamleFormHint";
-    $type = "div";
-    return $atts;
   }
-  function doProcess() {
-    $value = $this->getValue();
-    if($this->opt['required'])
-      $valid = $valid && ($value && true);
-    if($this->opt['regex'])
-      $valid = $valid && preg_match($this->opt['regex'], $value);
-    $this->valid = $valid;
+  function getHintAttDynamic(&$atts, &$type, &$content) {
+    $type = "div";
+    if(!$this->valid) {
+      $content = array($this->opt['error']);
+      $atts['class'][] = "hamleFormError";
+    }
+  }
+  function getDynamicAtt(&$atts, &$type, &$content) {
+    if($type == "input") {
+      $this->getInputAttDynamic($atts, $type, $content);
+    } elseif($type == "hint") {
+      $this->getHintAttDynamic($atts, $type, $content);
+    } elseif($type == "label") {
+      $this->getLabelAttDynamic($atts, $type, $contnet);
+    }
+  }
+  function doProcess($submit) {
+    if($submit) {
+      $value = $this->getValue();
+      if($this->opt['required'])
+        $this->valid = $this->valid && strlen($value);
+      if($this->opt['regex'])
+        $this->valid = $this->valid && preg_match($this->opt['regex'], $value);
+    }
   }
   
 }
 
 class hamleField_Button extends hamleField {
-  function getInputAttrib($atts, &$type = "input") {
-    $atts = parent::getInputAttrib($atts, $type);
+  function getInputAttStatic(&$atts, &$type, &$content) {
+    parent::getInputAttStatic($atts, $type, $content);
     $atts['type'] = "submit";
-    return $atts;
   }
   
   function isClicked() {
