@@ -66,6 +66,10 @@ class hamleString {
       $out[] = $string->toPHP();
     return implode(".",$out);
   }
+
+  function doEval() {
+    return eval('return '.$this->toPHP().';');
+  }
     
   static function varToCode($var) {
     if (is_array($var)) {
@@ -273,9 +277,9 @@ class hamleString_FormField extends hamleString {
     $this->var = $var;
   }
   function toPHP() {
-
+    return '$form->getField('.hamleString::varToCode($this->var).')->getValue()';
   }
   function toHTML() {
-    return '<?=$form->getField('.hamleString::varToCode($this->var).')->getValue()?>';
+    return '<?='.$this->toPHP().'?>';
   }
 }
