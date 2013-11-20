@@ -6,6 +6,9 @@
  * @author Chris Seufert <chris@seufert.id.au>
  */
 class hamleForm {
+  /**
+   * @var hamleField[] Form Fields
+   */
   protected $fields;
   protected $name;
   /**
@@ -30,10 +33,15 @@ class hamleForm {
   }
   
   function process() {
+    $clicked = "";
     foreach($this->fields as $f)
       if($f instanceOf hamleField_Button)
         if($f->isClicked())
-          $this->onSubmit($f);
+          $clicked = $f;
+    foreach($this->fields as $f)
+      $f->doProcess($clicked?true:false);
+    if($clicked)
+      $this->onSubmit($clicked);
   }
   
   function isValid() {
@@ -44,7 +52,7 @@ class hamleForm {
   }
   /**
    * Called upon form submission, $button will be assigned to the button that was clicked
-   * @param hamleFieldButton $button
+   * @param hamleField_Button $button
    */
   function onSubmit($button) { }
   
