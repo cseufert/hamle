@@ -167,7 +167,7 @@ class hamleTag_Ctrl extends hamleTag {
 
   /**
    * Crate new Control Tag
-   * @param $tag Type of Control Tag
+   * @param string Type of Control Tag
    * @param hamleTag $parentTag
    */
   function __construct($tag, $parentTag = null) {
@@ -502,5 +502,11 @@ class hamleTag_Form extends hamleTag {
     return "<?php unset(\$form); ?></form>";
     array_pop(self::$sForm);
     self::$sCount = count(self::$sForm);
+  }
+}
+
+class hamleTag_FormHint extends hamleTag {
+  function renderStTag() {
+    return "<div><?=\$form->hint?></div>";
   }
 }

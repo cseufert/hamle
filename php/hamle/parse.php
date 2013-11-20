@@ -100,6 +100,8 @@ class hamleParse {
               $hTag = new hamleTag_snippet($text);
             elseif($code == "|form")
               $hTag = new hamleTag_Form($text);
+            elseif($code == "|formhint")
+              $hTag = new hamleTag_FormHint($text);
             elseif($code == "|else") {
               $hTag = new hamleTag_Ctrl(substr($code,1), $heir[$i - 1]);
               $hTag->setVar($text);
