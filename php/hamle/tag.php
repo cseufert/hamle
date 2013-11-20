@@ -490,12 +490,10 @@ class hamleTag_Form extends hamleTag {
     foreach($fields as $n=>$f) {
       if(!$f instanceOf hamleField_Button) {
         $this->addChild($label = new hamleTag_HTML("label","!$n"));
-        $label->opt = $f->getLabelAttStatic($label->opt, $tag->type, $label->content);
-        $label->source[] = $f->name;
+        $f->getLabelAttStatic($label->opt, $label->type, $label->content);
       }
       $this->addChild($input = new hamleTag_HTML("input","!$n"));
-      $input->opt = $f->getInputAttStatic($input->opt);
-      $input->source[] = $f->name;
+      $f->getInputAttStatic($input->opt, $input->type, $input->content);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";
   }
