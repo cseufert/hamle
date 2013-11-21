@@ -89,10 +89,11 @@ class hamleTag {
       return false;
     return true;
   }
-  
+
   /**
    * Add a child tag to this tag
    * @param hamleTag $tag Tag to add as child
+   * @param string $mode Mode to add child [append|prepend]
    */
   function addChild($tag, $mode = "append") {
     if($mode == "prepend")
@@ -119,11 +120,12 @@ class hamleTag {
     $out .= ($oneliner?"":$ind).$this->renderEnTag()."\n";
     return $out;
   }
-  
+
   /**
    * Apply indent, to content, and return as string
    *
    * @param string $pad Indent String
+   * @param bool $oneliner Render to fit single line
    * @return string Indented Content
    */
   function renderContent($pad = "", $oneliner = false) {
@@ -140,10 +142,12 @@ class hamleTag {
    * Output the End Tag for this element
    */
   function renderEnTag() {}
+
   /**
    * Add content to this tag, one line at a time
-   * 
+   *
    * @param string $s One line of content
+   * @param int $strtype Type of string to parse, hamleString::TOKEN_*
    */
   function addContent($s, $strtype = hamleString::TOKEN_HTML) {
     if(trim($s)) {
@@ -169,6 +173,7 @@ class hamleTag_Ctrl extends hamleTag {
    * Crate new Control Tag
    * @param string Type of Control Tag
    * @param hamleTag $parentTag
+   * @throws hamleEx_ParseError
    */
   function __construct($tag, $parentTag = null) {
     parent::__construct();
@@ -363,10 +368,10 @@ class hamleTag_DynHTML extends hamleTag_HTML {
     foreach($d['opt'] as $k=>$v) {
       if(is_array($v)) {
         foreach($v as $k2=>$v2)
-          if($v[$k2] instanceof hamleString) $v[$k2] = eval('return '.$v->toPHP().';');
+          if($v[$k2] instanceof hamleString) $v[$k2] = eval('return '.$v[$k2]->toPHP().';');
         $v = implode(" ",$v);
       }
-      if($v instanceof hamleString) $v = eval('return '.$v->toPHP().';');
+      if($v instanceOf hamleString) $v = eval('return '.$v->toPHP().';');
       $out .= $k."=\"".str_replace("\"","\\\"",$v)."\" ";
     }
     $out .= in_array($d['type'],self::$selfCloseTags)?"/>":">";

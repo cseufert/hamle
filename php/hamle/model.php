@@ -18,6 +18,10 @@ interface hamleModel extends Iterator {
    * Retreive an iterable result of relatives to the current object
    * @param int $rel Relation to this object hamle::REL_CHILD, etc
    * @param array $typeTags Array of types to search containing tags eg([photo->[landscape,wide]])
+   * @param int $sortDir Sort Direction defined by hamle::SORT_*
+   * @param string $sortField Field to sort by
+   * @param int $limit Limit of rows to return
+   * @param int $offset Offset Number of rows to offset results by
    * @return hamleModel Return object must implmement hamleModel interface
    */
   function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0);

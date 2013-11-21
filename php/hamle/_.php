@@ -67,6 +67,7 @@ class hamle {
    * Parse a HAMLE Template File
    * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws hamleEx_NotFound If tempalte file cannot be found
+   * @return hamle Returns instance for chaining commands
    */
   function load($hamleFile) {
     $template = $this->setup->templatePath($hamleFile);
