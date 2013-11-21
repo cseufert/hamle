@@ -79,6 +79,15 @@ class hamleModel_array extends hamleModel_zero {
 }
 
 class hamleModel_arrayObj extends hamleModel_array {
+  /**
+   * Create a new array object helper
+   * @param hamleModel[] $array Array of hamle objects
+   */
+  function __construct($array = array()) {
+    $this->data = $array;
+    $this->pos = 0;
+  }
+
   function hamleGet($key) {
     return $this->data[$this->pos]->hamleGet($key);
   }

@@ -11,12 +11,19 @@ class hamleRun {
    */
   static protected $hamle;
   static protected $hamleList = array();
-  
+
+  /**
+   * Add a hamle instance to the stack
+   * @param hamle $hamle Hamle Instance
+   */
   static function addInstance(hamle $hamle) {
     self::$hamleList[] = $hamle;
     self::$hamle = $hamle;
   }
-  
+
+  /**
+   * Remove hamle Instance from the stack
+   */
   static function popInstance() {
     array_pop(self::$hamleList);
     if(self::$hamleList)
@@ -24,8 +31,13 @@ class hamleRun {
     else
       self::$hamle = NULL;
   }
-  
-  
+
+  /**
+   * Execute a hamle String Filter
+   * @param string $name Name of Filter
+   * @param string $data Data to pass to filter
+   * @return string Fitlered data
+   */
   static function filter($name, $data) {
     return strrev($data);
   }
@@ -41,7 +53,7 @@ class hamleRun {
 
   /**
    * Called from template by $() to find a specific model
-   * @param array $typeTags array of tags with types as key eg ['page'=>[]] or ['product'=>['featured]]
+   * @param array[] $typeTags array of tags with types as key eg ['page'=>[]] or ['product'=>['featured]]
    * @param int $sortDir Sort Direction see hamle::SORT_NATURAL...
    * @param string $sortField Sort Direction defined by hamle::SORT_*
    * @param int $limit Results Limit
@@ -73,7 +85,7 @@ class hamleRun {
 
   /**
    * Called from template by $() to find a specific model
-   * @param $typeId Array of types mapped to ids [type1=>[1],type2=>[2]]
+   * @param array[] $typeId Array of types mapped to ids [type1=>[1],type2=>[2]]
    * @param int $sortDir Sort Direction defined by hamle::SORT_*
    * @param string $sortField Field name to sort by
    * @param int $limit Results Limit

@@ -29,7 +29,7 @@ class hamleScope {
   static function get($id = 0) {
     $key = $id - 1;
     if(!isset(self::$scopes)) self::$scopes = array();
-    if($id < 0) $key = count(self::$scope) + $id - 1;
+    if($id < 0) $key = count(self::$scopes) + $id - 1;
     if($id == 0) $key = count(self::$scopes) - 1;
     if(!isset(self::$scopes[$key]))
       throw new hamleEx_OutOfScope("Unable to find Scope ($id) or $key");

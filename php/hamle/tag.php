@@ -171,7 +171,7 @@ class hamleTag_Ctrl extends hamleTag {
 
   /**
    * Crate new Control Tag
-   * @param string Type of Control Tag
+   * @param string $tag Type of Control Tag
    * @param hamleTag $parentTag
    * @throws hamleEx_ParseError
    */
@@ -262,6 +262,10 @@ class hamleTag_Ctrl extends hamleTag {
  * Filter tags start with colon or (:) and use hamleFilter_<filtername>
  */
 class hamleTag_Filter extends hamleTag {
+  /**
+   * @var hamleFilter $filter Filter CLass
+   */
+  protected $filter;
   function __construct($tag) {
     parent::__construct();
     $this->type = strtolower($tag);

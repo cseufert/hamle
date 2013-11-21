@@ -30,15 +30,15 @@ class hamle {
    *            The rest of the files are Snippets 
    */
   protected $snipFiles;
+
+  const REL_CHILD = 0x01;  /* Child Relation */
+  const REL_PARENT = 0x02; /* Parent Relation */
+  const REL_ANY = 0x03;    /* Unspecified or any relation */
   
-  const REL_CHILD = 0x01;
-  const REL_PARENT = 0x02;
-  const REL_ANY = 0x03;
-  
-  const SORT_NATURAL = 0x00;
-  const SORT_ASCENDING = 0x02;
-  const SORT_DESCENDING = 0x03;
-  const SORT_RANDOM = 0x04;
+  const SORT_NATURAL = 0x00;    /* Sort in what ever order is 'default' */
+  const SORT_ASCENDING = 0x02;  /* Sort Ascending */
+  const SORT_DESCENDING = 0x03; /* Sort Decending */
+  const SORT_RANDOM = 0x04;     /* Sort Randomly */
   /**
    * Create new HAMLE Parser
    * 
@@ -129,13 +129,20 @@ class hamle {
     hamleRun::popInstance();
     return $out;
   }
-  
+
+  /**
+   * Get the current line number
+   * @return int The line number being passed by the parser
+   */
   static function getLineNo() {
     if(!isset(self::$me))
       return 0;
     return self::$me->parse->getLineNo();
   }
 
+  /**
+   * Disable the caching of hamle templates
+   */
   function disableCache() {
     $this->cache = false;
   }

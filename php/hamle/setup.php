@@ -32,7 +32,7 @@ class hamleSetup {
   /**
    * Open a specific model type with id
    *
-   * @param $typeId Type ID array [type=>[id]] or [page=>[3]]
+   * @param array[] $typeId Type ID array [type=>[id]] or [page=>[3]]
    * @param int $sortDir Sort Direction defined by hamle::SORT_*
    * @param string $sortField Field name to sort on
    * @param int $limit Results Limit
@@ -51,7 +51,7 @@ class hamleSetup {
   /**
    * Return Iterator containing results from search of tags
    *
-   * @param $typeTags Type Tag Array [type=>[tag1,tag2],type2=>[]]
+   * @param array[] $typeTags Type Tag Array [type=>[tag1,tag2],type2=>[]]
    * @param int $sortDir Sort Direction defined by hamle::SORT_*
    * @param string $sortField Field name to sort
    * @param int $limit Results Limit
