@@ -224,6 +224,7 @@ class hamleString_Func extends hamleString_SimpleVar {
       else
         return "hamleRun::modelTypeId(".
                 hamleString::varToCode ($this->filt['id']).",$limit)$sub";
+    return "";
   }
   
   function toHTML() { throw new 

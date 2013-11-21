@@ -23,6 +23,11 @@ class hamleEx_ParseError extends hamleEx {
  */
 class hamleEx_NotFound extends hamleEx { }
 
+/**
+ * Class hamleEx_RunTime - Runtime Exceptions
+ */
+class hamleEx_RunTime extends hamleEx { }
+
 class hamleEx_Filter extends hamleEx { }
 class hamleEx_NoFilter extends hamleEx_Filter { }
 

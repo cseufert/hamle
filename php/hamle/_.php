@@ -45,6 +45,7 @@ class hamle {
    * @param hamleModel $baseModel
    * @param hamleSetup $setup
    * @throws hamleEx_Unsupported
+   * @throws hamleEx_NotFound
    */
   function __construct($baseModel, $setup = NULL) {
     self::$me = $this;
@@ -76,9 +77,12 @@ class hamle {
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
     $cacheFileAge = @filemtime($this->cacheFile);
     foreach(array_merge(array($template),$this->snipFiles) as $f)
-      if((!$this->cache) || $cacheFileAge < filemtime($f))
-        return $this->parse(file_get_contents($template));
-    $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+      if((!$this->cache) || $cacheFileAge < filemtime($f)) {
+        $this->setup->debugLog("Parsing File ({$this->cacheFile})");
+        $this->parse(file_get_contents($template));
+      } else
+        $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+    return $this;
   }
   /**
    * Parse a HAMLE tempalte from a string 

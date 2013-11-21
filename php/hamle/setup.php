@@ -36,7 +36,8 @@ class hamleSetup {
     if(count($typeId) > 1)
       throw new hamleEx_Runtime("Unable to open more than one ID at a time");
     foreach($typeId as $type=>$id)
-      return hamleDemoModel::findId($name, current($id)); 
+      return hamleDemoModel::findId($type, current($id));
+    return new hamleModel_Zero();
   }
   
   /**

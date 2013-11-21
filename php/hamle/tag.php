@@ -12,16 +12,16 @@ class hamleTag {
    */
   protected $tags = array();
   /**
-   * @var string Tag Type for Printable Tags 
+   * @var string Tag Type for Printable Tags
    */
   protected $type;
   /**
-   * @var array Array of lines of Content 
+   * @var array Array of lines of Content
    */
   protected $content;
-  
+
   protected $opt;
-  
+
   protected $source;
   /**
    * Number of spaces for each Indent when doing pretty format of output
@@ -80,13 +80,13 @@ class hamleTag {
   
   function compare($tic) {
     if(isset($tic['type']) && $this->type != $tic['type'])
-      return false; 
-    if(isset($tic['id']) && 
+      return false;
+    if(isset($tic['id']) &&
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
       return false;
     if(isset($tic['class']) && isset($this->opt['class']) &&
             count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
-      return false;      
+      return false;
     return true;
   }
   
@@ -122,7 +122,7 @@ class hamleTag {
   
   /**
    * Apply indent, to content, and return as string
-   * 
+   *
    * @param string $pad Indent String
    * @return string Indented Content
    */
@@ -159,7 +159,7 @@ class hamleTag {
  */
 class hamleTag_Ctrl extends hamleTag {
   /**
-   * @var string Variable passed to Control Tag 
+   * @var string Variable passed to Control Tag
    */
   protected $var;
   protected $o, $else = false;
@@ -320,7 +320,7 @@ class hamleTag_HTML extends hamleTag {
   }
   /**
    * Used to convert urlencoded string into html attributes
-   * 
+   *
    * @return string HTML Attributes
    */
   function optToTags() {
@@ -373,8 +373,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
     return $out;
   }
   static function toEnTag($d, $form) {
-    if(!in_array($d['type'],self::$selfCloseTags))
-      return "</".$d['type'].">";
+    return in_array($d['type'],self::$selfCloseTags)?"</".$d['type'].">":"";
   }
 }
 
@@ -428,8 +427,7 @@ class hamleTag_Comment extends hamleTag {
       $this->commentstyle = "HTML";
   }
   function renderStTag() {
-    if($this->commentstyle == "HTML")
-      return "<!-- ";
+    return $this->commentstyle == "HTML"?"<!-- ":"";
   }
   function renderContent($pad = "", $oneliner = false) {
     if($this->commentstyle == "HTML")
@@ -440,8 +438,7 @@ class hamleTag_Comment extends hamleTag {
     return "";
   }  
   function renderEnTag() {
-    if($this->commentstyle == "HTML")
-      return " -->";
+    return $this->commentstyle == "HTML"?" -->":"";
   }
 }
 
@@ -500,8 +497,8 @@ class hamleTag_Form extends hamleTag {
 
   function renderEnTag() {
     return "<?php unset(\$form); ?></form>";
-    array_pop(self::$sForm);
-    self::$sCount = count(self::$sForm);
+//    array_pop(self::$sForm);
+//    self::$sCount = count(self::$sForm);
   }
 }
 

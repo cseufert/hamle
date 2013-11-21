@@ -36,7 +36,7 @@ class hamleRun {
    * @return string HTML Code
    */
   static function includeFile($path) {
-    return self::$hamle->outputFile($path);
+    return self::$hamle->load($path)->output();
   }
   
   /**
@@ -60,7 +60,7 @@ class hamleRun {
   static function modelId($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     $o = self::$hamle->setup->getModelDefault($id,
                                   $sortDir, $sortField, $limit, $offset);
-    if(!$o instanceOf hamleModel) throw new hamleEx("Application must return hamleModel");
+    if(!$o instanceOf hamleModel) throw new hamleEx_RunTime("Application must return instance of hamleModel");
     return $o;
   }
 
