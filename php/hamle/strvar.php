@@ -206,9 +206,7 @@ class hamleStrVar_string implements hamleStrVar_int {
     $this->s = $s;
   }
   function toHTML() {
-    return str_replace(
-              array('\\$', "&"    ,"\""    ),
-              array('$'  , "&amp;","&quot;"),$this->s);
+    return htmlspecialchars($this->s);
   }
   function toPHP() {
     return hamleStrVar::arrayToPHP($this->s);

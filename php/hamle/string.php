@@ -97,7 +97,7 @@ class hamleString_Plain extends hamleString {
     return hamleString::varToCode($this->s);
   }
   function toHTML() {
-    return str_replace(array('&','"'),array('&amp;','&quot;'),$this->s);
+    return htmlspecialchars($this->s);
   }
 }
 
@@ -284,3 +284,4 @@ class hamleString_FormField extends hamleString {
     return '<?='.$this->toPHP().'?>';
   }
 }
+
