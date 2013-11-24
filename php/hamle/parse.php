@@ -23,7 +23,7 @@ class hamleParse {
   /**
    * Regex for parsing each HAMLE line
    */
-  const REGEX_PARSE_LINE = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#!][\w\-\_]+)*)(\[(?:[^\\\\\\]]*?(?:\\\.)*?)+\])?)|([_\/][\/]?)|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
+  const REGEX_PARSE_LINE = '/^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#!][\w\-\_]+)*)(\[(?:[^\\\\\\]]*?(?:\\\.)*?)+\])?)|([_\/]{1,2})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/';
   /**
    * @var int Current Line Number
    */
@@ -117,11 +117,12 @@ class hamleParse {
               $hTag->addContent($l,hamleString::TOKEN_CODE);
             break;
           case "_": //String Tag
-            $hTag = new hamleTag_String();
+          case "__": //Unescape String Tag
+            $hTag = new hamleTag_String($textcode);
             $hTag->addContent($text);
             break;
-          case "/": // Comment
-          case "//":
+          case "/": // HTML Comment
+          case "//": // Non Printed Comment
             $hTag = new hamleTag_Comment($textcode);
             $hTag->addContent($text);
             foreach($this->consumeBlock($indent) as $l)

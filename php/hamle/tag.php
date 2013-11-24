@@ -426,7 +426,22 @@ class hamleTag_Snippet extends hamleTag {
  * String Tag
  */
 class hamleTag_String extends hamleTag {
-  
+  protected $escape = true;
+  function __construct($tag) {
+    parent::__construct();
+    $this->escape = ($tag == "_");
+  }
+
+  function addContent($s, $strtype = hamleString::TOKEN_HTML) {
+    if(trim($s)) {
+      if($this->escape) {
+      $parse = new hamleString($s, $strtype);
+      $this->content[] = $parse->toHTML();
+      } else
+        $this->content[] = $s;
+    }
+  }
+
 }
 
 class hamleTag_Comment extends hamleTag {

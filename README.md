@@ -130,6 +130,7 @@ becomes
   * Plain text, can be easily translated
   * `_` is only required when text is the first thing on a new line
   * To escape $ sign, use \\$
+  * use '__' when you do not want to escape any html special chars (ie. you want to include html within your output.
  
 
 ## Todo List
