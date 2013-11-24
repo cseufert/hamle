@@ -21,27 +21,31 @@ class hamle {
    * @var string Filename for Cache file 
    */
   protected $cacheFile;
-  
+  /**
+   * @var bool Enable cacheing of templates
+   */
+  protected $cache = true;
   /**
    * @var array Array of Files required $files[0] is the template file
    *            The rest of the files are Snippets 
    */
   protected $snipFiles;
+
+  const REL_CHILD = 0x01;  /* Child Relation */
+  const REL_PARENT = 0x02; /* Parent Relation */
+  const REL_ANY = 0x03;    /* Unspecified or any relation */
   
-  const REL_CHILD = 0x01;
-  const REL_PARENT = 0x02;
-  const REL_ANY = 0x03;
-  
-  const SORT_NATURAL = 0x00;
-  const SORT_ASCENDING = 0x02;
-  const SORT_DESCENDING = 0x03;
-  const SORT_RANDOM = 0x04;
+  const SORT_NATURAL = 0x00;    /* Sort in what ever order is 'default' */
+  const SORT_ASCENDING = 0x02;  /* Sort Ascending */
+  const SORT_DESCENDING = 0x03; /* Sort Decending */
+  const SORT_RANDOM = 0x04;     /* Sort Randomly */
   /**
    * Create new HAMLE Parser
    * 
    * @param hamleModel $baseModel
    * @param hamleSetup $setup
    * @throws hamleEx_Unsupported
+   * @throws hamleEx_NotFound
    */
   function __construct($baseModel, $setup = NULL) {
     self::$me = $this;
@@ -61,8 +65,9 @@ class hamle {
   }
   /**
    * Parse a HAMLE Template File
-   * @param type $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
+   * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws hamleEx_NotFound If tempalte file cannot be found
+   * @return hamle Returns instance for chaining commands
    */
   function load($hamleFile) {
     $template = $this->setup->templatePath($hamleFile);
@@ -73,9 +78,12 @@ class hamle {
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
     $cacheFileAge = @filemtime($this->cacheFile);
     foreach(array_merge(array($template),$this->snipFiles) as $f)
-      if($cacheFileAge < filemtime($f))
-        return $this->parse(file_get_contents($template));
-    $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+      if((!$this->cache) || $cacheFileAge < filemtime($f)) {
+        $this->setup->debugLog("Parsing File ({$this->cacheFile})");
+        $this->parse(file_get_contents($template));
+      } else
+        $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+    return $this;
   }
   /**
    * Parse a HAMLE tempalte from a string 
@@ -99,7 +107,7 @@ class hamle {
    * @deprecated since version 2013-10-03
    */
   function outputFile($f) {
-    throw new hamleEx_Unsupported("Please use load() and output() methods rather than outputFile");
+    throw new hamleEx_Unsupported("Please use load($f); and output() methods rather than outputFile");
   }
   
   /**
@@ -121,11 +129,22 @@ class hamle {
     hamleRun::popInstance();
     return $out;
   }
-  
+
+  /**
+   * Get the current line number
+   * @return int The line number being passed by the parser
+   */
   static function getLineNo() {
     if(!isset(self::$me))
       return 0;
     return self::$me->parse->getLineNo();
+  }
+
+  /**
+   * Disable the caching of hamle templates
+   */
+  function disableCache() {
+    $this->cache = false;
   }
   
 }

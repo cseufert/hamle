@@ -59,8 +59,8 @@ class formTest extends base {
         <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
       <label for="formTestForm_title" class="hamleField" >title</label>
-      <input type="text" name="formTestForm_title" class="hamleField" value="" />
-      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
+      <input type="text" name="formTestForm_title" class="hamleField" />
+      <input type="submit" name="formTestForm_save" class="hamleField_Button" />
     </form>
   </body>
 </html>

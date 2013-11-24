@@ -13,7 +13,7 @@ class hamleParse {
    */
   protected $indents;
   /**
-   * @var array Array of Root Document Tags
+   * @var hamleTag[] Array of Root Document Tags
    */
   protected $root;
   /**
@@ -29,7 +29,7 @@ class hamleParse {
    */
   protected $lineNo;
   /**
-   * @var Total Lines in File 
+   * @var int Total Lines in File
    */
   protected $lineCount;
   
@@ -44,7 +44,6 @@ class hamleParse {
     $this->lines = array();
     $this->lineNo = 0;
     $this->lineCount = 0;
-    $heir = array();
     $this->root = array();
   }
   protected function loadLines($s) {
@@ -79,6 +78,8 @@ class hamleParse {
   }
 
   function procLines() {
+    /* @var $heir hamleTag[] Tag Heirachy Array */
+    $heir = array();
     while($this->lineNo < $this->lineCount) {
       $line = $this->lines[$this->lineNo];
       if(trim($line)) if(preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
@@ -99,6 +100,8 @@ class hamleParse {
               $hTag = new hamleTag_snippet($text);
             elseif($code == "|form")
               $hTag = new hamleTag_Form($text);
+            elseif($code == "|formhint")
+              $hTag = new hamleTag_FormHint($text);
             elseif($code == "|else") {
               $hTag = new hamleTag_Ctrl(substr($code,1), $heir[$i - 1]);
               $hTag->setVar($text);
@@ -125,7 +128,10 @@ class hamleParse {
               $hTag->addContent($l,hamleString::TOKEN_CODE);
             break;
           default:
-            $hTag = new hamleTag_HTML($tag, $classid, $params);
+            if(strpos($classid,"!") === FALSE)
+              $hTag = new hamleTag_HTML($tag, $classid, $params);
+            else
+              $hTag = new hamleTag_DynHTML($tag, $classid, $params);
             $hTag->addContent($text);
             break;
         }
@@ -147,7 +153,7 @@ class hamleParse {
 
   }
   function consumeBlock($indent) {
-    $out = array();
+    $out = array(); $m = array();
     while($this->lineNo + 1 < $this->lineCount &&
             ( !trim($this->lines[$this->lineNo+1]) ||
         preg_match('/^(\s){'.$indent.'}((\s)+[^\s].*)$/', 

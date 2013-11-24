@@ -53,9 +53,15 @@ class stringTest extends base{
     $this->assertEquals('Some &amp; &quot;Some&quot; More', $html);
     $this->assertEquals('\'Some & "Some" More\'', $php);
   }
-
-  
   public function testDollarStringEscape3() {
+    $hs = new hamleString('This < that > this');
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('This &lt; that &gt; this', $html);
+    $this->assertEquals('\'This < that > this\'', $php);
+  }
+
+  public function testDollarStringEscape4() {
     $hs = new hamleString("I have \\\$10.00");
     $html = $hs->toHTML();
     $php = $hs->toPHP();

@@ -8,20 +8,20 @@
  */
 class hamleTag {
   /**
-   * @var array Array of children tag elements 
+   * @var hamleTag[] Array of children tag elements
    */
   protected $tags = array();
   /**
-   * @var string Tag Type for Printable Tags 
+   * @var string Tag Type for Printable Tags
    */
   protected $type;
   /**
-   * @var array Array of lines of Content 
+   * @var array Array of lines of Content
    */
   protected $content;
-  
+
   protected $opt;
-  
+
   protected $source;
   /**
    * Number of spaces for each Indent when doing pretty format of output
@@ -36,7 +36,8 @@ class hamleTag {
     $this->content = array();
   }
   /**
-   @param array $path array of arrays[type/class/id]
+   * @param array $path array of arrays[type/class/id]
+   * @return hamleTag[] The tags you are looking for
    */
   function find($path) {
     //var_dump($this->type, json_encode($path), $this->compare($path[0]));
@@ -50,6 +51,13 @@ class hamleTag {
       $list[] = $this;
     return $list;
   }
+
+  /**
+   * Replace a tag at $path with a new tag ($newTag)
+   * @param $path array Path Array
+   * @param $newTag hamleTag New tag to replace old tag with
+   * @return bool
+   */
   function replace($path, $newTag) {
     $r = false;
     if($this->compare($path[0]))
@@ -71,21 +79,21 @@ class hamleTag {
   }
   
   function compare($tic) {
-    $class = array();
     if(isset($tic['type']) && $this->type != $tic['type'])
-      return false; 
-    if(isset($tic['id']) && 
+      return false;
+    if(isset($tic['id']) &&
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
       return false;
     if(isset($tic['class']) && isset($this->opt['class']) &&
             count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
-      return false;      
+      return false;
     return true;
   }
-  
+
   /**
    * Add a child tag to this tag
    * @param hamleTag $tag Tag to add as child
+   * @param string $mode Mode to add child [append|prepend]
    */
   function addChild($tag, $mode = "append") {
     if($mode == "prepend")
@@ -112,11 +120,12 @@ class hamleTag {
     $out .= ($oneliner?"":$ind).$this->renderEnTag()."\n";
     return $out;
   }
-  
+
   /**
    * Apply indent, to content, and return as string
-   * 
+   *
    * @param string $pad Indent String
+   * @param bool $oneliner Render to fit single line
    * @return string Indented Content
    */
   function renderContent($pad = "", $oneliner = false) {
@@ -133,10 +142,12 @@ class hamleTag {
    * Output the End Tag for this element
    */
   function renderEnTag() {}
+
   /**
    * Add content to this tag, one line at a time
-   * 
+   *
    * @param string $s One line of content
+   * @param int $strtype Type of string to parse, hamleString::TOKEN_*
    */
   function addContent($s, $strtype = hamleString::TOKEN_HTML) {
     if(trim($s)) {
@@ -152,11 +163,18 @@ class hamleTag {
  */
 class hamleTag_Ctrl extends hamleTag {
   /**
-   * @var string Variable passed to Control Tag 
+   * @var string Variable passed to Control Tag
    */
   protected $var;
   protected $o, $else = false;
   static $instCount = 1;
+
+  /**
+   * Crate new Control Tag
+   * @param string $tag Type of Control Tag
+   * @param hamleTag $parentTag
+   * @throws hamleEx_ParseError
+   */
   function __construct($tag, $parentTag = null) {
     parent::__construct();
     $this->o = "\$o".self::$instCount++;
@@ -244,6 +262,10 @@ class hamleTag_Ctrl extends hamleTag {
  * Filter tags start with colon or (:) and use hamleFilter_<filtername>
  */
 class hamleTag_Filter extends hamleTag {
+  /**
+   * @var hamleFilter $filter Filter CLass
+   */
+  protected $filter;
   function __construct($tag) {
     parent::__construct();
     $this->type = strtolower($tag);
@@ -281,7 +303,6 @@ class hamleTag_HTML extends hamleTag {
     $this->opt = array();
     $this->source = array();
     $this->type = $tag?$tag:"div";
-    /// todo: variable substitution
     if(isset($param[0]) && $param[0] == "[") {
       $param = substr($param, 1, strlen($param)-2);
       parse_str($param, $this->opt);
@@ -304,13 +325,11 @@ class hamleTag_HTML extends hamleTag {
   function renderEnTag() {
     if(in_array($this->type,self::$selfCloseTags))
             return "";
-        var_dump($this->opt['class']);
-
     return "</{$this->type}>";
   }
   /**
    * Used to convert urlencoded string into html attributes
-   * 
+   *
    * @return string HTML Attributes
    */
   function optToTags() {
@@ -324,6 +343,46 @@ class hamleTag_HTML extends hamleTag {
       $out[] = " ".$k->toHTML()."=\"".$v->toHTML()."\"";
     }
     return implode("", $out);
+  }
+}
+
+class hamleTag_DynHTML extends hamleTag_HTML {
+  static $var = 0;
+  protected $varname;
+  function __construct($tag, $classid, $param=array()) {
+    parent::__construct($tag, $classid, $param);
+    self::$var++;
+    $this->varname = "\$dynhtml".self::$var;
+  }
+  function render($indent = 0, $doIndent = true) {
+    $data = hamleString::varToCode(array("type"=>$this->type,"opt"=>$this->opt, "source"=>$this->source, "content"=>$this->content));
+    $out = "<?php ".$this->varname."=$data; echo hamleTag_DynHTML::toStTag(".$this->varname.",\$form).";
+    $out .= "implode('\\n',".$this->varname."['content']).";
+    $out .= "hamleTag_DynHTML::toEnTag(".$this->varname.",\$form)?>\n";
+    return $out;
+  }
+  function addChild($tag, $mode = "append") {
+    throw new hamleEx_ParseError("Unable to display content within a Dynamic Tag");
+  }
+  static function toStTag(&$d, hamleForm $form) {
+    foreach($d["source"] as $source) {
+      $form->getField($source)->getDynamicAtt($d['opt'], $d['type'], $d['content']);
+    }
+    $out = "<".$d['type']." ";
+    foreach($d['opt'] as $k=>$v) {
+      if(is_array($v)) {
+        foreach($v as $k2=>$v2)
+          if($v[$k2] instanceof hamleString) $v[$k2] = eval('return '.$v[$k2]->toPHP().';');
+        $v = implode(" ",$v);
+      }
+      if($v instanceOf hamleString) $v = eval('return '.$v->toPHP().';');
+      $out .= $k."=\"".str_replace("\"","\\\"",$v)."\" ";
+    }
+    $out .= in_array($d['type'],self::$selfCloseTags)?"/>":">";
+    return $out;
+  }
+  static function toEnTag($d, $form) {
+    return in_array($d['type'],self::$selfCloseTags)?"</".$d['type'].">":"";
   }
 }
 
@@ -377,8 +436,7 @@ class hamleTag_Comment extends hamleTag {
       $this->commentstyle = "HTML";
   }
   function renderStTag() {
-    if($this->commentstyle == "HTML")
-      return "<!-- ";
+    return $this->commentstyle == "HTML"?"<!-- ":"";
   }
   function renderContent($pad = "", $oneliner = false) {
     if($this->commentstyle == "HTML")
@@ -389,8 +447,7 @@ class hamleTag_Comment extends hamleTag {
     return "";
   }  
   function renderEnTag() {
-    if($this->commentstyle == "HTML")
-      return " -->";
+    return $this->commentstyle == "HTML"?" -->":"";
   }
 }
 
@@ -414,7 +471,6 @@ class hamleTag_Form extends hamleTag {
     self::$sCount = count(self::$sForm);
     $out = array();
     foreach($this->form->getHTMLProp() as $k=>$v) {
-      $v = $v; $k = $k;
       $out[] = "$k=\"$v\"";
     }
     $fields = $this->form->getFields();
@@ -422,39 +478,41 @@ class hamleTag_Form extends hamleTag {
      foreach($labelTags as $tag) 
       if($tag instanceOf hamleTag_HTML)
         foreach($tag->source as $source) {
-          $tag->opt = $fields[$source]->getLabelAttrib($tag->opt);
-          $tag->addContent($fields[$source]->label);
+          $fields[$source]->getLabelAttStatic($tag->opt, $tag->type, $tag->content);
         }
     $inputTags = $this->find(array(array("type"=>"hint")));
     foreach($inputTags as $tag) 
       if($tag instanceOf hamleTag_HTML)
         foreach($tag->source as $source) {
-          $tag->opt = $fields[$source]->getHintAttrib($tag->opt, $tag->type);
-          if($field[$source]->hinttext)
-            $tag->addContent($field[$source]->hinttext);
+          $fields[$source]->getHintAttStatic($tag->opt, $tag->type, $tag->content);
         }
     $inputTags = $this->find(array(array("type"=>"input")));
     foreach($inputTags as $tag) 
       if($tag instanceOf hamleTag_HTML)
         foreach($tag->source as $source) {
-          $tag->opt = $fields[$source]->getInputAttrib($tag->opt);
+          $fields[$source]->getInputAttStatic($tag->opt, $tag->type, $tag->content);
           unset($fields[$source]);
         }
     foreach($fields as $n=>$f) {
       if(!$f instanceOf hamleField_Button) {
         $this->addChild($label = new hamleTag_HTML("label","!$n"));
-        $label->opt = $f->getLabelAttrib($label->opt);
-        $label->addContent($f->label);
+        $f->getLabelAttStatic($label->opt, $label->type, $label->content);
       }
       $this->addChild($input = new hamleTag_HTML("input","!$n"));
-      $input->opt = $f->getInputAttrib($input->opt);
+      $f->getInputAttStatic($input->opt, $input->type, $input->content);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";
   }
 
   function renderEnTag() {
     return "<?php unset(\$form); ?></form>";
-    array_pop(self::$sForm);
-    self::$sCount = count(self::$sForm);
+//    array_pop(self::$sForm);
+//    self::$sCount = count(self::$sForm);
+  }
+}
+
+class hamleTag_FormHint extends hamleTag {
+  function renderStTag() {
+    return "<div><?=\$form->hint?></div>";
   }
 }

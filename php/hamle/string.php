@@ -66,6 +66,10 @@ class hamleString {
       $out[] = $string->toPHP();
     return implode(".",$out);
   }
+
+  function doEval() {
+    return eval('return '.$this->toPHP().';');
+  }
     
   static function varToCode($var) {
     if (is_array($var)) {
@@ -93,7 +97,7 @@ class hamleString_Plain extends hamleString {
     return hamleString::varToCode($this->s);
   }
   function toHTML() {
-    return str_replace(array('&','"'),array('&amp;','&quot;'),$this->s);
+    return htmlspecialchars($this->s);
   }
 }
 
@@ -220,6 +224,7 @@ class hamleString_Func extends hamleString_SimpleVar {
       else
         return "hamleRun::modelTypeId(".
                 hamleString::varToCode ($this->filt['id']).",$limit)$sub";
+    return "";
   }
   
   function toHTML() { throw new 
@@ -273,9 +278,10 @@ class hamleString_FormField extends hamleString {
     $this->var = $var;
   }
   function toPHP() {
-
+    return '$form->getField('.hamleString::varToCode($this->var).')->getValue()';
   }
   function toHTML() {
-    return '<?=$form->getField('.hamleString::varToCode($this->var).')->getValue()?>';
+    return '<?='.$this->toPHP().'?>';
   }
 }
+

@@ -11,11 +11,22 @@ class hamleEx extends Exception {
   //put your code here
 }
 
-class hamleEx_ParseError extends hamleEx { }
+class hamleEx_ParseError extends hamleEx {
+  function __construct($message = "" , $code = 0, $previous = NULL) {
+    ///@todo  Include Line number & file name within parse error exceptions
+    $message .= ", on line ".hamle::getLineNo()." in file ?.hamle";
+    parent::__construct($message, $code, $previous);
+  }
+}
 /**
  * HAMLE Exception - File Not Found
  */
 class hamleEx_NotFound extends hamleEx { }
+
+/**
+ * Class hamleEx_RunTime - Runtime Exceptions
+ */
+class hamleEx_RunTime extends hamleEx { }
 
 class hamleEx_Filter extends hamleEx { }
 class hamleEx_NoFilter extends hamleEx_Filter { }
