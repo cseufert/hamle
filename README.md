@@ -95,6 +95,9 @@ becomes
     * `if $price greater 10`
   * `|else` - else for `|with`, and `|if`
   * Future Ideas
+    * `|page <key>,<size> <modelIterator>` - eg `|page results,16 $(#gallery > photo)`
+      * Special Link Targets: `a!firstpage`; `a!prevpage`; `a!nextpage`; `a!lastpage`; 
+      * Special Page Features: Page `div!thispage` of `div!pagecount`; `div!pagelinks`;
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
       * `if $price less 10 OR $price greater 20`
     * `|unless $title` - if not shortcut, show block if there is no title

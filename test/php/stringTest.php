@@ -39,6 +39,13 @@ class stringTest extends base{
     $this->assertEquals("Hello <?=hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0)->hamleGet('state')?>", $html);
     $this->assertEquals("'Hello '.hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0)->hamleGet('state')", $php);
   }
+  public function testDollarString6() {
+    $hs = new hamleString("Hello {\$[1]->summary}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=hamleScope::get(1)->hamleGet('summary')?>", $html);
+    $this->assertEquals("'Hello '.hamleScope::get(1)->hamleGet('summary')", $php);
+  }
   public function testDollarStringEscape1() {
     $hs = new hamleString("String with \\$ Dollar Sign");
     $html = $hs->toHTML();
