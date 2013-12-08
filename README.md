@@ -11,7 +11,7 @@ to address, is to remove native code from the template. The idea here being that
 could be served as html from the server, however where supported, it could be rendered by
 javascript, with a small json request to retreive the data to fill the template with. The main
 focus for hamle is not on markup, but on page/document structure, so inline tags are not a
-consideration at this stage.
+consideration at this stage. The focuis is on clean, readable markup
 
 * CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
@@ -142,7 +142,7 @@ becomes
   * Better syntax debugging
 
 ## Example 
-```haml
+```hamle
 html
   body
     .head

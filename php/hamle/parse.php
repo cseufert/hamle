@@ -84,7 +84,7 @@ class hamleParse {
       $line = $this->lines[$this->lineNo];
       if(trim($line)) if(preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
         if(FALSE !== strpos($m[1], "\t"))
-          throw new hamleEx_ParseError("Tabs are not supprted in templates at this time");
+          throw new hamleEx_ParseError("Tabs are not supported in templates at this time");
         $indent = strlen($m[1]);
         $tag = isset($m[2])?$tag = $m[2]:""; 
         $classid = isset($m[3])?$m[3]:""; 
@@ -142,7 +142,7 @@ class hamleParse {
         else
           $this->root[] = $hTag;
       } else 
-        throw new hamleEx_ParseError("Unable to parse line $this->lineNo\n\"$line\"");
+        throw new hamleEx_ParseError("Unable to parse line {$this->lineNo}\n\"$line\"/".preg_last_error());
       $this->lineNo++;
     }
   }
