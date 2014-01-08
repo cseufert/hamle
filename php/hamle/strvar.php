@@ -390,7 +390,11 @@ class hamleStrVar_Comp implements hamleStrVar_int {
     $p2 = $this->param2->toPHP();
     switch($this->operator) {
       case "equals":
+      case "equal":
         return $p1." == ".$p2;
+      case "notequals":
+      case "notequal":
+        return $p1." != ".$p2;
       case "less":
         return $p1." < ".$p2;
       case "greater":

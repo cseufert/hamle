@@ -86,6 +86,7 @@ becomes
     * Variable substitution is active within the filename
   * `|if $id equals $(view)->id` - include section if this id is the view id
     * `if $title equals a`
+    * `if $id notequal 54`
     * `if $tags has sale` - has sale in array
     * `if $title starts Hi`
     * `if $title ends s`

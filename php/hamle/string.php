@@ -50,7 +50,7 @@ class hamleString {
       }
     }
     if($pos != strlen($s))
-      $this->nodes[] = new hamleString_Plain(substr($s, $pos));
+      $this->nodes[] = new hamleString_Plain(substr($s, $pos), $mode);
   }
   
   function toHTML() {
@@ -90,13 +90,17 @@ class hamleString {
 
 class hamleString_Plain extends hamleString {
   protected $s;
-  function __construct($s) {
+  protected $type;
+  function __construct($s, $type = self::TOKEN_HTML) {
     $this->s = str_replace('\\$',"$",$s);
+    $this->type = $type;
   }
   function toPHP() {
     return hamleString::varToCode($this->s);
   }
   function toHTML() {
+    if($this->type == self::TOKEN_CODE)
+      return $this->s;
     return htmlspecialchars($this->s);
   }
 }
