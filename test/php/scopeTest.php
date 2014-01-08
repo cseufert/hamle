@@ -70,14 +70,14 @@ class scopeTest extends base {
              '    |if $title'.PHP_EOL.
              '      h2 $title'.PHP_EOL.
              '    |if {$[0]->istrue}'.PHP_EOL.
-             '      .show This will be visible'.PHP_EOL.
+             '      .show[class={$[0]->class}] This will be visible'.PHP_EOL.
              '    |if $nottrue'.PHP_EOL.
              '      .hide This will not be shown'.PHP_EOL;
     $html = '
 <html>
   <body>
     <h2>This is My TITLE</h2>
-    <div class="show">This will be visible</div>
+    <div class="colored show">This will be visible</div>
   </body>
 </html>';
     $this->hamle->parse($hamle);
