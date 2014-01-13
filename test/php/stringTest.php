@@ -101,6 +101,7 @@ class stringTest extends base{
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),0,'',4,0)", $php);
   }
+  
   public function testDollarFunc5() {
     $hs = new hamleString("\$(page^title:1-3)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
@@ -112,6 +113,12 @@ class stringTest extends base{
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('photo'=>array(0=>'heroimage')),4,'',1,0)", $php);
+  }
+  public function testDollarFunc7() {
+    $hs = new hamleString("\$(.hero-image^:1)", hamleString::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("hamleRun::modelTypeTags(array('*'=>array(0=>'hero-image')),4,'',1,0)", $php);
   }
   public function testDollarFuncChild1() {
     $hs = new hamleString("\$(#my_page > link)", hamleString::TOKEN_CONTROL);

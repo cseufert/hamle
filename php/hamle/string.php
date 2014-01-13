@@ -185,7 +185,7 @@ class hamleString_Func extends hamleString_SimpleVar {
       if(preg_match('/^[a-zA-Z0-9\\_]+/', $str, $m)) $type = $m[0];
       else $type = "*";
       if(preg_match('/#([a-zA-Z0-9\_]+)/', $str, $m)) $att['id'][$type][] = $m[1];
-      elseif(preg_match('/\\.([a-zA-Z0-9\_]+)/', $str, $m))
+      elseif(preg_match('/\\.([a-zA-Z0-9\_\-]+)/', $str, $m))
                                   $att['tag'][$type][] = $m[1];
       else $att['tag'][$type] = array();
     }
