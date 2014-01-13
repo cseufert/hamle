@@ -11,39 +11,51 @@ class hamleSetup {
   /**
    * Returns the full file path to the cache file
    * 
-   * @param string $file Filename of cache file
+   * @param string $f Filename of cache file
    * @return string Directory to store cache in
    */
   function cachePath($f) {
     return __DIR__."/../../cache/$f"; }
-  
+
   /**
    * Open the default model when only an ID is specified in the template
-   * 
+   *
    * @param mixed $id Identifier when no type is passed
+   * @param int $sortDir Sort Direction defined by hamle::SORT_*
+   * @param string $sortField Field name to sort by
+   * @param int $limit Results Limit
+   * @param int $offset Results Offset
    * @return hamleModel Instance of model class that implements hamleModel
    */
   function getModelDefault($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) { return new hamleDemoModel($id); }
-  
+
   /**
    * Open a specific model type with id
-   * 
-   * @param string $name Type Name
-   * @param mixed $id Identifier for Model
+   *
+   * @param array[] $typeId Type ID array [type=>[id]] or [page=>[3]]
+   * @param int $sortDir Sort Direction defined by hamle::SORT_*
+   * @param string $sortField Field name to sort on
+   * @param int $limit Results Limit
+   * @param int $offset Results Offset
+   * @throws hamleEx_Runtime
    * @return hamleModel Instance of model class that implements hamleModel
    */
   function getModelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     if(count($typeId) > 1)
       throw new hamleEx_Runtime("Unable to open more than one ID at a time");
     foreach($typeId as $type=>$id)
-      return hamleDemoModel::findId($name, current($id)); 
+      return hamleDemoModel::findId($type, current($id));
+    return new hamleModel_Zero();
   }
-  
+
   /**
    * Return Iterator containing results from search of tags
-   * 
-   * @param string $name Model Type Name
-   * @param array $tags Array of Tags to search for (Default Logic is AND)
+   *
+   * @param array[] $typeTags Type Tag Array [type=>[tag1,tag2],type2=>[]]
+   * @param int $sortDir Sort Direction defined by hamle::SORT_*
+   * @param string $sortField Field name to sort
+   * @param int $limit Results Limit
+   * @param int $offset Results Limit
    * @return hamleModel Instance of Iteratable model class
    */
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {

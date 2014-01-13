@@ -18,17 +18,21 @@ interface hamleModel extends Iterator {
    * Retreive an iterable result of relatives to the current object
    * @param int $rel Relation to this object hamle::REL_CHILD, etc
    * @param array $typeTags Array of types to search containing tags eg([photo->[landscape,wide]])
+   * @param int $sortDir Sort Direction defined by hamle::SORT_*
+   * @param string $sortField Field to sort by
+   * @param int $limit Limit of rows to return
+   * @param int $offset Offset Number of rows to offset results by
    * @return hamleModel Return object must implmement hamleModel interface
    */
-  function hamleRel($rel, $typeTags);
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0);
 }
 
-class hamleModel_zero implements hamleModel {
+class hamleModel_Zero implements hamleModel {
   function hamleGet($key) {
-    throw new hamleEx_NoKey("Cant find Key ($key)");
+    return new hamleModel_Zero();
   }
-  function hamleRel($rel, $typeTags) {
-    throw new hamleEx_NoFunc("Unable to retreive relations");
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
+    return new hamleModel_Zero();
   }
   
   function valid() { return false; }
@@ -43,8 +47,8 @@ class hamleModel_one implements hamleModel {
   function hamleGet($key) {
     throw new hamleEx_NoKey("Cant find Key ($key)");
   }
-  function hamleRel($rel, $typeTags) {
-    throw new hamleEx_NoFunc("Unable to retreive relations");
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
+    return new hamleModel_Zero();
   }
   
   function valid() { return $this->hamleIndex == 0; }
@@ -75,10 +79,19 @@ class hamleModel_array extends hamleModel_zero {
 }
 
 class hamleModel_arrayObj extends hamleModel_array {
+  /**
+   * Create a new array object helper
+   * @param hamleModel[] $array Array of hamle objects
+   */
+  function __construct($array = array()) {
+    $this->data = $array;
+    $this->pos = 0;
+  }
+
   function hamleGet($key) {
     return $this->data[$this->pos]->hamleGet($key);
   }
-  function hamleRel($rel, $typeTags) {
+  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0, $offset = 0) {
     return $this->data[$this->pos]->hamleRel($rel, $typeTags);
   }
   function current() { return $this->data[$this->pos]; }

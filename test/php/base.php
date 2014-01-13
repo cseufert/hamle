@@ -1,7 +1,7 @@
 <?php
 
 require_once 'XmlDiff/src/XmlDiff.php';
-require_once("../../php/autoload.php");
+require_once(__DIR__."/../../php/autoload.php");
 
 class base extends PHPUnit_Framework_TestCase {
 	/**
@@ -59,6 +59,20 @@ class baseTestSetup extends hamleSetup {
               array('url'=>'http://www.test.com',  'title'=>'Test.com'),
               array('url'=>'http://www.test2.com', 'title'=>'Test2.com'),
               array('url'=>'http://www.test3.com', 'title'=>'Test3.com')));
-    return parent::getNamedModel($name, $id);
+    if(in_array("formtest",array_keys($typeTags)))
+      return new hamleModel_array(array(
+              array('title'=>'The Title',  'testform'=>new formTestForm())));
+    return parent::getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0);
   }
 }
+
+class formTestForm extends hamleForm {
+  function setup() {
+    $this->fields = array(
+      (new hamleField("title"))->required(true),
+      (new hamleField("message"))->default("Message goes here"),
+      (new hamleField_Button("save"))
+    );
+  }
+}
+

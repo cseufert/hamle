@@ -11,7 +11,7 @@ to address, is to remove native code from the template. The idea here being that
 could be served as html from the server, however where supported, it could be rendered by
 javascript, with a small json request to retreive the data to fill the template with. The main
 focus for hamle is not on markup, but on page/document structure, so inline tags are not a
-consideration at this stage.
+consideration at this stage. The focus is on clean, readable markup
 
 * CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
@@ -86,6 +86,7 @@ becomes
     * Variable substitution is active within the filename
   * `|if $id equals $(view)->id` - include section if this id is the view id
     * `if $title equals a`
+    * `if $id notequal 54`
     * `if $tags has sale` - has sale in array
     * `if $title starts Hi`
     * `if $title ends s`
@@ -95,6 +96,9 @@ becomes
     * `if $price greater 10`
   * `|else` - else for `|with`, and `|if`
   * Future Ideas
+    * `|page <key>,<size> <modelIterator>` - eg `|page results,16 $(#gallery > photo)`
+      * Special Link Targets: `a!firstpage`; `a!prevpage`; `a!nextpage`; `a!lastpage`; 
+      * Special Page Features: Page `div!thispage` of `div!pagecount`; `div!pagelinks`;
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
       * `if $price less 10 OR $price greater 20`
     * `|unless $title` - if not shortcut, show block if there is no title
@@ -130,6 +134,7 @@ becomes
   * Plain text, can be easily translated
   * `_` is only required when text is the first thing on a new line
   * To escape $ sign, use \\$
+  * use '__' when you do not want to escape any html special chars (ie. you want to include html within your output.
  
 
 ## Todo List
@@ -141,7 +146,7 @@ becomes
   * Better syntax debugging
 
 ## Example 
-```haml
+```hamle
 html
   body
     .head
@@ -153,15 +158,18 @@ html
         ul#mainmenu
           |each
             li.menuitem
-              a[href=$url] $title
-                |with $( > text)
-                  ul.submenu
-                    |each
-                      li.menuitem
-                        |if $[0]->id = $id
-                          a.highlight[href=$url] $title
-                        |else
-                          a[href=$url] $title
+              |if {$[1]->id} = $id
+                a.highlight[href=$url] $title
+              |else
+                a[href=$url] $title
+              |with $( > text)
+                ul.submenu
+                  |each
+                    li.menuitem
+                      |if {$[1]->id} = $id
+                        a.highlight[href=$url] $title
+                      |else
+                        a[href=$url] $title
       .body
         |if $text
           $text

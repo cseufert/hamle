@@ -3,7 +3,7 @@
   body
     |form myHameForm $commentform
       .errors
-        |formhint
+        p!validate
       table
         tr
           td[colspan=2]
@@ -27,6 +27,9 @@
           td
             |options state
               radio!state[id=opt$val]
+        tr
+          td
+            label!state
           td
             select!state
               |options state

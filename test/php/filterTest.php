@@ -9,8 +9,7 @@ class fitlerTest extends base {
              '    :css'.PHP_EOL.
              '      div#id.class { color: red; }'.PHP_EOL.
              '      div#id2.class { padding: 5px; }'.PHP_EOL;
-    $html = '
-<html>
+    $html = '<html>
   <head>
     <style>
       div#id.class { color: red; }
@@ -32,22 +31,21 @@ class fitlerTest extends base {
              '        console.log($("body").html());'.PHP_EOL.
              '      });'.PHP_EOL.
              '  body';
-    $html = '
-<html>
-  <head>
-    <script type="text/javascript">
-/*<![CDATA[*/
-      $(document).ready(function() {
-        console.log($("body").html());
-      });
-/*]]>*/    </script>
-  </head>
-  <body></body>
-</html>
-';
+    $html = "<html>\n".
+            "  <head>\n".
+            "    <script type=\"text/javascript\">\n".
+            "/*<![CDATA[*/\n".
+            "      $(document).ready(function() {\n".
+            "        console.log($(\"body\").html());\n".
+            "      });\n".
+            "/*]]>*/    </script>\n".
+            "  </head>\n".
+            "  <body></body>\n".
+            "</html>";
+
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
-    $this->compareXmlStrings($html, $out);
+    $this->assertSame(trim($html), trim($out));
   }
  
     public function testJavascriptVars() {

@@ -206,9 +206,7 @@ class hamleStrVar_string implements hamleStrVar_int {
     $this->s = $s;
   }
   function toHTML() {
-    return str_replace(
-              array('\\$', "&"    ,"\""    ),
-              array('$'  , "&amp;","&quot;"),$this->s);
+    return htmlspecialchars($this->s);
   }
   function toPHP() {
     return hamleStrVar::arrayToPHP($this->s);
@@ -392,7 +390,11 @@ class hamleStrVar_Comp implements hamleStrVar_int {
     $p2 = $this->param2->toPHP();
     switch($this->operator) {
       case "equals":
+      case "equal":
         return $p1." == ".$p2;
+      case "notequals":
+      case "notequal":
+        return $p1." != ".$p2;
       case "less":
         return $p1." < ".$p2;
       case "greater":
