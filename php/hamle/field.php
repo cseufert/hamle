@@ -12,12 +12,11 @@ class hamleField {
   
   protected $name;
   
-  protected $value;
+  protected $setValue = null;
 
   protected $valid = true;
   
   function __construct($name, $options = array()) {
-    $this->value = null;
     $this->name = $name;
     $this->hint = "";
     $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
@@ -34,7 +33,7 @@ class hamleField {
         throw new hamleEx("Unable to change $name after object is created");
       case "val":
       case "value":
-        $this->value = $val;
+        $this->setValue = $val;
         break;
       default:
         $this->opt[$name] = $val;
@@ -61,20 +60,21 @@ class hamleField {
         throw new hamleEx("Unable to change $name after object is created");
       case "val":
       case "value":
-        return $this->value = $val;
+        return $this->setValue = $val;
       default:
         return isset($this->opt[$name])?$this->opt[$name]:null;
     }
   }
   
   function getValue() {
+    if(!is_null($this->setValue)) return $this->setValue;
     if(isset($_REQUEST[$this->form."_".$this->name])) {
-      $this->value = $_REQUEST[$this->form."_".$this->name];
       if(get_magic_quotes_runtime())
-        $this->value = stripslashes($this->value);
-      return $this->value;
-    } else 
-      return is_null($this->value)?$this->opt['default']:$this->value;
+          return stripslashes($_REQUEST[$this->form."_".$this->name]);
+        else
+          return $_REQUEST[$this->form."_".$this->name];
+    }
+    return $this->opt['default'];
   }
   function getInputAttStatic(&$atts, &$type, &$content) {
     $atts['name'] = $this->form."_".$this->name;
