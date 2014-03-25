@@ -71,7 +71,7 @@ class hamleForm {
     return $this->fields[$n];
   }
   function __get($n) {
-    return $this->getFIeld($n);
+    return $this->getField($n);
   }
   
   function getHTMLProp() {
