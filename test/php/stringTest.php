@@ -4,6 +4,13 @@ require_once "base.php";
 
 class stringTest extends base{
   
+  public function testPlainString1() {
+    $hs = new hamleString("\"SimpleFileName.hamle\"", hamleString::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("SimpleFileName.hamle", $html);
+    $this->assertEquals("'SimpleFileName.hamle'", $php);
+  }
   public function testDollarString1() {
     $hs = new hamleString("Hello \$user");
     $html = $hs->toHTML();

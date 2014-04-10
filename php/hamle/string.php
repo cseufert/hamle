@@ -29,7 +29,10 @@ class hamleString {
     $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
     if(!trim($s)) return;
     if($mode == self::TOKEN_CONTROL) {
-      $this->nodes[] = new hamleString_Complex(trim($s));
+      if(preg_match('/^"(.*)"$/',trim($s),$m)) {
+        $this->nodes[] = new hamleString($m[1]);
+      } else
+        $this->nodes[] = new hamleString_Complex(trim($s));
       return;
     }
     preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
