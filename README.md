@@ -173,7 +173,7 @@ html
             li.icon
                a[href=$url&class=$code]
                  img[alt=$title] $->child(“img”)->url
-        |include footer_$type.hamle
+        |include "footer_$type.hamle"
         |if $alias != “home”
           a[href=/] Home
         .powered
