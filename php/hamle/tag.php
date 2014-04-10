@@ -479,7 +479,10 @@ class hamleTag_Form extends hamleTag {
     $param = explode(' ',$param);
     if(count($param) < 2) throw new hamleEx_ParseError("|form requires 2 arguments, form type, and instance");
     $this->var = new hamleString($param[1]);
-    $this->form = new $param[0];
+    if(preg_match('/^(.*)\((.*)\)/',$param[0],$m))
+      $this->form = new $m[1]($m[2]);
+    else
+      $this->form = new $param[0];
   }
   function renderStTag() {
     self::$sForm[] = $this;
