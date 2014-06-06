@@ -1,0 +1,4 @@
+|snippet prepend html head
+  script[src=/js/jquery.min.js]
+|snippet append html head
+  info[loaded=JQuery]
