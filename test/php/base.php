@@ -68,7 +68,7 @@ class baseTestSetup extends hamleSetup {
 
 class formTestForm extends hamleForm {
   function setup() {
-    $this->fields = array(
+    $this->_fields = array(
       (new hamleField("title"))->required(true),
       (new hamleField("message"))->default("Message goes here"),
       (new hamleField_Button("save"))
