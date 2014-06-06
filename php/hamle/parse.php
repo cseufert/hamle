@@ -61,12 +61,40 @@ ENDREGEX;
     $roots = $this->root; $this->root = array();
     $this->loadLines($s);
     $this->procLines();
+    $this->root = array_merge($roots, $this->root);
+    return;
     foreach($this->root as $tag) {
       if(! $tag instanceOf hamleTag_Snippet)
         throw new hamleEx_ParseError("Illegal Tag in snippet file, parent most tag has to be |snippet");
       foreach($roots as $root)
         $tag->apply($root);
     }
+    $this->root = $roots;
+  }
+
+  function applySnip() {
+    /** @var hamleTag_Snippet[] $fwdSnip */
+    $fwdSnip = array();
+    /** @var hamleTag_Snippet[] $revSnip */
+    $revSnip = array();
+    /** @var hamleTag $roots */
+    $roots = array();
+    foreach($this->root as $snip)
+      if($snip instanceOf hamleTag_Snippet) {
+        if($snip->getType() == "append") {
+          array_unshift($revSnip, $snip);
+        } else {
+          $fwdSnip[] = $snip;
+        }
+      } else {
+        $roots[] = $snip;
+      }
+    foreach($fwdSnip as $snip)
+      foreach($roots as $root)
+        $snip->apply($root);
+    foreach($revSnip as $snip)
+      foreach($roots as $root)
+        $snip->apply($root);
     $this->root = $roots;
   }
  
@@ -151,6 +179,7 @@ ENDREGEX;
     }
   }
   function output() {
+    $this->applySnip();
     $out = "";
     foreach($this->root as $tag)
       $out .= $tag->render();

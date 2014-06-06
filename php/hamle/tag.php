@@ -382,7 +382,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
     return $out;
   }
   static function toEnTag($d, $form) {
-    return in_array($d['type'],self::$selfCloseTags)?"</".$d['type'].">":"";
+    return in_array($d['type'],self::$selfCloseTags)?"":"</".$d['type'].">";
   }
 }
 
@@ -400,6 +400,7 @@ class hamleTag_Snippet extends hamleTag {
     foreach($this->path as $k=>$v)
       $this->path[$k] = hamleStrVar::getTIC($v);
   }
+  function getType() { return $this->type; }
 
   function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
     if($this->type == "content") {

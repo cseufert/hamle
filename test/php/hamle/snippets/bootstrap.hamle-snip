@@ -1,3 +1,4 @@
+|snippet prepend html head
+  script[src=/js/bootstrap.js]
 |snippet append html head
   link[rel=stylesheet&type=text/css&href=/css/bootstrap.css]
-  script[src=/js/bootstrap.js]

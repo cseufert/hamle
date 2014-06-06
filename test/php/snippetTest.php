@@ -41,6 +41,26 @@ class snippetTest extends base {
     $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
+  function testHead2Snippet() {
+    $he = new hamle($this->model(), new snippetHead2Setup());
+    $hamle = "html\n".
+        "  head\n".
+        "    title \$titlebar\n".
+        "  body\n".
+        "    .content\n";
+    $html = "<html><head>\n".
+        '    <script src="/js/jquery.min.js"></script>'."\n".
+        "   <title>My Page</title>\n".
+        '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />'."\n".
+        '    <info loaded="JQuery"></info>'."\n".
+        '    <script src="/js/bootstrap.js"></script>'."\n".
+        "</head><body>".
+        "<div class=\"content\"></div>".
+        "</body></html>";
+    $he->parse($hamle);
+    $out = $he->output();
+    $this->compareXmlStrings($html, $out);
+  }
   function testTypeClassIDSnippet() {
     $he = new hamle($this->model(), new snippetTypeClassIDSetup());
     $hamle = "html\n".
@@ -99,6 +119,11 @@ TESTHTML;
 class snippetHeadSetup extends hamleSetup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
   function snippetFiles() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip"); }
+}
+class snippetHead2Setup extends hamleSetup {
+  function templatePath($f) { return __DIR__."/hamle/$f"; }
+  function snippetFiles() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip",
+                                      __DIR__."/hamle/snippets/jquery.hamle-snip"); }
 }
 class snippetTypeClassIDSetup extends hamleSetup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
