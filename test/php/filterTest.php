@@ -11,7 +11,7 @@ class fitlerTest extends base {
              '      div#id2.class { padding: 5px; }'.PHP_EOL;
     $html = '<html>
   <head>
-    <style>
+    <style type="text/css">
       div#id.class { color: red; }
       div#id2.class { padding: 5px; }
     </style>
