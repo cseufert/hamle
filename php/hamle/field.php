@@ -137,3 +137,14 @@ class hamleField_Button extends hamleField {
     return isset($_REQUEST[$this->form."_".$this->name]);
   }
 }
+
+class hamleField_Memo extends hamleField {
+  function getInputAttStatic(&$atts, &$type, &$content) {
+    parent::getInputAttStatic($atts, $type, $content);
+    $atts['type'] = "textarea";
+  }
+
+  function isClicked() {
+    return isset($_REQUEST[$this->form."_".$this->name]);
+  }
+}

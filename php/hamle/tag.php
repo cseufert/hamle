@@ -376,7 +376,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
         $v = implode(" ",$v);
       }
       if($v instanceOf hamleString) $v = eval('return '.$v->toPHP().';');
-      $out .= $k."=\"".str_replace("\"","\\\"",$v)."\" ";
+      $out .= $k."=\"".htmlspecialchars($v)."\" ";
     }
     $out .= in_array($d['type'],self::$selfCloseTags)?"/>":">";
     return $out;
@@ -514,10 +514,10 @@ class hamleTag_Form extends hamleTag {
         }
     foreach($fields as $n=>$f) {
       if(!$f instanceOf hamleField_Button) {
-        $this->addChild($label = new hamleTag_HTML("label","!$n"));
+        $this->addChild($label = new hamleTag_DynHTML("label","!$n"));
         $f->getLabelAttStatic($label->opt, $label->type, $label->content);
       }
-      $this->addChild($input = new hamleTag_HTML("input","!$n"));
+      $this->addChild($input = new hamleTag_DynHTML("input","!$n"));
       $f->getInputAttStatic($input->opt, $input->type, $input->content);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";

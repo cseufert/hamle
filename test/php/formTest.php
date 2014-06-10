@@ -14,9 +14,12 @@ class formTest extends base {
              '        div.fmessage'.PHP_EOL.
              '          label!message'.PHP_EOL.
              '          input!message[tabindex=2]'.PHP_EOL.
+             '        div.fstring'.PHP_EOL.
+             '          label!string'.PHP_EOL.
+             '          input!string[tabindex=3]'.PHP_EOL.
              '        div.fsave'.PHP_EOL.
              '          label!save[style=display:none;]'.PHP_EOL.
-             '          input!save[tabindex=3]'.PHP_EOL;
+             '          input!save[tabindex=4]'.PHP_EOL;
     $html = '
 <html>
   <body>
@@ -29,9 +32,13 @@ class formTest extends base {
         <label for="formTestForm_message" class="hamleField">message</label>
         <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
+      <div class="fstring">
+        <label for="formTestForm_string" class="hamleField">string</label>
+        <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" tabindex="3" />
+      </div>
       <div class="fsave">
         <label for="formTestForm_save" style="display:none;" class="hamleField_Button">save</label>
-        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="3" />
+        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="4" />
       </div>
     </form>
   </body>
@@ -59,8 +66,10 @@ class formTest extends base {
         <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
       <label for="formTestForm_title" class="hamleField" >title</label>
-      <input type="text" name="formTestForm_title" class="hamleField" />
-      <input type="submit" name="formTestForm_save" class="hamleField_Button" />
+      <input type="text" name="formTestForm_title" class="hamleField" value="" />
+      <label for="formTestForm_string" class="hamleField" >string</label>
+      <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" />
+      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
     </form>
   </body>
 </html>
