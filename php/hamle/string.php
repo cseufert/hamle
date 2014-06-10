@@ -40,14 +40,14 @@ class hamleString {
       if($mode & self::FIND_BARDOLLAR && isset($match[2])) {
         if($match[2][1] != $pos)
           $this->nodes[] = new hamleString_Plain(
-                                    substr($s, $pos, $match[2][1] - $pos));
+                                    substr($s, $pos, $match[2][1] - $pos), $mode);
         $this->nodes[] = new hamleString_Complex(substr($match[2][0],1,-1));
         $pos = $match[2][1] + strlen($match[2][0]);
       } elseif($mode & self::FIND_DOLLARVAR) {
         if($match[1][1] > 0 && $s[$match[1][1]-1] == '\\') continue;
         if($match[1][1] != $pos)
           $this->nodes[] = new hamleString_Plain(
-                                    substr($s, $pos, $match[1][1] - $pos));
+                                    substr($s, $pos, $match[1][1] - $pos), $mode);
         $this->nodes[] = new hamleString_SimpleVar($match[1][0]);
         $pos = $match[1][1] + strlen($match[1][0]);
       }

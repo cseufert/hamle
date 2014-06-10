@@ -79,27 +79,26 @@ class formTest extends base {
     $this->compareXmlStrings($html, $out);
   }
  
-    public function testJavascriptVars() {
+public function testJavascriptVars() {
     $hamle = "head".PHP_EOL.
              '  :javascript'.PHP_EOL.
              '    $(document).ready(function() {'.PHP_EOL.
-             '      console.log("{$title}");'.PHP_EOL.
+             '      console.log("My Title = {$title}");'.PHP_EOL.
              "      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');".PHP_EOL.
              '    });'.PHP_EOL;
-    $html = '
-<head>
+    $html = '<head>
   <script type="text/javascript">
 /*<![CDATA[*/
-      $(document).ready(function() {
-        console.log("This is My TITLE");
-      });
-/*]]>*/    </script>
+    $(document).ready(function() {
+      console.log("My Title = This is My TITLE");
+      var regExp	= eval(\'/^aprod_\'+grpid+\'_\d+$/i\\\');
+    });
+/*]]>*/  </script>
 </head>
 ';
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
-    $this->compareXmlStrings($html, $out);
+    $this->assertEquals($html, $out);
   }
 
-   
 }

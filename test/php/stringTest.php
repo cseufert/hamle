@@ -53,6 +53,18 @@ class stringTest extends base{
     $this->assertEquals("Hello <?=hamleScope::get(1)->hamleGet('summary')?>", $html);
     $this->assertEquals("'Hello '.hamleScope::get(1)->hamleGet('summary')", $php);
   }
+  public function testDollarCodeString1() {
+    $hs = new hamleString("\"My Title = {\$title}\"",hamleString::TOKEN_CODE);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("\"My Title = <?=hamleScope::get()->hamleGet('title')?>\"", $html);
+  }
+  public function testDollarCodeString2() {
+    $hs = new hamleString("\"My Title = \$title\"",hamleString::TOKEN_CODE);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("\"My Title = \$title\"", $html);
+  }
   public function testDollarStringEscape1() {
     $hs = new hamleString("String with \\$ Dollar Sign");
     $html = $hs->toHTML();
