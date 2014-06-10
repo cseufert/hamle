@@ -40,12 +40,15 @@ class formTest extends base {
         <label for="formTestForm_save" style="display:none;" class="hamleField_Button">save</label>
         <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="4" />
       </div>
+      <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
+      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
     </form>
   </body>
 </html>
 ';
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
+    //$this->assertEquals($html, $out);
     $this->compareXmlStrings($html, $out);
   }
 
@@ -69,6 +72,8 @@ class formTest extends base {
       <input type="text" name="formTestForm_title" class="hamleField" value="" />
       <label for="formTestForm_string" class="hamleField" >string</label>
       <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" />
+      <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
+      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
       <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
     </form>
   </body>
