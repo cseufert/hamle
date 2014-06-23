@@ -15,6 +15,13 @@ hamle = {
         var _name = $this.attr('data-name');
         var _tpl = hamle.compile($this.html());
         hamle.tpl[_name] = function(model) {
+          var _model = model;
+          _tpl.find("span[data-var]").each(function(item) {
+            var key = $(this).attr("data-var");
+            if(key in model) {
+              $(this).html(model[key]);
+            };
+          });
           return _tpl.children();
         };
       };
@@ -46,6 +53,76 @@ hamle = {
           $tag.attr(attrs);
         };
         return $tag;
+      }
+
+      function hamleString(s, m) {
+        var nodes = [];
+        var mode = m?m:"html";
+        var buff = "";
+        var reVar = /\$([a-zA-Z0-9_]+)/;
+        var reBarVar = /\{\$([a-zA-Z0-9_]+)(.*?)\}/;
+        function dollarStr() {
+          var _m = s.match(reVar);
+          if(!_m) throw "Unable to determine variable in string (" + s + ")";
+          s = s.substr(1+_m[1].length)
+          nodes.push($(document.createElement("span")).attr('data-var',_m[1]));
+        }
+        function barDollar() {
+          var _m = s.match(reBarVar);
+          if(!_m) throw "Unable to determine variable in string (" + s + ")";
+          s = s.substr(3 + _m[1].length + _m[2].length);
+          nodes.push($(document.createElement("span")).attr('data-var',_m[1]));
+          if(_m[2]) throw "Variable accessor is not yet suppoted (" + _m[2] + ")";
+        }
+        function bufferText() {
+          var len = [];
+          var p = s.indexOf("$");
+          if(p >= 0) len.push(p);
+          var p = s.indexOf("{$");
+          if(p >= 0) len.push(p);
+          var p = s.indexOf("\\");
+          if(p >= 0) len.push(p);
+          if(len.length) {
+            minLen = Math.min.apply(Math,len);
+            buff = buff + s.substr(0,minLen);
+            s = s.substr(minLen);
+          } else {
+            buff = buff + s;
+            s = "";
+            nodes.push($(document.createTextNode(buff)));
+          }
+
+        }
+        while(s.length > 1) {
+          var _s = s.charAt(0);
+          if(_s == "\\" && s.charAt(1) == "$") {
+            buff = buff + s.substr(0,2);
+            s = s.substr(2);
+          } else {
+            if(_s == "{" && s.charAt(1) == "$") {
+              if(mode == "html") {
+                if(buff.length) nodes.push($(document.createTextNode(buff)));
+                buff = "";
+                barDollar();
+              } else {
+                bufferText();
+              }
+            } else {
+              if(_s == "$") {
+                if(mode == "html") {
+                  if(buff.length) nodes.push($(document.createTextNode(buff)));
+                  buff = "";
+                  dollarStr();
+                } else {
+                  bufferText();
+                }
+              } else {
+                bufferText();
+              }
+            }
+          }
+        }
+        return nodes;
       }
 
       var reParse = /^(\s*)(?:(?:([a-zA-Z0-9]*)((?:[\.#!][\w\-\_]+)*)(\[(?:(?:\{\$[^\}]+\})?[^\\\]{]*?(?:\\.)*?(?:{[^\$])*?)+\])?)|([_\/]{1,2})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/;
@@ -86,7 +163,7 @@ hamle = {
               break;
             default:
               tag = hamleTag(tagname, classid, params);
-              tag.html(text);
+              tag.append(hamleString(text));
               break;
           };
           if(i == 0) {

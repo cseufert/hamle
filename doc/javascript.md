@@ -33,17 +33,17 @@ Working Example (variables and conditions not yet implemented)
   </head>
   <body>
     <script data-name="home" type="text/x-hamle">
-    h1.main Hamle Test
+    h1.main Hamle Test - $title
     .row
       |if $title
         .colums.large-6
           a[href=//github.com/cseufert/hamle&id=link-hamle] Hamle
         .colums.large-6
-          span#rocks ROCKS!!!
+          span#rocks ROCKS!!! {$awe}Plus
     </script>
     <script type="text/javascript">
       hamle.autoload();
-      $(document.body).append(hamle.tpl.home(null));
+      $(document.body).append(hamle.tpl.home({"title":"Hi Fellas","awe":"Awesome"}));
     </script>
   </body>
 </html>
@@ -71,7 +71,7 @@ Outputs (in Chrome via HTML Tidy)
       $(document.body).append(hamle.tpl.home(null));
   </script>
 
-  <h1>Hamle Test</h1>
+  <h1>Hamle Test - <span data-var="title">Hi Fellas</span></h1>
 
   <div data-control="if" data-condition="$title">
     <div>
@@ -80,7 +80,7 @@ Outputs (in Chrome via HTML Tidy)
   </div>
 
   <div>
-    <span>ROCKS!!!</span>
+    <span>ROCKS!!! <span data-var="awe">Awesome</span>Plus</span>
   </div>
 </body></html>
 ```
