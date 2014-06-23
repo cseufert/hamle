@@ -14,9 +14,12 @@ class formTest extends base {
              '        div.fmessage'.PHP_EOL.
              '          label!message'.PHP_EOL.
              '          input!message[tabindex=2]'.PHP_EOL.
+             '        div.fstring'.PHP_EOL.
+             '          label!string'.PHP_EOL.
+             '          input!string[tabindex=3]'.PHP_EOL.
              '        div.fsave'.PHP_EOL.
              '          label!save[style=display:none;]'.PHP_EOL.
-             '          input!save[tabindex=3]'.PHP_EOL;
+             '          input!save[tabindex=4]'.PHP_EOL;
     $html = '
 <html>
   <body>
@@ -29,16 +32,23 @@ class formTest extends base {
         <label for="formTestForm_message" class="hamleField">message</label>
         <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
+      <div class="fstring">
+        <label for="formTestForm_string" class="hamleField">string</label>
+        <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" tabindex="3" />
+      </div>
       <div class="fsave">
         <label for="formTestForm_save" style="display:none;" class="hamleField_Button">save</label>
-        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="3" />
+        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="4" />
       </div>
+      <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
+      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
     </form>
   </body>
 </html>
 ';
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
+    //$this->assertEquals($html, $out);
     $this->compareXmlStrings($html, $out);
   }
 
@@ -59,8 +69,12 @@ class formTest extends base {
         <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
       </div>
       <label for="formTestForm_title" class="hamleField" >title</label>
-      <input type="text" name="formTestForm_title" class="hamleField" />
-      <input type="submit" name="formTestForm_save" class="hamleField_Button" />
+      <input type="text" name="formTestForm_title" class="hamleField" value="" />
+      <label for="formTestForm_string" class="hamleField" >string</label>
+      <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" />
+      <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
+      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
+      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
     </form>
   </body>
 </html>
@@ -70,27 +84,26 @@ class formTest extends base {
     $this->compareXmlStrings($html, $out);
   }
  
-    public function testJavascriptVars() {
+public function testJavascriptVars() {
     $hamle = "head".PHP_EOL.
              '  :javascript'.PHP_EOL.
              '    $(document).ready(function() {'.PHP_EOL.
-             '      console.log("{$title}");'.PHP_EOL.
+             '      console.log("My Title = {$title}");'.PHP_EOL.
              "      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');".PHP_EOL.
              '    });'.PHP_EOL;
-    $html = '
-<head>
+    $html = '<head>
   <script type="text/javascript">
 /*<![CDATA[*/
-      $(document).ready(function() {
-        console.log("This is My TITLE");
-      });
-/*]]>*/    </script>
+    $(document).ready(function() {
+      console.log("My Title = This is My TITLE");
+      var regExp	= eval(\'/^aprod_\'+grpid+\'_\d+$/i\\\');
+    });
+/*]]>*/  </script>
 </head>
 ';
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
-    $this->compareXmlStrings($html, $out);
+    $this->assertEquals($html, $out);
   }
 
-   
 }

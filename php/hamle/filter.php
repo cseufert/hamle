@@ -27,6 +27,13 @@ class hamleFilter_javascript extends hamleFilter {
 	  	$s."/*]]>*/";
   }
 }
+class hamleFilter_html extends hamleFilter {
+  static function stTag() { return "<!-- HTML Fitler -->"; }
+  static function ndTag() { return "<!-- HTML Fitler End -->"; }
+  static function filterText($s) {
+    return "$s";
+  }
+}
 /**
  * HAMLE CSS Filter
  */

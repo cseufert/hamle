@@ -9,12 +9,13 @@ class hamleForm {
   /**
    * @var hamleField[] Form Fields
    */
-  protected $fields;
-  protected $name;
+  protected $_fields;
+  protected $_name;
   public $hint;
+  protected $_data;
   /**
    * Setup Method
-   * Fills the fields array
+   * Fills the $this->fields array with hamleFields
    */
   function setup() {
     throw new hamleForm_ExNoSetup("You must configure the form in the setup ".
@@ -22,24 +23,25 @@ class hamleForm {
   }
   
   function __construct() {
-    $this->name = get_called_class();
+    $this->_data = func_get_args();
+    $this->_name = get_called_class();
     $this->setup();
-    $fields = $this->fields;
-    $this->fields = array();
+    $fields = $this->_fields;
+    $this->_fields = array();
     foreach($fields as $v) {
-      $this->fields[$v->name] = $v;
-      $v->form($this->name);
+      $this->_fields[$v->name] = $v;
+      $v->form($this->_name);
     }
     //$this->process();
   }
   
   function process() {
     $clicked = "";
-    foreach($this->fields as $f)
+    foreach($this->_fields as $f)
       if($f instanceOf hamleField_Button)
         if($f->isClicked())
           $clicked = $f;
-    foreach($this->fields as $f)
+    foreach($this->_fields as $f)
       $f->doProcess($clicked?true:false);
     if($clicked)
       try {
@@ -51,7 +53,7 @@ class hamleForm {
   
   function isValid() {
     $valid = true;
-    foreach($this->fields as $f)
+    foreach($this->_fields as $f)
       $valid = $f->valid && $valid;
     return $valid;
   }
@@ -63,19 +65,19 @@ class hamleForm {
   function onSubmit($button) { }
   
   function getFields() {
-    return $this->fields;
+    return $this->_fields;
   }
   function getField($n) {
-    if(!isset($this->fields[$n]))
+    if(!isset($this->_fields[$n]))
       throw new hamleEx_NoKey("unable to find form field ($n)");
-    return $this->fields[$n];
+    return $this->_fields[$n];
   }
   function __get($n) {
     return $this->getField($n);
   }
   
   function getHTMLProp() {
-    return array('action'=>'','method'=>'post','name'=>$this->name,
+    return array('action'=>'','method'=>'post','name'=>$this->_name,
                                         'enctype'=>'multipart/form-data');
   }
   

@@ -53,6 +53,18 @@ class stringTest extends base{
     $this->assertEquals("Hello <?=hamleScope::get(1)->hamleGet('summary')?>", $html);
     $this->assertEquals("'Hello '.hamleScope::get(1)->hamleGet('summary')", $php);
   }
+  public function testDollarCodeString1() {
+    $hs = new hamleString("\"My Title = {\$title}\"",hamleString::TOKEN_CODE);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("\"My Title = <?=hamleScope::get()->hamleGet('title')?>\"", $html);
+  }
+  public function testDollarCodeString2() {
+    $hs = new hamleString("\"My Title = \$title\"",hamleString::TOKEN_CODE);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("\"My Title = \$title\"", $html);
+  }
   public function testDollarStringEscape1() {
     $hs = new hamleString("String with \\$ Dollar Sign");
     $html = $hs->toHTML();
@@ -108,7 +120,6 @@ class stringTest extends base{
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('page'=>array()),0,'',4,0)", $php);
   }
-  
   public function testDollarFunc5() {
     $hs = new hamleString("\$(page^title:1-3)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
@@ -126,6 +137,12 @@ class stringTest extends base{
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelTypeTags(array('*'=>array(0=>'hero-image')),4,'',1,0)", $php);
+  }
+  public function testDollarFunc8() {
+    $hs = new hamleString("\$(#_ga)", hamleString::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("hamleRun::modelId('_ga',0,'',0,0)", $php);
   }
   public function testDollarFuncChild1() {
     $hs = new hamleString("\$(#my_page > link)", hamleString::TOKEN_CONTROL);

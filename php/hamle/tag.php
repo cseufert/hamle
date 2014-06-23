@@ -349,13 +349,15 @@ class hamleTag_HTML extends hamleTag {
 class hamleTag_DynHTML extends hamleTag_HTML {
   static $var = 0;
   protected $varname;
+  protected $baseType;
   function __construct($tag, $classid, $param=array()) {
     parent::__construct($tag, $classid, $param);
+    $this->baseType = $tag;
     self::$var++;
     $this->varname = "\$dynhtml".self::$var;
   }
   function render($indent = 0, $doIndent = true) {
-    $data = hamleString::varToCode(array("type"=>$this->type,"opt"=>$this->opt, "source"=>$this->source, "content"=>$this->content));
+    $data = hamleString::varToCode(array("base"=>$this->baseType,"type"=>$this->type,"opt"=>$this->opt, "source"=>$this->source, "content"=>$this->content));
     $out = "<?php ".$this->varname."=$data; echo hamleTag_DynHTML::toStTag(".$this->varname.",\$form).";
     $out .= "implode('\\n',".$this->varname."['content']).";
     $out .= "hamleTag_DynHTML::toEnTag(".$this->varname.",\$form)?>\n";
@@ -366,7 +368,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
   }
   static function toStTag(&$d, hamleForm $form) {
     foreach($d["source"] as $source) {
-      $form->getField($source)->getDynamicAtt($d['opt'], $d['type'], $d['content']);
+      $form->getField($source)->getDynamicAtt($d['base'], $d['opt'], $d['type'], $d['content']);
     }
     $out = "<".$d['type']." ";
     foreach($d['opt'] as $k=>$v) {
@@ -376,7 +378,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
         $v = implode(" ",$v);
       }
       if($v instanceOf hamleString) $v = eval('return '.$v->toPHP().';');
-      $out .= $k."=\"".str_replace("\"","\\\"",$v)."\" ";
+      $out .= $k."=\"".htmlspecialchars($v)."\" ";
     }
     $out .= in_array($d['type'],self::$selfCloseTags)?"/>":">";
     return $out;
@@ -514,10 +516,10 @@ class hamleTag_Form extends hamleTag {
         }
     foreach($fields as $n=>$f) {
       if(!$f instanceOf hamleField_Button) {
-        $this->addChild($label = new hamleTag_HTML("label","!$n"));
+        $this->addChild($label = new hamleTag_DynHTML("label","!$n"));
         $f->getLabelAttStatic($label->opt, $label->type, $label->content);
       }
-      $this->addChild($input = new hamleTag_HTML("input","!$n"));
+      $this->addChild($input = new hamleTag_DynHTML("input","!$n"));
       $f->getInputAttStatic($input->opt, $input->type, $input->content);
     }
     return "<form ".implode(" ", $out)."><?php \$form = ".$this->var->toPHP()."; \$form->process(); ?>";

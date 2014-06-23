@@ -106,12 +106,12 @@ class hamleField {
       $atts['class'][] = "hamleFormError";
     }
   }
-  function getDynamicAtt(&$atts, &$type, &$content) {
-    if($type == "input") {
+  function getDynamicAtt($base, &$atts, &$type, &$content) {
+    if($base == "input") {
       $this->getInputAttDynamic($atts, $type, $content);
-    } elseif($type == "hint") {
+    } elseif($base == "hint") {
       $this->getHintAttDynamic($atts, $type, $content);
-    } elseif($type == "label") {
+    } elseif($base == "label") {
       $this->getLabelAttDynamic($atts, $type, $contnet);
     }
   }
@@ -133,6 +133,21 @@ class hamleField_Button extends hamleField {
     $atts['type'] = "submit";
   }
   
+  function isClicked() {
+    return isset($_REQUEST[$this->form."_".$this->name]);
+  }
+}
+
+class hamleField_Memo extends hamleField {
+  function getInputAttStatic(&$atts, &$type, &$content) {
+    parent::getInputAttStatic($atts, $type, $content);
+    unset($atts['type']);
+    $type = "textarea";
+  }
+  function getInputAttDynamic(&$atts, &$type, &$content) {
+    $content = array(htmlspecialchars($this->getValue()));
+  }
+
   function isClicked() {
     return isset($_REQUEST[$this->form."_".$this->name]);
   }
