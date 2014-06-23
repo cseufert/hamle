@@ -1,8 +1,9 @@
 # HAMLE for Javascript
 
 ## Usage
-- Include Library hamle.js
-- Add templates into <script> blocks
+Include Library hamle.js
+
+Add templates into `<script>` blocks
 
 ```html
 <script type="text/x-hamle" id="tpl-home">
@@ -12,7 +13,7 @@
 </script>
 ```
 
-- Render using hamle object
+Render using hamle object
 
 ```javascript
 hamle.autoload();
