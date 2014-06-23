@@ -6,7 +6,7 @@ Include Library hamle.js
 Add templates into `<script>` blocks
 
 ```html
-<script type="text/x-hamle" id="tpl-home">
+<script type="text/x-hamle" data-name="home">
 .hamle
   #thisishamle
     a[href=/hamle] This is HAMLE ($hi)
