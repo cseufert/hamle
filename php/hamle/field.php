@@ -89,6 +89,8 @@ class hamleField {
     }
     if($this->opt["disabled"])
       $atts['disabled'] = "disabled";
+    if($this->opt['help'])
+      $atts['title'] = $this->opt['help'];
   }
   function getLabelAttStatic(&$atts, &$type, &$content) {
     $atts['class'][] = get_class($this);
