@@ -21,7 +21,7 @@ class hamleField {
     $this->hint = "";
     $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
          "default"=>"", "error"=>"$name is Required", "help"=>"", "test"=>null,
-        "form"=>"noForm", "readonly"=>false, 'hinttext'=>'');
+        "form"=>"noForm", "readonly"=>false, 'hinttext'=>'',"disabled"=>false);
   }
   
   function __call($name, $valarray) {
@@ -87,6 +87,8 @@ class hamleField {
     if(!$this->valid) {
       $atts['class'][] = "hamleFormError";
     }
+    if($this->opt["disabled"])
+      $atts['disabled'] = "disabled";
   }
   function getLabelAttStatic(&$atts, &$type, &$content) {
     $atts['class'][] = get_class($this);
