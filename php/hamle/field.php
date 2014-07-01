@@ -77,7 +77,7 @@ class hamleField {
     return $this->opt['default'];
   }
   function getInputAttStatic(&$atts, &$type, &$content) {
-    $atts['name'] = $this->form."_".$this->name;
+    $atts['id'] = $atts['name'] = $this->form."_".$this->name;
     $atts['type'] = "text";
     $atts['class'][] = get_class($this);
   }
