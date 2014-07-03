@@ -359,7 +359,7 @@ class hamleTag_DynHTML extends hamleTag_HTML {
   function render($indent = 0, $doIndent = true) {
     $data = hamleString::varToCode(array("base"=>$this->baseType,"type"=>$this->type,"opt"=>$this->opt, "source"=>$this->source, "content"=>$this->content));
     $out = "<?php ".$this->varname."=$data; echo hamleTag_DynHTML::toStTag(".$this->varname.",\$form).";
-    $out .= "implode('\\n',".$this->varname."['content']).";
+    $out .= "implode(\"\\n\",".$this->varname."['content']).";
     $out .= "hamleTag_DynHTML::toEnTag(".$this->varname.",\$form)?>\n";
     return $out;
   }
