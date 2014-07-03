@@ -32,8 +32,9 @@ class hamleForm {
       $this->_fields[$v->name] = $v;
       $v->form($this->_name);
     }
-    //$this->process();
+    $this->postInit();
   }
+  function postInit() {}
   
   function process() {
     $clicked = "";
