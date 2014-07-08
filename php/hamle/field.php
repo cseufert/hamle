@@ -146,9 +146,12 @@ class hamleField_Memo extends hamleField {
   function getInputAttStatic(&$atts, &$type, &$content) {
     parent::getInputAttStatic($atts, $type, $content);
     unset($atts['type']);
-    $type = "textarea";
   }
   function getInputAttDynamic(&$atts, &$type, &$content) {
+    parent::getInputAttDynamic($atts, $type, $content);
+    unset($atts['value']);
+    $type = "textarea";
+    unset($atts['type']);
     $content = array(htmlspecialchars($this->getValue()));
   }
 
