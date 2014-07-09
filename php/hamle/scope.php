@@ -5,7 +5,7 @@
  * @author Chris Seufert <chris@seufert.id.au>
  */
 class hamleScope {
-  static $scopes;
+  static $scopes = array();
   
   static function add($model) {
     if(!$model instanceOf hamleModel)
@@ -27,8 +27,12 @@ class hamleScope {
    * @throws hamleEx_OutOfScope
    */
   static function get($id = 0) {
+    if(0 == $id) {
+      if($scope = end(self::$scopes))
+        return $scope;
+      throw new hamleEx_OutOfScope("Unable to find Scope ($id) or $key");
+    }
     $key = $id - 1;
-    if(!isset(self::$scopes)) self::$scopes = array();
     if($id < 0) $key = count(self::$scopes) + $id - 1;
     if($id == 0) $key = count(self::$scopes) - 1;
     if(!isset(self::$scopes[$key]))
