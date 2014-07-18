@@ -40,11 +40,17 @@ class stringTest extends base{
     $this->assertEquals("'Hello '.hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->hamleGet('user')", $php);
   }
   public function testDollarString5() {
-    $hs = new hamleString("Hello {\$(site > address.mail)->state}");
+    $hs = new hamleString("Hello {\$(site > address.mail@2)->state}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hello <?=hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0)->hamleGet('state')?>", $html);
-    $this->assertEquals("'Hello '.hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0)->hamleGet('state')", $php);
+    $this->assertEquals("Hello <?=".
+        "hamleRun::modelTypeTags(array('site'=>array()),0,'',0,0)->".
+        "hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0,2)->".
+        "hamleGet('state')?>", $html);
+    $this->assertEquals("'Hello '.".
+        "hamleRun::modelTypeTags("."array('site'=>array()),0,'',0,0)->".
+        "hamleRel(1,array('address'=>array(0=>'mail')),0,'',0,0,2)->".
+        "hamleGet('state')", $php);
   }
   public function testDollarString6() {
     $hs = new hamleString("Hello {\$[1]->summary}");
@@ -149,21 +155,21 @@ class stringTest extends base{
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('my_page',0,'',0,0)".
-                      "->hamleRel(1,array('link'=>array()),0,'',0,0)", $php);
+                      "->hamleRel(1,array('link'=>array()),0,'',0,0,1)", $php);
   }  
   public function testDollarFuncChild2() {
     $hs = new hamleString("\$(#my_page > .gallery)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('my_page',0,'',0,0)".
-                    "->hamleRel(1,array('*'=>array(0=>'gallery')),0,'',0,0)", $php);
+                    "->hamleRel(1,array('*'=>array(0=>'gallery')),0,'',0,0,1)", $php);
   } 
   public function testDollarFuncChild3() {
     $hs = new hamleString("\$(#menu > page,cat)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('menu',0,'',0,0)".
-                "->hamleRel(1,array('page'=>array(),'cat'=>array()),0,'',0,0)", $php);
+                "->hamleRel(1,array('page'=>array(),'cat'=>array()),0,'',0,0,1)", $php);
   } 
   /**
    * @expectedException hamleEx_ParseError
@@ -177,12 +183,13 @@ class stringTest extends base{
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("hamleRun::modelId('heroimage',0,'',0,0)".
-                    "->hamleRel(1,array('photo'=>array()),4,'',4,0)", $php);
+                    "->hamleRel(1,array('photo'=>array()),4,'',4,0,1)", $php);
   } 
   public function testDollarFuncParent1() {
     $hs = new hamleString("\$( < cat)", hamleString::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("hamleScope::get(0)->hamleRel(2,array('cat'=>array()),0,'',0,0)", $php);
+    $this->assertEquals("hamleScope::get(0)->".
+        "hamleRel(2,array('cat'=>array()),0,'',0,0,1)", $php);
   }   
 }

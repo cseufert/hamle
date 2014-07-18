@@ -166,7 +166,7 @@ class hamleString_Func extends hamleString_SimpleVar {
   protected $scope = false;
   protected $filt;
   protected $sortlimit;
-  const REGEX_FUNCSEL = '[a-zA-Z0-9\.,#_:\\^\\-]';
+  const REGEX_FUNCSEL = '[a-zA-Z0-9\.,#_:\\^\\-@]';
   function __construct($s) {
     $m = array();
     if(!preg_match('/^\$\(('.self::REGEX_FUNCSEL.'*)(.*)\)$/', $s, $m))
@@ -214,6 +214,14 @@ class hamleString_Func extends hamleString_SimpleVar {
     }
     return $att;
   }
+  function attGroupType(&$s) {
+    $att = array('grouptype'=>1);
+    $m = array();
+    if(preg_match('/@([0-9]+)/',$s,$m)) {
+      $att['grouptype'] = $m[1];
+    }
+    return $att;
+  }
   function toPHP() {
     $limit = $this->sortlimit['dir'].",".
             hamleString::varToCode($this->sortlimit['field']).",".
@@ -249,6 +257,7 @@ class hamleString_FuncSub extends hamleString_Func {
     else $this->dir = hamle::REL_ANY;
     $this->sortlimit = $this->attSortLimit($m[2]);
     $this->filt = $this->attIdTag($m[2]);
+    $this->grouptype = $this->attGroupType($m[2]);
     if($this->filt['id']) throw new hamleEx_ParseError("Unable to select by id");
     if(trim($m[3]))
       $this->sub = new hamleString_FuncSub($m[3]);
@@ -256,7 +265,8 @@ class hamleString_FuncSub extends hamleString_Func {
   function toPHP() {
     $limit = $this->sortlimit['dir'].",".
             hamleString::varToCode($this->sortlimit['field']).",".
-            $this->sortlimit['limit'].",".$this->sortlimit['offset'];
+            $this->sortlimit['limit'].",".$this->sortlimit['offset'].",".
+            $this->grouptype['grouptype'];
     $sub = $this->sub?"->".$this->sub->toPHP():"";
     return "hamleRel(".$this->dir.",".
               hamleString::varToCode($this->filt['tag']).",$limit)$sub";
