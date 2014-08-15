@@ -81,6 +81,10 @@ class hamleForm {
     return array('action'=>'','method'=>'post','name'=>$this->_name,
                                         'enctype'=>'multipart/form-data');
   }
+
+  function preEndTag() {
+    echo "<input type='hidden' name='{$this->_name}__submit' value='submit' />";
+  }
   
 }
 

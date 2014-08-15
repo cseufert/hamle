@@ -526,7 +526,7 @@ class hamleTag_Form extends hamleTag {
   }
 
   function renderEnTag() {
-    return "<?php unset(\$form); ?></form>";
+    return "<?php echo \$form->preEndTag(); unset(\$form); ?></form>";
 //    array_pop(self::$sForm);
 //    self::$sCount = count(self::$sForm);
   }

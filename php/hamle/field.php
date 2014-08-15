@@ -159,3 +159,23 @@ class hamleField_Memo extends hamleField {
     return isset($_REQUEST[$this->form."_".$this->name]);
   }
 }
+
+class hamleField_Checkbox extends hamleField {
+  function getInputAttStatic(&$atts, &$type, &$content) {
+    parent::getInputAttStatic($atts, $type, $context);
+    $atts['type'] = "checkbox";
+  }
+  function getInputAttDynamic(&$atts, &$type, &$content) {
+    parent::getInputAttDynamic($atts, $type, $content);
+    $atts['value'] = "ON";
+    if($this->getValue())
+      $atts['checked'] = "checked";
+  }
+
+  function getValue() {
+    if(!is_null($this->setValue)) return $this->setValue;
+    if(isset($_REQUEST[$this->form."__submit"]))
+      return isset($_REQUEST[$this->form."_".$this->name]);
+    return $this->opt['default'];
+  }
+}
