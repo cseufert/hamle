@@ -379,7 +379,7 @@ class hamleStrVar_relfilt implements hamleStrVar_int {
 
 class hamleStrVar_Comp implements hamleStrVar_int {
   protected $param1, $param2, $operator;
-  const REGEX_COMP_OPER = '(equals|less|greater|has|starts|contains|ends)';
+  const REGEX_COMP_OPER = '(equals|notequal|notequals|less|greater|has|starts|contains|ends)';
   function __construct(hamleStrVar_int $p1, hamleStrVar_int $p2, $operator) {
     $this->param1 = $p1;
     $this->param2 = $p2;
