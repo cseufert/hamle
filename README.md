@@ -51,8 +51,9 @@ becomes
       * Usage #2 `{$[1]->title}` - read value `$title` from initial scope
     * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$[-2]` second last scope
   * jQuery like magic `$` function 
-    * `$({<type>}{#<id>}{.<tags>}{^<sort>}{:{<offset>-}<limit>})`
+    * `$({<type>}{@<group>}{#<id>}{.<tags>}{^<sort>}{:{<offset>-}<limit>})`
       * `<type>` is a type that hamleSetup->modelType($type) can find
+      * `<group>` is an arbitary id that determines a group type, eg. for differentiating gallery image from header image
       * `<id>` is a unique id, either combined with a type, or globally unique
       * `<tags>` are user defined tags that can be used to help find find data
       * `<sort>` field to sort on, by default ascending, prefix with - for descending, nothing after for random
