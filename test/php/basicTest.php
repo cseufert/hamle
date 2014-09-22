@@ -61,7 +61,14 @@ class basicTest extends base {
   }
   public function testAttrSquareBracket() {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
-    $html = '<a href="/special\[10\]">Hello [Mate] [ ]</a>';
+    $html = '<a href="/special[10]">Hello [Mate] [ ]</a>';
+    $this->hamle->parse($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAngularArray() {
+    $hamle = 'input[name=my-input&ng-bind=myval\[\$index\]]';
+    $html = '<input name="my-input" ng-bind="myval[$index]" />';
     $this->hamle->parse($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
