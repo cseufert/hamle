@@ -94,7 +94,7 @@ class hamleTag {
     if(isset($tic['id']) &&
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
       return false;
-    if(isset($tic['class']) != isset($this->opt['class']))
+    if(isset($tic['class']) && count($tic['class']) && !isset($this->opt['class']))
       return false;
     if(isset($tic['class']) && isset($this->opt['class']) &&
             count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
