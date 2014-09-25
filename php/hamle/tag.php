@@ -63,7 +63,7 @@ class hamleTag {
     if($this->compare($path[0]))
       array_shift($path);
     if(!count($path))
-      $r = true;
+      return true;
     foreach($this->tags as $k=>$tag)
       if($tag->replace($path, $newTag)) {
         $inner = $this->tags[$k];
