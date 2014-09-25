@@ -60,17 +60,26 @@ class hamleTag {
    */
   function replace($path, $newTag) {
     $r = false;
-    if($this->compare($path[0]))
+    if($this->compare($path[0])) {
+      if(count($path) == 1) return $newTag;
       array_shift($path);
+    }
+    foreach($this->tags as $k=>$tag) {
+      if($r = $tag->replace($path, $newTag)) {
+        $r->addSnipContent($this->tags[$k]);
+        array_splice($this->tags, $k, 1, $r->tags);
+      }
+    }
+
+/*      array_shift($path);
     if(!count($path))
       return true;
     foreach($this->tags as $k=>$tag)
       if($tag->replace($path, $newTag)) {
-        $inner = $this->tags[$k];
         array_splice($this->tags, $k, 1, $newTag->tags);
         $newTag->addSnipContent($inner);
       }
-    return $r;
+    return $r;*/
   }
   
   function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
