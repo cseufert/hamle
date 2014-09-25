@@ -3,3 +3,5 @@
 |snippet replace .enlarge img
   a[href=#&onclick=enlarge('imgid')&data-img=$url]
     |snippet content
+|snippet replace .find1.two .find2
+  .found Hi There

@@ -89,7 +89,13 @@ class snippetTest extends base {
              "  body\n".
              "    |each\n".
              "      .enlarge\n".
-             "        img[src={\$url}/thumb&alt=\$alt]\n";
+             "        img[src={\$url}/thumb&alt=\$alt]\n".
+             "    div\n".
+             "      .two.find1\n".
+             "        .stuff\n".
+             "          .more-stuff\n".
+             "            .find2\n".
+             "              .gone\n";
     $html = <<<TESTHTML
 <html>
   <head>
@@ -107,11 +113,21 @@ class snippetTest extends base {
         <img src="/img/2/thumb" alt="My Image #2" />
       </a>
     </div>
+    <div>
+      <div class="two find1">
+        <div class="stuff">
+          <div class="more-stuff">
+            <div class="found">Hi There</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
 TESTHTML;
     $he->parse($hamle);
     $out = $he->output();
+    $this->assertEquals(trim($html), trim($out));
     $this->compareXmlStrings($html, $out);
   }
 }
