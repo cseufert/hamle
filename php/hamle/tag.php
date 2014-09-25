@@ -70,7 +70,6 @@ class hamleTag {
         array_splice($this->tags, $k, 1, $r->tags);
       }
     }
-
 /*      array_shift($path);
     if(!count($path))
       return true;
@@ -90,8 +89,12 @@ class hamleTag {
   function compare($tic) {
     if(isset($tic['type']) && $this->type != $tic['type'])
       return false;
+    if(isset($this->opt['id']) != isset($tic['id']))
+      return false;
     if(isset($tic['id']) &&
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
+      return false;
+    if(isset($tic['class']) != isset($this->opt['class']))
       return false;
     if(isset($tic['class']) && isset($this->opt['class']) &&
             count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
