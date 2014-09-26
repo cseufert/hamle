@@ -77,12 +77,15 @@ class hamle {
                   str_replace("/","-",$hamleFile).".php");
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
     $cacheFileAge = @filemtime($this->cacheFile);
+    $cacheDirty = false;
     foreach(array_merge(array($template),$this->snipFiles) as $f)
-      if((!$this->cache) || $cacheFileAge < filemtime($f)) {
-        $this->setup->debugLog("Parsing File ({$this->cacheFile})");
-        $this->parse(file_get_contents($template));
-      } else
-        $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
+      if((!$this->cache) || $cacheFileAge < filemtime($f))
+        $cacheDirty = true;
+    if($cacheDirty) {
+      $this->setup->debugLog("Parsing File ($template to {$this->cacheFile})");
+      $this->parse(file_get_contents($template));
+    } else
+      $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
     return $this;
   }
   /**
