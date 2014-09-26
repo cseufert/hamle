@@ -42,13 +42,16 @@ class hamleTag {
   function find($path) {
     //var_dump($this->type, json_encode($path), $this->compare($path[0]));
     $list = array();
-    if($this->compare($path[0]))
+    if($this->compare($path[0])) {
+      if(count($path) == 1) {
+        $list[] = $this;
+        return $list;
+      }
       array_shift($path);
-    if(count($path))
-      foreach($this->tags as $tag)
-        $list = array_merge($list, $tag->find($path));
-    else
-      $list[] = $this;
+    }
+    foreach($this->tags as $tag)
+      if($found = $tag->find($path))
+        $list = array_merge($list, $found);
     return $list;
   }
 
@@ -56,10 +59,9 @@ class hamleTag {
    * Replace a tag at $path with a new tag ($newTag)
    * @param $path array Path Array
    * @param $newTag hamleTag New tag to replace old tag with
-   * @return bool
+   * @return hamleTag
    */
   function replace($path, $newTag) {
-    $r = false;
     if($this->compare($path[0])) {
       if(count($path) == 1) return $newTag;
       array_shift($path);
@@ -89,15 +91,11 @@ class hamleTag {
   function compare($tic) {
     if(isset($tic['type']) && $this->type != $tic['type'])
       return false;
-    if(isset($this->opt['id']) != isset($tic['id']))
-      return false;
     if(isset($tic['id']) &&
             !(isset($this->opt['id']) && $tic['id'] == $this->opt['id']))
       return false;
-    if(isset($tic['class']) && count($tic['class']) && !isset($this->opt['class']))
-      return false;
-    if(isset($tic['class']) && isset($this->opt['class']) &&
-            count($tic['class']) && array_diff($tic['class'],$this->opt['class']))
+    if(isset($tic['class']) && !(isset($this->opt['class'])
+            && empty(array_diff($tic['class'],$this->opt['class']))))
       return false;
     return true;
   }
