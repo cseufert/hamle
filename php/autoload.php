@@ -11,12 +11,9 @@
  */
 spl_autoload_register(function($class) {
   
-  if(preg_match("/^([a-z0-9]+)([A-Z][a-zA-Z0-9]*)(_[a-zA-Z_]+)?$/", $class, $m)) {
-    $path = __DIR__."/".$m[1]."/".strtolower($m[2]).".php";
-    if(file_exists($path)) require_once($path);
-  } elseif(preg_match("/^([a-z0-9]+)$/", $class, $m)) {
-    $path = __DIR__."/".$m[1]."/_.php";
-    if(file_exists($path)) require_once($path);
+  if(preg_match("/^hamle(?:([A-Z][a-zA-Z0-9]*)(_[a-zA-Z_]+)?)?$/", $class, $m)) {
+    $path = __DIR__."/hamle/".(isset($m[1])?strtolower($m[1]):"_").".php";
+    if(is_file($path)) require_once($path);
   }
 });
 
