@@ -124,9 +124,12 @@ class hamle {
     try {
       ob_start();
       hamleRun::addInstance($this);
-      hamleScope::add($this->baseModel);
+      $baseModel = $this->baseModel;
+      $this->baseModel = null;
+      if($baseModel) hamleScope::add($baseModel);
       require $this->cacheFile;
-      hamleScope::done();
+      if($baseModel) hamleScope::done();
+      $this->baseModel = $baseModel;
       $out = ob_get_contents();
       ob_end_clean();
     } catch (hamleEx $e) {
