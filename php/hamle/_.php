@@ -31,6 +31,8 @@ class hamle {
    */
   protected $snipFiles;
 
+  protected $baseModel = null;
+
   const REL_CHILD = 0x01;  /* Child Relation */
   const REL_PARENT = 0x02; /* Parent Relation */
   const REL_ANY = 0x03;    /* Unspecified or any relation */
@@ -57,7 +59,7 @@ class hamle {
     if(!$baseModel instanceOf hamleModel)
       throw new hamleEx_Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
     $this->setup = $setup;
-    hamleScope::add($baseModel);
+    $this->baseModel = $baseModel;
     $this->cacheFile = $this->setup->cachePath("string.hamle.php");
     $this->snipFiles = $this->setup->snippetFiles();
     foreach($this->snipFiles as $f)
@@ -122,7 +124,9 @@ class hamle {
     try {
       ob_start();
       hamleRun::addInstance($this);
+      hamleScope::add($this->baseModel);
       require $this->cacheFile;
+      hamleScope::done();
       $out = ob_get_contents();
       ob_end_clean();
     } catch (hamleEx $e) {

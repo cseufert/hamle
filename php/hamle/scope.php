@@ -14,7 +14,6 @@ class hamleScope {
   }
   
   static function done() {
-    if(!isset(self::$scopes)) self::$scopes = array();
     array_pop (self::$scopes);
   }
   /**
