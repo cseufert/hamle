@@ -544,6 +544,6 @@ class hamleTag_Form extends hamleTag {
 
 class hamleTag_FormHint extends hamleTag {
   function renderStTag() {
-    return "<div><?=\$form->hint?></div>";
+    return '<?=$form->hint?"<div>{$form->hint}</div>":""?>';
   }
 }

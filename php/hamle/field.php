@@ -29,8 +29,9 @@ class hamleField {
     $val = count($valarray) == 1?current($valarray):$valarray;
     switch($name) {
       case "name":
-      case "valid":
         throw new hamleEx("Unable to change $name after object is created");
+      case "valid":
+        return $this->valid;
       case "val":
       case "value":
         $this->setValue = $val;
@@ -45,6 +46,8 @@ class hamleField {
      switch($name) {
       case "name":
         return $this->name;
+       case "valid":
+         return $this->valid;
       case "val":
       case "value":
         return $this->getValue();
