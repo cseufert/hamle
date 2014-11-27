@@ -55,7 +55,13 @@ ENDREGEX;
     $this->lineCount = count($this->lines);
     $this->lineNo = 0;
   }
-  
+
+  function parseFilter(hamleParse_filter $filter) {
+    foreach($this->root as $k=>$tag) {
+      $this->root[$k] = $filter->filterTag($tag);
+    }
+  }
+
   function parseSnip($s) {
     //save root tags
     $roots = $this->root; $this->root = array();
@@ -179,7 +185,6 @@ ENDREGEX;
     }
   }
   function output() {
-    $this->applySnip();
     $out = "";
     foreach($this->root as $tag)
       $out .= $tag->render();
@@ -219,4 +224,13 @@ ENDREGEX;
   function getLineNo() {
     return $this->lineNo;
   }
+}
+
+interface hamleParse_filter {
+  /**
+   * Filter HAMLE Tag
+   * @param hamleTag $tag
+   * @return hamleTag Filtered Tag
+   */
+  function filterTag(hamleTag $tag);
 }

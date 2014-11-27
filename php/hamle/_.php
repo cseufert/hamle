@@ -99,8 +99,14 @@ class hamle {
    */
   function parse($hamleCode) {
     $this->parse->str($hamleCode);
+    $this->setup->debugLog("Loading Snippet Files");
     foreach($this->snipFiles as $snip)
       $this->parse->parseSnip(file_get_contents($snip));
+    $this->setup->debugLog("Applying Snippet Files");
+    $this->parse->applySnip();
+    $this->setup->debugLog("Executing Parse Filters");
+    foreach($this->setup->getFilters() as $filter)
+      $this->parse->parseFilter($filter);
     $this->setup->debugLog("Updating Cache File ({$this->cacheFile})");
     if(FALSE === file_put_contents($this->cacheFile, $this->parse->output()))
       throw new hamleEx_ParseError(
@@ -158,3 +164,4 @@ class hamle {
   }
   
 }
+

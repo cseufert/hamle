@@ -81,6 +81,13 @@ class hamleSetup {
   function snippetFiles() {
     return array();
   }
+
+  /**
+   * @return hamleParse_filter[] List of HAMLE Parse Filters
+   */
+  function getFilters() {
+    return array();
+  }
   /**
    * Function to write debug logs out
    * @param $s string Debug Message String

@@ -10,19 +10,19 @@ class hamleTag {
   /**
    * @var hamleTag[] Array of children tag elements
    */
-  protected $tags = array();
+  public $tags = array();
   /**
    * @var string Tag Type for Printable Tags
    */
-  protected $type;
+  public $type;
   /**
    * @var array Array of lines of Content
    */
-  protected $content;
+  public $content;
 
-  protected $opt;
+  public $opt;
 
-  protected $source;
+  public $source;
   /**
    * Number of spaces for each Indent when doing pretty format of output
    */
@@ -313,7 +313,9 @@ class hamleTag_HTML extends hamleTag {
     $this->opt = array();
     $this->source = array();
     $this->type = $tag?$tag:"div";
-    if(isset($param[0]) && $param[0] == "[") {
+    if(is_array($param))
+      $this->opt = $param;
+    elseif(isset($param[0]) && $param[0] == "[") {
       $param = substr($param, 1, strlen($param)-2);
       parse_str($param, $this->opt);
     }
