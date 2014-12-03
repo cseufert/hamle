@@ -13,14 +13,17 @@ javascript, with a small json request to retreive the data to fill the template 
 focus for hamle is not on markup, but on page/document structure, so inline tags are not a
 consideration at this stage. The focus is on clean, readable markup
 
-* CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, `A#home`, `#content.cols.two` )
+* CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, 
+  `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
-  * There is no specific order to the id and class, however the name, if specified must be first
+  * There is no specific order to the id and class, however the name, if 
+    specified must be first
   * Multiple IDs (#one#two) will not be recognized, only one will be used
   * Usage #1 `.one Text` becomes `<div class="one">Text</div>`
   * Usage #2 `span.two Foo` becomes `<span class="two">Foo</span>`
   * Usage #3 `#my.mine.ours` becomes `<div id="my" class="mine ours"></div>`
-* Indented Structure (Python like), increased indents means inside parent element, decreased implies closing tag
+* Indented Structure (Python like), increased indents means inside parent 
+  element, decreased implies closing tag
 ```
 html
   body
@@ -50,6 +53,12 @@ becomes
       * Usage #1 `|with $[-1]` - Switch back to last scope
       * Usage #2 `{$[1]->title}` - read value `$title` from initial scope
     * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$[-2]` second last scope
+  * Named Scopes **(new)**
+    * Select item and assign name rather than numeric scope 
+      `|with $(page.footer) as footer`
+    * Now to use this or its variables, use `$[footer]`
+    * Loop through footers with `|each $[footer]`
+    * Access HTML attribute on footer `{$[footer]->html}`
   * jQuery like magic `$` function 
     * `$({<type>}{@<group>}{#<id>}{.<tags>}{^<sort>}{:{<offset>-}<limit>})`
       * `<type>` is a type that hamleSetup->modelType($type) can find

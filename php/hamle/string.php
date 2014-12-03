@@ -278,12 +278,15 @@ class hamleString_Scope extends hamleString_SimpleVar {
   function __construct($s) {
     $m = array();
     //var_dump($s);
-    if(!preg_match('/\$\[(-?[0-9]+)\]/', $s, $m))
+    if(!preg_match('/\$\[(-?[0-9]+|[a-zA-Z]+)\]/', $s, $m))
       throw new hamleEx_ParseError("Unable to match scope");
     $this->scope = $m[1];
   }
   function toPHP() {
-    return "hamleScope::get(".hamleString::varToCode($this->scope).")";
+    if(is_numeric($this->scope))
+      return "hamleScope::get(".hamleString::varToCode($this->scope).")";
+    else
+      return "hamleScope::getName(".hamleString::varToCode($this->scope).")";
   }
   function toHTML() { throw new 
           hamleEx_ParseError("Unable to use Scope operator in HTML Code"); }

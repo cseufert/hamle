@@ -5,12 +5,18 @@
  * @author Chris Seufert <chris@seufert.id.au>
  */
 class hamleScope {
+  /** @var hamleModel[] Array of Models by Scope Order  */
   static $scopes = array();
-  
-  static function add($model) {
+  /** @var hamleModel[] Assoc array of Models by Scope Name  */
+  static $namedScopes = array();
+
+  static function add($model, $name = null) {
     if(!$model instanceOf hamleModel)
       throw new hamleEx_Unsupported("Unsupported Model, Needs to implement hamleModel Interface");
-    self::$scopes[] = $model;
+    if($name)
+      self::$namedScopes[$name] = $model;
+    else
+      self::$scopes[] = $model;
   }
   
   static function done() {
@@ -37,6 +43,14 @@ class hamleScope {
     if(!isset(self::$scopes[$key]))
       throw new hamleEx_OutOfScope("Unable to find Scope ($id) or $key");
     return self::$scopes[$key];
+  }
+
+  static function getName($name) {
+    if($name && isset(self::$namedScopes[$name])) {
+      self::$namedScopes[$name]->rewind();
+      return self::$namedScopes[$name];
+    } else
+      throw new hamleEx_RunTime("Unable to find scope ($name)");
   }
 
 }

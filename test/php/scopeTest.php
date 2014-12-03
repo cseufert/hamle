@@ -5,12 +5,13 @@ require_once "base.php";
 class scopeTest extends base {
   public function testScopeAccessor() {
     $hamle = "html".PHP_EOL.
+             '  |with $(basetest) as test'.PHP_EOL.
              "  body".PHP_EOL.
-             '    |with $(basetest)'.PHP_EOL.
-             '      ul.menu'.PHP_EOL.
-             '        |each'.PHP_EOL.
-             '          li.menuitem[data-menu=$title]'.PHP_EOL.
-             '            a[href=$url] $title'.PHP_EOL.
+             '    ul.menu'.PHP_EOL.
+             '      |each $[test]'.PHP_EOL.
+             '        li.menuitem[data-menu=$title]'.PHP_EOL.
+             '          a[href=$url] $title'.PHP_EOL.
+             '    |with $[test]'.PHP_EOL.
              '      span $title';
     $html = '
 <html>

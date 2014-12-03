@@ -115,7 +115,7 @@ class hamleStrVar implements hamleStrVar_int {
     return $out;
   }
   protected function dollarScope(&$s) {
-    if(preg_match('/^\$\[([0-9]+)\](.*)$/', $s, $m)) {
+    if(preg_match('/^\$\[([0-9]+|[a-zA-Z]+)\](.*)$/', $s, $m)) {
       $out = new hamleStrVar_scope($m[1]);
       $this->nodes[] = $out;
       return $out;
@@ -324,7 +324,10 @@ class hamleStrVar_scope extends hamleStrVar_intChild {
     return "<?=".$this->toPHP()."?>";
   }
   function toPHP() {
-    $out = "hamleScope::get(".hamleStrVar::arrayToPHP($this->id).")";
+    if(is_numeric($this->id))
+      $out = "hamleScope::get(".hamleStrVar::arrayToPHP($this->id).")";
+    else
+      $out = "hamleScope::getName(".hamleStrVar::arrayToPHP($this->id).")";
     return $this->relPHP($out);
   }
 }

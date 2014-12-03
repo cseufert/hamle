@@ -204,8 +204,13 @@ class hamleTag_Ctrl extends hamleTag {
     
   function renderStTag() {
     $out = "<"."?php ";
-    //var_dump($this->type);
-    $hsv = new hamleString($this->var, hamleString::TOKEN_CONTROL);
+    $scopeName = "";
+    if(preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
+      $scopeName = $m[1];
+      $lookup = substr($this->var,0,strlen($this->var) - strlen($m[0]));
+      $hsv = new hamleString(trim($lookup), hamleString::TOKEN_CONTROL);
+    } else
+      $hsv = new hamleString($this->var, hamleString::TOKEN_CONTROL);
     switch($this->type) {
       case "each":
         if($this->var)
@@ -219,9 +224,13 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= "if(".$hsvcomp->toPHP().") {";
         break;
       case "with":
-        $out .= "if(({$this->o} = ".$hsv->toPHP().") && ".
-                    "(is_array({$this->o}) || {$this->o}"."->valid())) {\n";
-        $out .= "hamleScope::add({$this->o});\n;";
+        if($scopeName)
+          $out .= "hamleScope::add(".$hsv->toPHP().", \"$scopeName\");\n;";
+        else {
+          $out .= "if(({$this->o} = " . $hsv->toPHP() . ") && " .
+              "{$this->o}->valid()) {\n";
+          $out .= "hamleScope::add({$this->o});\n;";
+        }
         break;
       case "else":
         $out .= "/* else */";
@@ -252,8 +261,10 @@ class hamleTag_Ctrl extends hamleTag {
         $out .= "}";
         break;
       case "with";
-        $out .= 'hamleScope::done(); ';
-        $out .= '}';
+        if(!preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
+            $out .= 'hamleScope::done(); ';
+            $out .= '}';
+          }
         break;
       case "include":
         return "";
