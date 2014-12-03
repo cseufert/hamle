@@ -20,16 +20,13 @@ class base extends PHPUnit_Framework_TestCase {
                 new baseTestSetup());
 	}
 
-	public function compareXmlStrings($expected, $actual)
-	{
+	public function compareXmlStrings($expected, $actual)	{
 		$docExpected = new DOMDocument();
 
 		try {
 			if(!$docExpected->loadXML($expected))
 				$this->fail("Couldn't load expected xml into DOMDocument. The xml was: $actual");
-		}
-		catch (Exception $ex)
-		{
+		} catch (Exception $ex) {
 			$this->fail("Couldn't load expected xml into DOMDocument. The xml was: $actual");
 		}
 
@@ -38,9 +35,7 @@ class base extends PHPUnit_Framework_TestCase {
 		try {
 			if(!$docActual->loadXML($actual))
 				$this->fail("Couldn't load actual xml into DOMDocument. The xml was: $actual");
-		}
-		catch (Exception $ex)
-		{
+		}	catch (Exception $ex)	{
 			$this->fail("Couldn't load actual xml into DOMDocument. The xml was: $actual");
 		}
 
@@ -49,10 +44,11 @@ class base extends PHPUnit_Framework_TestCase {
 		$delta = (string)$differ->diff();
 
 		$this->assertEmpty($delta, "Differences found: $delta");
-	} 
+	}
 }
 
 class baseTestSetup extends hamleSetup {
+
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     if(in_array("basetest",array_keys($typeTags)))
       return new hamleModel_array(array(
