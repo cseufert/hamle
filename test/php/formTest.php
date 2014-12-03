@@ -24,24 +24,25 @@ class formTest extends base {
 <html>
   <body>
     <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
+      <input type="hidden" name="formTestForm__submit" value="submit" />
       <div class="ftitle">
         <label for="formTestForm_title" class="hamleField">title</label>
-        <input type="text" name="formTestForm_title" class="hamleField" value="" tabindex="1" />
+        <input type="text" name="formTestForm_title" class="hamleField" value="" tabindex="1" required="required" id="formTestForm_title" />
       </div>
       <div class="fmessage">
         <label for="formTestForm_message" class="hamleField">message</label>
-        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
+        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" id="formTestForm_message" />
       </div>
       <div class="fstring">
         <label for="formTestForm_string" class="hamleField">string</label>
-        <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" tabindex="3" />
+        <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" tabindex="3" id="formTestForm_string" />
       </div>
       <div class="fsave">
         <label for="formTestForm_save" style="display:none;" class="hamleField_Button">save</label>
-        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="4" />
+        <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" tabindex="4" id="formTestForm_save" />
       </div>
       <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
-      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
+      <textarea name="formTestForm_memo" class="hamleField_Memo" id="formTestForm_memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
     </form>
   </body>
 </html>
@@ -66,15 +67,16 @@ class formTest extends base {
     <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
       <div class="fmessage">
         <label for="formTestForm_message" class="hamleField">message</label>
-        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" />
+        <input type="text" name="formTestForm_message" class="hamleField" value="Message goes here" tabindex="2" id="formTestForm_message" />
       </div>
       <label for="formTestForm_title" class="hamleField" >title</label>
-      <input type="text" name="formTestForm_title" class="hamleField" value="" />
+      <input type="text" name="formTestForm_title" class="hamleField" value="" id="formTestForm_title" required="required" />
       <label for="formTestForm_string" class="hamleField" >string</label>
-      <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" />
+      <input type="text" name="formTestForm_string" class="hamleField" value="Tricky String \'&quot;" id="formTestForm_string" />
       <label for="formTestForm_memo" class="hamleField_Memo" >memo</label>
-      <textarea name="formTestForm_memo" class="hamleField_Memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
-      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" />
+      <textarea name="formTestForm_memo" class="hamleField_Memo" id="formTestForm_memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
+      <input type="submit" name="formTestForm_save" class="hamleField_Button" value="" id="formTestForm_save" />
+      <input type="hidden" name="formTestForm__submit" value="submit" />
     </form>
   </body>
 </html>

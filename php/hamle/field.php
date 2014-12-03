@@ -19,7 +19,7 @@ class hamleField {
   function __construct($name, $options = array()) {
     $this->name = $name;
     $this->hint = "";
-    $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>"false",
+    $this->opt = $options + array("label"=>"$name", "regex"=>"", "required"=>false,
          "default"=>"", "error"=>"$name is Required", "help"=>"", "test"=>null,
         "form"=>"noForm", "readonly"=>false, 'hinttext'=>'',"disabled"=>false);
   }
