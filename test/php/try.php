@@ -1,9 +1,12 @@
 <?php
+use Seufert\Hamle\String;
+use Seufert\Hamle\Model\WrapArray;
+
 require_once("../../php/autoload.php");
 
-echo (new hamleString("      div#id.class { color: red; }", hamleString::TOKEN_CODE))->toHTML();
+echo (new String("      div#id.class { color: red; }", String::TOKEN_CODE))->toHTML();
 exit();
-class snippetSetup extends hamleSetup {
+class snippetSetup extends Setup {
   function themePath($f) {
     return __DIR__."/hamle/$f";
   }
@@ -13,7 +16,7 @@ class snippetSetup extends hamleSetup {
   
 }
 
-$ho = new hamle(new hamleModel_array(array(array(
+$ho = new Hamle(new WrapArray(array(array(
                         'url'=>'/img/1',
                         'title'=>'The TITLE',
                         'titlebar'=>"My Page",
@@ -44,10 +47,10 @@ $ho = new hamle(new hamleModel_array(array(array(
 
 
 exit();
-class mySetup extends hamleSetup {
+class mySetup extends Setup {
   function getNamedModel($name, $id = NULL) {
     if($name == "basetest")
-      return new hamleModel_array(array(
+      return new WrapArray(array(
               array('url'=>'http://www.test.com',  'title'=>'Test.com'),
               array('url'=>'http://www.test2.com', 'title'=>'Test2.com'),
               array('url'=>'http://www.test3.com', 'title'=>'Test3.com')));
@@ -55,7 +58,7 @@ class mySetup extends hamleSetup {
   }
 }
 
-$h = new hamle(new hamleModel_array(array(array(
+$h = new Hamle(new WrapArray(array(array(
                         'link'=>'https://www.secure.com',
                         'website'=>'Secure.com'))),
                 new mySetup());

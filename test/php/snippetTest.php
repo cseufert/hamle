@@ -4,12 +4,15 @@
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
+use Seufert\Hamle;
+use Seufert\Hamle\Model\WrapArray;
+
 require_once("base.php");
 
 class snippetTest extends base {
   protected $hamleSnip;
   function model() {
-    return new hamleModel_array(array(array(
+    return new WrapArray(array(array(
                         'url'=>'/img/1',
                         'title'=>'The TITLE',
                         'titlebar'=>"My Page",
@@ -24,7 +27,7 @@ class snippetTest extends base {
   }
   
   function testHeadSnippet() {
-    $he = new hamle($this->model(), new snippetHeadSetup());
+    $he = new Hamle\Hamle($this->model(), new snippetHeadSetup());
     $hamle = "html\n".
              "  head\n".
              "    title \$titlebar\n".
@@ -42,7 +45,7 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
   function testHead2Snippet() {
-    $he = new hamle($this->model(), new snippetHead2Setup());
+    $he = new Hamle\Hamle($this->model(), new snippetHead2Setup());
     $hamle = "html\n".
         "  head\n".
         "    title \$titlebar\n".
@@ -62,7 +65,7 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
   function testTypeClassIDSnippet() {
-    $he = new hamle($this->model(), new snippetTypeClassIDSetup());
+    $he = new Hamle\Hamle($this->model(), new snippetTypeClassIDSetup());
     $hamle = "html\n".
              "  head\n".
              "    title \$titlebar\n".
@@ -82,7 +85,7 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
   function testReplaceImgSnippet() {
-    $he = new hamle($this->model(), new snippetReplaceImgSetup());
+    $he = new Hamle\Hamle($this->model(), new snippetReplaceImgSetup());
     $hamle = "html\n".
              "  head\n".
              "    title \$titlebar\n".
@@ -132,20 +135,20 @@ TESTHTML;
   }
 }
 
-class snippetHeadSetup extends hamleSetup {
+class snippetHeadSetup extends Hamle\Setup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
   function snippetFiles() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip"); }
 }
-class snippetHead2Setup extends hamleSetup {
+class snippetHead2Setup extends Hamle\Setup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
   function snippetFiles() { return array(__DIR__."/hamle/snippets/bootstrap.hamle-snip",
                                       __DIR__."/hamle/snippets/jquery.hamle-snip"); }
 }
-class snippetTypeClassIDSetup extends hamleSetup {
+class snippetTypeClassIDSetup extends Hamle\Setup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
   function snippetFiles() { return array(__DIR__."/hamle/snippets/typeclassid.hamle-snip"); }
 }
-class snippetReplaceImgSetup extends hamleSetup {
+class snippetReplaceImgSetup extends Hamle\Setup {
   function templatePath($f) { return __DIR__."/hamle/$f"; }
   function snippetFiles() { return array(__DIR__."/hamle/snippets/replace-img.hamle-snip"); }
 }

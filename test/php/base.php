@@ -1,16 +1,22 @@
 <?php
-
 require_once 'XmlDiff/src/XmlDiff.php';
 require_once(__DIR__."/../../php/autoload.php");
 
+use Seufert\Hamle\Field\Button;
+use Seufert\Hamle\Field\Memo;
+use Seufert\Hamle\Hamle;
+use Seufert\Hamle as H;
+use Seufert\Hamle\Field;
+use Seufert\Hamle\Model\WrapArray;
+
 class base extends PHPUnit_Framework_TestCase {
 	/**
-	 * @var hamle Hamle Parser
+	 * @var Hamle Hamle Parser
 	 */
 	protected $hamle;
 
 	public function __construct() {
-    $this->hamle = new hamle(new hamleModel_array(array(array(
+    $this->hamle = new Hamle(new WrapArray(array(array(
                         'url'=>'https://www.secure.com',
                         'title'=>'This is My TITLE',
                         'class'=>"colored",
@@ -47,29 +53,29 @@ class base extends PHPUnit_Framework_TestCase {
 	}
 }
 
-class baseTestSetup extends hamleSetup {
+class baseTestSetup extends H\Setup {
 
   function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     if(in_array("basetest",array_keys($typeTags)))
-      return new hamleModel_array(array(
+      return new WrapArray(array(
               array('url'=>'http://www.test.com',  'title'=>'Test.com'),
               array('url'=>'http://www.test2.com', 'title'=>'Test2.com'),
               array('url'=>'http://www.test3.com', 'title'=>'Test3.com')));
     if(in_array("formtest",array_keys($typeTags)))
-      return new hamleModel_array(array(
+      return new WrapArray(array(
               array('title'=>'The Title',  'testform'=>new formTestForm())));
     return parent::getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0);
   }
 }
 
-class formTestForm extends hamleForm {
+class formTestForm extends H\Form {
   function setup() {
     $this->_fields = array(
-      (new hamleField("title"))->required(true),
-      (new hamleField("message"))->default("Message goes here"),
-      (new hamleField("string"))->default("Tricky String '\""),
-      (new hamleField_Memo("memo"))->default("Some <Funky> Text\"'"),
-      (new hamleField_Button("save"))
+      (new Field("title"))->required(true),
+      (new Field("message"))->default("Message goes here"),
+      (new Field("string"))->default("Tricky String '\""),
+      (new Memo("memo"))->default("Some <Funky> Text\"'"),
+      (new Button("save"))
     );
   }
 }
