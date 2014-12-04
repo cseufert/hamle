@@ -1,4 +1,6 @@
 <?php
+use Seufert\Hamle\Setup;
+use Seufert\Hamle\Hamle;
 use Seufert\Hamle\String;
 use Seufert\Hamle\Model\WrapArray;
 
