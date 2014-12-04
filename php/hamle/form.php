@@ -1,13 +1,39 @@
 <?php
+/*
+This project is Licenced under The MIT License (MIT)
+
+Copyright (c) 2014 Christopher Seufert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+ */
+namespace Seufert\Hamle;
+
 /**
  * HAMLE Form Class
  * 
  * @pachage hamle
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class hamleForm {
+class Form {
   /**
-   * @var hamleField[] Form Fields
+   * @var Field[] Form Fields
    */
   protected $_fields;
   protected $_name;
@@ -39,7 +65,7 @@ class hamleForm {
   function process() {
     $clicked = "";
     foreach($this->_fields as $f)
-      if($f instanceOf hamleField_Button)
+      if($f instanceOf Field\Button)
         if($f->isClicked())
           $clicked = $f;
     foreach($this->_fields as $f)
@@ -60,8 +86,8 @@ class hamleForm {
   }
   /**
    * Called upon form submission, $button will be assigned to the button that was clicked
-   * @param hamleField_Button $button
-   * @throws hamleForm_ExInvalid
+   * @param Field\Button $button
+   * @throws Exception\NoKey
    */
   function onSubmit($button) { }
   
@@ -70,7 +96,7 @@ class hamleForm {
   }
   function getField($n) {
     if(!isset($this->_fields[$n]))
-      throw new hamleEx_NoKey("unable to find form field ($n)");
+      throw new Exception\NoKey("unable to find form field ($n)");
     return $this->_fields[$n];
   }
   function __get($n) {
@@ -89,6 +115,6 @@ class hamleForm {
 }
 
 
-class hamleForm_Ex extends hamleEx { }
+class hamleForm_Ex extends Exception { }
 class hamleForm_ExNoSetup extends hamleForm_Ex { }
 class hamleForm_ExInvalid extends hamleForm_Ex { }

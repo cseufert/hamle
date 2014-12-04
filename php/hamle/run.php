@@ -1,22 +1,50 @@
 <?php
+/*
+This project is Licenced under The MIT License (MIT)
+
+Copyright (c) 2014 Christopher Seufert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+ */
+namespace Seufert\Hamle;
+
+use Seufert\Hamle\Exception\RunTime;
+use Seufert\Hamle\Model;
+
 /**
  * HAMLE Runtime
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-
-class hamleRun {
+class Run {
   /**
-   * @var hamle Current HAMLE instance 
+   * @var Hamle Current HAMLE instance
    */
   static protected $hamle;
   static protected $hamleList = array();
 
   /**
    * Add a hamle instance to the stack
-   * @param hamle $hamle Hamle Instance
+   * @param Hamle $hamle Hamle Instance
    */
-  static function addInstance(hamle $hamle) {
+  static function addInstance(Hamle $hamle) {
     self::$hamleList[] = $hamle;
     self::$hamle = $hamle;
   }
@@ -26,7 +54,7 @@ class hamleRun {
    */
   static function popInstance() {
     array_pop(self::$hamleList);
-    if(self::$hamleList)
+    if (self::$hamleList)
       self::$hamle = self::$hamleList[count(self::$hamleList) - 1];
     else
       self::$hamle = NULL;
@@ -41,7 +69,7 @@ class hamleRun {
   static function filter($name, $data) {
     return strrev($data);
   }
-  
+
   /**
    * Helper for hamle |include command
    * @param string $path Path to file to include
@@ -59,11 +87,11 @@ class hamleRun {
    * @param int $limit Results Limit
    * @param int $offset Offset Results by
    * @internal param string $sortBy Field name to sort by
-   * @return hamleModel
+   * @return Model
    */
   static function modelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     return self::$hamle->setup->getModelTypeTags($typeTags,
-                                  $sortDir, $sortField, $limit, $offset);
+        $sortDir, $sortField, $limit, $offset);
   }
 
   /**
@@ -73,13 +101,13 @@ class hamleRun {
    * @param string $sortField Field to sort by
    * @param int $limit Limit of results
    * @param int $offset Results Offset
-   * @throws hamleEx_RunTime
-   * @return hamleModel
+   * @throws RunTime
+   * @return Model
    */
   static function modelId($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
     $o = self::$hamle->setup->getModelDefault($id,
-                                  $sortDir, $sortField, $limit, $offset);
-    if(!$o instanceOf hamleModel) throw new hamleEx_RunTime("Application must return instance of hamleModel");
+        $sortDir, $sortField, $limit, $offset);
+    if (!$o instanceOf Model) throw new RunTime("Application must return instance of hamleModel");
     return $o;
   }
 
@@ -92,12 +120,12 @@ class hamleRun {
    * @param int $offset Results Offset
    * @internal param string $type type to filter by
    * @internal param string $id id to search for
-   * @return hamleModel
+   * @return Model
    */
   static function modelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
-    return self::$hamle->setup->getModelTypeId($typeId, 
-                                $sortDir, $sortField, $limit, $offset);
+    return self::$hamle->setup->getModelTypeId($typeId,
+        $sortDir, $sortField, $limit, $offset);
   }
-  
-  
+
+
 }

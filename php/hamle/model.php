@@ -1,105 +1,61 @@
 <?php
+/*
+This project is Licenced under The MIT License (MIT)
 
-/**
- * HAMLE Model Interface, all models used in the template must implmenent this
- *
- * @author Chris
+Copyright (c) 2014 Christopher Seufert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
  */
-interface hamleModel extends Iterator {
-  /**
-   * hamleGet Must be implemented to get a variable using key
-   * 
-   * @param string $key String of key name to retreive
-   * @throws hamleEx_NoKey
-   */
-  function hamleGet($key);
+
+namespace Seufert\Hamle {
+  use Seufert\Hamle\Exception\NoKey;
+  use Iterator;
 
   /**
-   * Retreive an iterable result of relatives to the current object
-   * @param int $rel Relation to this object hamle::REL_CHILD, etc
-   * @param array $typeTags Array of types to search containing tags
-   *                                    eg([photo->[landscape,wide]])
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field to sort by
-   * @param int $limit Limit of rows to return
-   * @param int $offset Offset Number of rows to offset results by
-   * @param int $grouptype Type of group
-   * @return hamleModel Return object must implmement hamleModel interface
+   * HAMLE Model Interface, all models used in the template must implmenent this
+   *
+   * @author Chris
    */
-  function hamleRel($rel, $typeTags,
-                    $sortDir = 0, $sortField = '', $limit = 0, $offset = 0,
-                    $grouptype=1);
-}
+  interface Model extends Iterator {
+    /**
+     * hamleGet Must be implemented to get a variable using key
+     *
+     * @param string $key String of key name to retreive
+     * @throws \Seufert\Hamle\Exception\NoKey
+     */
+    function hamleGet($key);
 
-class hamleModel_Zero implements hamleModel {
-  function hamleGet($key) {
-    return new hamleModel_Zero();
+    /**
+     * Retreive an iterable result of relatives to the current object
+     * @param int $rel Relation to this object hamle::REL_CHILD, etc
+     * @param array $typeTags Array of types to search containing tags
+     *                                    eg([photo->[landscape,wide]])
+     * @param int $sortDir Sort Direction defined by hamle::SORT_*
+     * @param string $sortField Field to sort by
+     * @param int $limit Limit of rows to return
+     * @param int $offset Offset Number of rows to offset results by
+     * @param int $grouptype Type of group
+     * @return Model Return object must implmement hamleModel interface
+     */
+    function hamleRel($rel, $typeTags,
+                      $sortDir = 0, $sortField = '', $limit = 0, $offset = 0,
+                      $grouptype = 1);
   }
-  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0,
-                    $offset = 0,$grouptype=1) {
-    return new hamleModel_Zero();
-  }
-  
-  function valid() { return false; }
-  function key() { return 0; }
-  function current() {return $this; }
-  function rewind() { }
-  function next() { }
-}
-
-class hamleModel_one implements hamleModel {
-  protected $hamleIndex = 0;
-  function hamleGet($key) {
-    throw new hamleEx_NoKey("Cant find Key ($key)");
-  }
-  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0,
-                    $offset = 0, $grouptype=1) {
-    return new hamleModel_Zero();
-  }
-  
-  function valid() { return $this->hamleIndex == 0; }
-  function key() { return $this->hamleIndex; }
-  function current() {return $this; }
-  function rewind() { $this->hamleIndex = 0; }
-  function next() { $this->hamleIndex++; }
-}
-
-class hamleModel_array extends hamleModel_zero {
-  protected $data;
-  protected $pos;
-  function __construct($array = array()) {
-    $this->data = $array;
-    $this->pos = 0;
-  }
-  function hamleGet($key) {
-    if(!isset($this->data[$this->pos][$key]))
-      return "Missing Key [$key]";
-    return $this->data[$this->pos][$key];
-  }
-  function valid() { return isset($this->data[$this->pos]); }
-  function key() { return $this->pos; }
-  function current() { return $this; }
-  function rewind() { $this->pos = 0; }
-  function next() { ++$this->pos; }
-    
-}
-
-class hamleModel_arrayObj extends hamleModel_array {
-  /**
-   * Create a new array object helper
-   * @param hamleModel[] $array Array of hamle objects
-   */
-  function __construct($array = array()) {
-    $this->data = $array;
-    $this->pos = 0;
-  }
-
-  function hamleGet($key) {
-    return $this->data[$this->pos]->hamleGet($key);
-  }
-  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0,
-                    $offset = 0, $grouptype=1) {
-    return $this->data[$this->pos]->hamleRel($rel, $typeTags);
-  }
-  function current() { return $this->data[$this->pos]; }
 }
