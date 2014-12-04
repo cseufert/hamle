@@ -44,7 +44,7 @@ class Form {
    * Fills the $this->fields array with hamleFields
    */
   function setup() {
-    throw new hamleForm_ExNoSetup("You must configure the form in the setup ".
+    throw new Exception\RunTime("You must configure the form in the setup ".
       "function, by adding fields to the \$this->fields array");
   }
   
@@ -73,7 +73,7 @@ class Form {
     if($clicked)
       try {
         $this->onSubmit($clicked);
-      } catch(hamleForm_ExInvalid $e) {
+      } catch(Exception\FormInvalid $e) {
         $this->hint = $e->getMessage();
       }
   }
@@ -113,8 +113,3 @@ class Form {
   }
   
 }
-
-
-class hamleForm_Ex extends Exception { }
-class hamleForm_ExNoSetup extends hamleForm_Ex { }
-class hamleForm_ExInvalid extends hamleForm_Ex { }
