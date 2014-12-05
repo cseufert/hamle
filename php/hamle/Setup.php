@@ -39,7 +39,10 @@ class Setup {
    * @return string Directory to store cache in
    */
   function cachePath($f) {
-    return __DIR__."/../../cache/$f"; }
+    $dir = __DIR__."/../../cache/$f";
+    if(!is_dir($dir)) mkdir($dir);
+    return $dir;
+  }
 
   /**
    * Open the default model when only an ID is specified in the template
