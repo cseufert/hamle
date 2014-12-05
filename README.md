@@ -1,5 +1,8 @@
 HAMLE
 =====
+[![Build Status](https://travis-ci.org/cseufert/hamle.svg?branch=master)](https://travis-ci.org/cseufert/hamle)
+
+PHP >= 5.4
 
 * [Example Implementation](doc/example.md)
 
