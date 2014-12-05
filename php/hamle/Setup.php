@@ -39,9 +39,10 @@ class Setup {
    * @return string Directory to store cache in
    */
   function cachePath($f) {
-    $dir = __DIR__."/../../cache/$f";
+    $s = DIRECTORY_SEPARATOR;
+    $dir = implode($s,[__DIR__,"..","..","cache",""]);
     if(!is_dir($dir)) mkdir($dir);
-    return $dir;
+    return $dir.$f;
   }
 
   /**
