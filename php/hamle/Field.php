@@ -117,7 +117,7 @@ class Field {
   function getInputAttStatic(&$atts, &$type, &$content) {
     $atts['id'] = $atts['name'] = $this->form . "_" . $this->name;
     $atts['type'] = "text";
-    $atts['class'][] = get_class($this);
+    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
   }
 
   function getInputAttDynamic(&$atts, &$type, &$content) {
@@ -135,7 +135,7 @@ class Field {
   }
 
   function getLabelAttStatic(&$atts, &$type, &$content) {
-    $atts['class'][] = get_class($this);
+    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
     $atts["for"] = $this->form . "_" . $this->name;
     $content = array($this->opt['label']);
   }
@@ -144,7 +144,7 @@ class Field {
   }
 
   function getHintAttStatic(&$atts, &$type, &$content) {
-    $atts['class'][] = get_class($this);
+    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
     $atts['class'][] = "hamleFormHint";
   }
 
