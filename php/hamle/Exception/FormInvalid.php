@@ -25,6 +25,5 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Exception;
 
-use Seufert\Hamle\Exception\Form;
 
-class FormInvalid extends Invalid { }
+class FormInvalid extends Form { }
