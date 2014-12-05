@@ -9,8 +9,8 @@ php:
 matrix:
   allow_failures:
     - php: hhvm
-before_script:
-  - cd test/php
-script: phpunit
+#before_script:
+#  - cd test/php
+script: phpunit test\php
 notifications:
   email: false
