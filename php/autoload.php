@@ -35,8 +35,9 @@ THE SOFTWARE.
  */
 spl_autoload_register(function($class) {
   if(strpos($class, "Seufert\\Hamle\\") === 0) {
+    $s = DIRECTORY_SEPARATOR;
     $class = substr($class,14);
-    $path = __DIR__."\\Hamle\\".$class.".php";
+    $path = __DIR__.$s."hamle".$s.$class.".php";
     if(is_file($path)) require_once($path);
   }
 });
