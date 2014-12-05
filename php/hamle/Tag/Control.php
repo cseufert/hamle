@@ -96,7 +96,7 @@ class Control extends H\Tag {
         $out .= "/* else */";
         break;
       case "include":
-        $out .= "echo Run::includeFile(" . $hsv->toPHP() . ");";
+        $out .= "echo Hamle\\Run::includeFile(" . $hsv->toPHP() . ");";
         break;
     }
     return $out . ' ?>';
