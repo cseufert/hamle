@@ -1,5 +1,5 @@
 <?php
-require_once 'XmlDiff/src/XmlDiff.php';
+require_once __DIR__.'/xmldiff/src/XmlDiff.php';
 require_once(__DIR__."/../../php/autoload.php");
 
 use Seufert\Hamle\Field\Button;
