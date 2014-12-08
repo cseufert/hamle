@@ -55,7 +55,7 @@ class Setup {
    * @param int $offset Results Offset
    * @return Model Instance of model class that implements hamleModel
    */
-  function getModelDefault($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) { return new hamleDemoModel($id); }
+  function getModelDefault($id, $sort = [], $limit = 0, $offset = 0) { return new hamleDemoModel($id); }
 
   /**
    * Open a specific model type with id
@@ -68,7 +68,7 @@ class Setup {
    * @throws Exception\RunTime
    * @return Model Instance of model class that implements hamleModel
    */
-  function getModelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+  function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0) {
     if(count($typeId) > 1)
       throw new Exception\RunTime("Unable to open more than one ID at a time");
     foreach($typeId as $type=>$id)
@@ -86,7 +86,7 @@ class Setup {
    * @param int $offset Results Limit
    * @return Model Instance of Iteratable model class
    */
-  function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+  function getModelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
     return hamleDemoModel::findTag($typeTags);
   }
   /**
