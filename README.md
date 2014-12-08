@@ -86,6 +86,7 @@ becomes
     * `$(news^postdate)` returns all news posts sorted ascending by postdate
     * `$(news^-postdate)` returns all news posts sorted descending by postdate
     * `$(news^)` returns all news posts sorted in random order
+    * `$(news^-postdate^title)` returns all news posts sorted by date (DESC), then title(ASC)
     * `$(link:5-10)` returns links starting at #5 through 10
     * `$(news:4)` return 4 news posts
     * `$(product.featured:4^)` Return 4 randomly selected products with featured tag
