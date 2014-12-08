@@ -32,7 +32,7 @@ class Zero implements Model {
     return new Zero();
   }
 
-  function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0,
+  function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
                     $offset = 0, $grouptype = 1) {
     return new Zero();
   }

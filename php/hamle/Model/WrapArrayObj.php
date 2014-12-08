@@ -39,7 +39,7 @@ namespace Seufert\Hamle\Model {
       return $this->data[$this->pos]->hamleGet($key);
     }
 
-    function hamleRel($rel, $typeTags, $sortDir = 0, $sortField = '', $limit = 0,
+    function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
                       $offset = 0, $grouptype = 1) {
       return $this->data[$this->pos]->hamleRel($rel, $typeTags);
     }

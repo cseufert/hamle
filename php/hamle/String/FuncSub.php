@@ -47,8 +47,7 @@ class FuncSub extends Hamle\String\Func {
   }
 
   function toPHP() {
-    $limit = $this->sortlimit['dir'] . "," .
-        Hamle\String::varToCode($this->sortlimit['field']) . "," .
+    $limit = Hamle\String::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'] . "," .
         $this->grouptype['grouptype'];
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";

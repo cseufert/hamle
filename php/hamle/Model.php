@@ -47,15 +47,13 @@ namespace Seufert\Hamle {
      * @param int $rel Relation to this object hamle::REL_CHILD, etc
      * @param array $typeTags Array of types to search containing tags
      *                                    eg([photo->[landscape,wide]])
-     * @param int $sortDir Sort Direction defined by hamle::SORT_*
-     * @param string $sortField Field to sort by
+     * @param array $sort Array of SORT fields(key) with DIRECTION(value)
      * @param int $limit Limit of rows to return
      * @param int $offset Offset Number of rows to offset results by
      * @param int $grouptype Type of group
      * @return Model Return object must implmement hamleModel interface
      */
-    function hamleRel($rel, $typeTags,
-                      $sortDir = 0, $sortField = '', $limit = 0, $offset = 0,
-                      $grouptype = 1);
+    function hamleRel($rel, $typeTags, $sort = [],
+                      $limit = 0, $offset = 0, $grouptype = 1);
   }
 }

@@ -68,19 +68,22 @@ class Func extends SimpleVar {
   }
 
   function attSortLimit(&$s) {
-    $att = array('limit' => 0, 'offset' => 0, 'dir' => 0, 'field' => '');
+    $att = array('limit' => 0, 'offset' => 0, 'sort'=> []);
     $m = array();
     if (preg_match('/:(?:([0-9]+)\-)?([0-9]+)/', $s, $m)) {
       $att['limit'] = $m[2];
       $att['offset'] = $m[1] ? $m[1] : 0;
     }
-    if (preg_match('/\\^(-?)([a-zA-Z0-9\_]*)/', $s, $m)) {
-      if ($m[2]) {
-        $att['field'] = $m[2];
-        if ($m[1] == "-") $att['dir'] = Hamle\Hamle::SORT_DESCENDING;
-        else $att['dir'] = Hamle\Hamle::SORT_ASCENDING;
-      } else $att['dir'] = Hamle\Hamle::SORT_RANDOM;
+    $rand = false;
+    if (preg_match_all('/\\^(-?)([a-zA-Z0-9\_]*)/', $s, $m)) {
+      foreach($m[0] as $k=>$mv)
+        if ($m[2][$k]) {
+          $dir = $m[1][$k] == "-"?Hamle\Hamle::SORT_DESCENDING:Hamle\Hamle::SORT_ASCENDING;
+          $att['sort'][$m[2][$k]] = $dir;
+        } else $rand = true;
     }
+    if($rand)
+      $att['sort'] = [""=>$att['dir'] = Hamle\Hamle::SORT_RANDOM];
     return $att;
   }
 
@@ -94,8 +97,7 @@ class Func extends SimpleVar {
   }
 
   function toPHP() {
-    $limit = $this->sortlimit['dir'] . "," .
-        String::varToCode($this->sortlimit['field']) . "," .
+    $limit = String::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'];
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
     if ($this->scope) return "Hamle\\Scope::get(0)$sub";
