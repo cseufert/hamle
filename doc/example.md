@@ -14,6 +14,7 @@ Example HAMLE Implementation
 <?php
 // Includ the HAMLE Autoload for the library
 require_once("php/autoload.php");
+use Seufert\Hamle as H;
 // Set the default page to page id = 0
 $_REQUEST += array('page'=>0);
 
@@ -24,7 +25,7 @@ $pages = array(
     2=>array('id'=>2,'title'=>"What is This",'body'=>'This is a hamle demo','bgcolor'=>'#fff2f2'),
   );
 //The HAMLE Setup Class, this is where you customise the behaviour of HAMLE
-class siteHamleSetup extends hamleSetup {
+class siteHamleSetup extends H\Setup {
 
   // Tell HAMLE where to find template files, for this example the root dir is fine
   function templatePath($f) { 
@@ -37,7 +38,7 @@ class siteHamleSetup extends hamleSetup {
   }
   
   // Tell HAMLE how to get all Pages Model, this would normally be much more implemented
-  function getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+  function getModelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
     global $pages;
     // I am using a wrapper class, which makes any array a valid model
     if(in_array("pages",array_keys($typeTags))) 
@@ -45,9 +46,9 @@ class siteHamleSetup extends hamleSetup {
   }
 }
 // Create a new model for the current view (the initial model)
-$myModel = new hamleModel_Array(array($pages[$_REQUEST['page']]));
+$myModel = new H\Model\WrapArray(array($pages[$_REQUEST['page']]));
 // Create a new HAMLE parser instance for the site
-$hamle = new hamle($myModel, new siteHamleSetup());
+$hamle = new H\Hamle($myModel, new siteHamleSetup());
 // Output the template file
 $hamle->load("index.hamle");
 echo $hamle->output();
