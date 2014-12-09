@@ -42,7 +42,7 @@ class siteHamleSetup extends H\Setup {
     global $pages;
     // I am using a wrapper class, which makes any array a valid model
     if(in_array("pages",array_keys($typeTags))) 
-      return new hamleModel_Array($pages);
+      return new H\Model\WrapArray($pages);
   }
 }
 // Create a new model for the current view (the initial model)

@@ -1,0 +1,19 @@
+{
+  "name": "cseufert/hamle",
+  "description": "A PHP Library to Pass HAMLE Files. HAMLE was inspired by HAML, however involves less typeing, and does not allow code in a template, but does containt the logic.",
+  "homepage":"https://github.com/cseufert/hamle",
+  "authors": [{
+    "name": "Chris Seufert",
+    "email": "chris@seufert.id.au"
+  }],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Seufert\\Hamle\\": "php/"
+    }
+  },
+  "licence": "MIT",
+  "keywords":["PHP","HAMLE","HAML","Templating","Markup","HTML","Forms"]
+}
