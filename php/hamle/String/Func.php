@@ -34,7 +34,7 @@ class Func extends SimpleVar {
   protected $scope = false;
   protected $filt;
   protected $sortlimit;
-  const REGEX_FUNCSEL = '[a-zA-Z0-9\.,#_:\\^\\-@]';
+  const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@]';
 
   function __construct($s) {
     $m = array();
