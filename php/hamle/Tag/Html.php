@@ -25,14 +25,13 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Tag;
 
-use Seufert\Hamle\String;
-use Seufert\Hamle\Tag;
+use Seufert\Hamle as H;
 
 /**
  * HAMLE HTML Tag
  * Use to represent plain HTML Tags
  */
-class Html extends Tag {
+class Html extends H\Tag {
   /**
    * @var array Options for html tags (eg, href, class, style, etc)
    */
@@ -84,9 +83,9 @@ class Html extends Tag {
     foreach ($this->opt as $k => $v) {
       if ($k == "class" && !$v) continue;
       if (is_array($v)) $v = implode(" ", $v);
-      if (!$v instanceof String)
-        $v = new String($v);
-      $k = new String($k);
+      if (!$v instanceof H\String)
+        $v = new H\String($v);
+      $k = new H\String($k);
       $out[] = " " . $k->toHTML() . "=\"" . $v->toHTML() . "\"";
     }
     return implode("", $out);

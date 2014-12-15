@@ -25,8 +25,6 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle;
 
-use Seufert\Hamle\Filter;
-use Seufert\Hamle\String;
 
 /**
  * HAMLE Tag object
