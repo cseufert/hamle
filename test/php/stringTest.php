@@ -202,6 +202,13 @@ class stringTest extends base {
     $this->assertEquals("Hamle\\Run::modelId('heroimage',array(),0,0)".
                     "->hamleRel(1,array('photo'=>array()),array(''=>4),4,0,1)", $php);
   }
+  public function testDollarFuncChild6() {
+    $hs = new String("\$( > *@2)", String::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::get(0)->".
+        "hamleRel(1,array('*'=>array()),array(),0,0,2)", $php);
+  }
   public function testDollarFuncSort1() {
     $hs = new String("\$(testim.featured^-sorder^title)", String::TOKEN_CONTROL);
     $html = $hs->toHTML();
