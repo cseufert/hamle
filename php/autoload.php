@@ -37,8 +37,8 @@ spl_autoload_register(function($class) {
   if(strpos($class, "Seufert\\Hamle\\") === 0) {
     $s = DIRECTORY_SEPARATOR;
     $class = str_replace("\\",$s,substr($class,14));
-    $path = __DIR__.$s."hamle".$s.$class.".php";
-    if(is_file($path)) require_once($path);
+    $path = __DIR__.$s."hamle".$s."$class.php";
+    if(is_file($path)) include_once($path);
   }
-});
+},true,true);
 

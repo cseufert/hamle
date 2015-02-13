@@ -18,6 +18,48 @@ ul
 li
 ```
 
+### Special Tags
+```
+img
+a
+meta
+link
+script
+form
+textarea
+input
+button
+```
+
+### Generic Tags
+```
+html
+body
+div
+span
+section
+article
+p
+table
+thead
+tfoot
+tbody
+tr
+td
+h1
+h2
+h3
+h4
+h5
+h6
+```
+
+### Self Closing Tags
+img
+br
+hline
+
+
 ### HTML Tags with Params
 ```
 link[href=/css&type=text/css]
