@@ -86,7 +86,6 @@ class Hamle {
       throw new Exception\Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
     $this->setup = $setup;
     $this->baseModel = $baseModel;
-    $this->cacheFile = $this->setup->cachePath("string.hamle.php");
     $this->snipFiles = $this->setup->snippetFiles();
     foreach($this->snipFiles as $f)
       if(!file_exists($f)) throw new Exception\NotFound("Unable to find Snippet File ($f)");
@@ -119,11 +118,14 @@ class Hamle {
   /**
    * Parse a HAMLE tempalte from a string 
    * _WARNING_ Template Sting will *NOT* be cached, it will be parsed every time
-   * 
+   *
+   * @internal Not for general use, use string($h) instead
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
   function parse($hamleCode) {
+    if(!$this->cacheFile)
+        $this->cacheFile = $this->setup->cachePath("string.hamle.php");
     $this->parse->str($hamleCode);
     $this->setup->debugLog("Loading Snippet Files");
     foreach($this->snipFiles as $snip)
@@ -137,6 +139,18 @@ class Hamle {
     if(FALSE === file_put_contents($this->cacheFile, $this->parse->output()))
       throw new Exception\ParseError(
                       "Unable to write to cache file ({$this->cacheFile})");
+  }
+
+  /**
+   * Parse a HAMLE String, and cache output
+   * @param $hamleString string Hamle
+   */
+  function string($hamleString) {
+    $md5 = md5($hamleString);
+    $stringId = substr($md5,0,12).substr($md5,24,8);
+    $this->cacheFile = $this->setup->cachePath("string.$stringId.hamle.php");
+    if(!is_file($this->cacheFile))
+      $this->parse($hamleString);
   }
 
   /**
