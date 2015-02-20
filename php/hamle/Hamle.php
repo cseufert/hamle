@@ -178,6 +178,14 @@ class Hamle {
     return $out;
   }
 
+  function outputHamle() {
+    $out = "";
+    foreach($this->parse->root as $tag) {
+      $out .= $tag->renderHamle();
+    }
+    return $out;
+  }
+
   /**
    * Get the current line number
    * @return int The line number being passed by the parser

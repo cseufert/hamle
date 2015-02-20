@@ -43,7 +43,7 @@ class Parse {
   /**
    * @var Tag[] Array of Root Document Tags
    */
-  protected $root;
+  public $root;
   /**
    * @var string Each Line read in from template
    */
@@ -184,7 +184,7 @@ ENDREGEX;
             break;
           case "/": // HTML Comment
           case "//": // Non Printed Comment
-            $hTag = new Tag\Comment($textcode);
+            $hTag = new Tag\Comment($textcode == "//");
             $hTag->addContent($text);
             foreach ($this->consumeBlock($indent) as $l)
               $hTag->addContent($l, String::TOKEN_CODE);
@@ -218,13 +218,16 @@ ENDREGEX;
 
   function consumeBlock($indent) {
     $out = array();
-    $m = array();
+    $m = array(); $e = false; $indStep = 0;
     while ($this->lineNo + 1 < $this->lineCount &&
-        (!trim($this->lines[$this->lineNo + 1]) ||
-            preg_match('/^(\s){' . $indent . '}((\s)+[^\s].*)$/',
+        (($e = !trim($this->lines[$this->lineNo + 1])) ||
+            preg_match('/^\s{' . $indent . '}((\s+)[^\s].*)$/',
                 $this->lines[$this->lineNo + 1], $m))) {
-      if (trim($this->lines[$this->lineNo + 1]))
-        $out[] = $m[2];
+      if(!$e) {
+        if($indStep === 0) $indStep = strlen($m[1]);
+        $out[] = substr($m[1],2);
+      }
+
       $this->lineNo++;
     }
     return $out;
