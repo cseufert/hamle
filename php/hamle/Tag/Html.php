@@ -31,12 +31,20 @@ use Seufert\Hamle as H;
  * HAMLE HTML Tag
  * Use to represent plain HTML Tags
  */
-class Html extends H\Tag {
-  /**
-   * @var array Options for html tags (eg, href, class, style, etc)
-   */
-  static protected $selfCloseTags = array("area", "base", "br", "col", "command",
-      "embed", "hr", "img", "input", "keygen", "link",
+class Html extends Tree {
+
+  /** @var string Tag Type for Printable Tags */
+  public $type;
+
+  /** @var array Options Array */
+  public $opt;
+
+  /** @var array Tag Source, (Dynamic Tag) */
+  public $source;
+
+  /** @var array List of Self closing tags (eg, meta, class, style, br,  etc) */
+  static protected $selfCloseTags = array("area", "base", "br", "col",
+      "command", "embed", "hr", "img", "input", "keygen", "link",
       "meta", "param", "source", "track", "wbr");
 
   function __construct($tag, $classid, $param = array()) {
@@ -53,13 +61,54 @@ class Html extends H\Tag {
     if (isset($this->opt['class']) && !is_array($this->opt['class']))
       $this->opt['class'] = explode(" ", $this->opt['class']);
     $this->opt += array('class' => array());
-
-    preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $m);
-    if (isset($m[0])) foreach ($m[0] as $s) {
-      if ($s[0] == "#") $this->opt['id'] = substr($s, 1);
-      if ($s[0] == ".") $this->opt['class'][] = substr($s, 1);
-      if ($s[0] == "!") $this->source[] = substr($s, 1);
+    if(is_array($classid)) {
+      $this->opt += $classid;
+    } else {
+      preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $m);
+      if(isset($m[0])) foreach($m[0] as $s) {
+        if($s[0] == "#") $this->opt['id'] = substr($s, 1);
+        if($s[0] == ".") $this->opt['class'][] = substr($s, 1);
+        if($s[0] == "!") $this->source[] = substr($s, 1);
+      }
     }
+  }
+
+  function renderHamleTag() {
+    if($this->type == 'div' && ($this->opt['class'] || (isset($this->opt['id']) && $this->opt['id'])))
+      $out = "";
+    else
+      $out = $this->type;
+    $opt = $this->opt;
+    if(isset($opt['id'])) {
+      if($opt['id'])
+        $out .= "#".$this->opt['id'];
+      unset($opt['id']);
+    }
+    if(isset($opt['class'])) {
+      if($opt['class'])
+        $out .= ".".implode('.', $this->opt['class']);
+      unset($opt['class']);
+    }
+    if($opt)
+      $out .= "[".self::buildHamleParams($opt)."]";
+    if($this->content)
+      $out .= " ".$this->content[0];
+    $out .= "\n";
+    return $out;
+  }
+
+  function renderHamleContent($pad) {
+    $out = "";
+    foreach($this->tags as $tag)
+      $out .= $tag->renderHamle($pad);
+    return $out;
+  }
+
+  static function buildHamleParams($o) {
+    return str_replace(
+        ["+", "%22","%24","%26","%2C","%2F","%3D","%5B","%5C","%5D",],
+        [" ", "\"", "\$", "\\&",",",  "/",  "=",  "\[", "\\", "\]"],
+        http_build_query($o));
   }
 
   function renderStTag() {

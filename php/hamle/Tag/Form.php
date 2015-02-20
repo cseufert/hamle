@@ -30,7 +30,7 @@ use Seufert\Hamle\Tag;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Field\Button;
 
-class Form extends Tag {
+class Form extends Html {
   protected static $sForm, $sCount;
   protected $var;
   /**
@@ -39,7 +39,7 @@ class Form extends Tag {
   protected $form;
 
   function __construct($param) {
-    parent::__construct();
+    parent::__construct("form",[]);
     $param = explode(' ', $param);
     if (count($param) < 2) throw new ParseError("|form requires 2 arguments, form type, and instance");
     $this->var = new H\String($param[1]);

@@ -43,7 +43,7 @@ class Filter extends Tag {
     $this->type = ucfirst(strtolower($tag));
     $this->filter = "\\Seufert\\Hamle\\Filter\\{$this->type}";
     if (!class_exists($this->filter))
-      Throw new ParseError("Unable to fild filter $tag");
+      Throw new ParseError("Unable to filter for type $tag");
   }
 
   function renderContent($pad = "", $oneliner = false) {

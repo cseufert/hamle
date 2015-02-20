@@ -27,7 +27,7 @@ namespace Seufert\Hamle\Tag;
 
 use Seufert\Hamle;
 
-class Snippet extends Hamle\Tag {
+class Snippet extends Tree {
   protected $path;
 
   function __construct($params) {
@@ -67,6 +67,7 @@ class Snippet extends Hamle\Tag {
   }
 
   function apply(Hamle\Tag $rootTag) {
+    if(!$rootTag instanceof Tree) return;
     if ($this->type == "append" or $this->type == "prepend") {
       $matchTags = $rootTag->find($this->path);
       foreach ($matchTags as $tag)

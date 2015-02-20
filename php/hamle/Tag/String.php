@@ -25,12 +25,11 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Tag;
 use Seufert\Hamle as H;
-use Seufert\Hamle\Tag;
 
 /**
  * String Tag
  */
-class String extends Tag {
+class String extends H\Tag {
   protected $escape = true;
 
   function __construct($tag) {
@@ -46,6 +45,19 @@ class String extends Tag {
       } else
         $this->content[] = $s;
     }
+  }
+
+  function renderHamleTag() {
+    return ($this->escape?"_":"__").
+    ($this->content?" ".$this->content[0]:"")."\n";
+  }
+
+  function renderHamleContent($pad = "") {
+    $out = "";
+    for($i = 1; $i < count($this->content); $i++) {
+      $out .= $pad.$this->content[$i]."\n";
+    }
+    return $out;
   }
 
 }

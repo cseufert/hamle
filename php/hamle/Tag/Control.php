@@ -31,7 +31,7 @@ use Seufert\Hamle\Exception\ParseError;
  * HAMLE Control Tag
  * Used for tags starting with the pipe (|) symbol
  */
-class Control extends H\Tag {
+class Control extends Tree {
   /**
    * @var string Variable passed to Control Tag
    */
