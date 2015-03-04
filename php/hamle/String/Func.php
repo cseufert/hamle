@@ -57,8 +57,9 @@ class Func extends SimpleVar {
       if (preg_match('/^[a-zA-Z0-9\\_]+/', $str, $m)) $type = $m[0];
       else $type = "*";
       if (preg_match('/#([a-zA-Z0-9\_]+)/', $str, $m)) $att['id'][$type][] = $m[1];
-      elseif (preg_match('/\\.([a-zA-Z0-9\_\-]+)/', $str, $m))
-        $att['tag'][$type][] = $m[1];
+      elseif (preg_match_all('/\\.([a-zA-Z0-9\_\-]+)/', $str, $m))
+        foreach ($m[1] as $tag)
+          $att['tag'][$type][] = $tag;
       else $att['tag'][$type] = array();
     }
     //var_dump($att);

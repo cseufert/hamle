@@ -75,6 +75,13 @@ class stringTest extends base {
     $this->assertEquals("<?=Hamle\\Scope::getName('test')->hamleGet('user')?>", $html);
     $this->assertEquals("Hamle\\Scope::getName('test')->hamleGet('user')", $php);
   }
+  public function testDollarString9() {
+    $hs = new String("Hello {\$(page.home.feature)->user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')", $php);
+  }
 
   public function testDollarCodeString1() {
     $hs = new String("\"My Title = {\$title}\"",String::TOKEN_CODE);
