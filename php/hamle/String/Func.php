@@ -89,7 +89,7 @@ class Func extends SimpleVar {
   }
 
   function attGroupType(&$s) {
-    $att = array('grouptype' => 1);
+    $att = array('grouptype' => 0);
     $m = array();
     if (preg_match('/@([0-9]+)/', $s, $m)) {
       $att['grouptype'] = $m[1];
