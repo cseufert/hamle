@@ -179,21 +179,21 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('my_page',array(),0,0)".
-                      "->hamleRel(1,array('link'=>array()),array(),0,0,1)", $php);
+                      "->hamleRel(1,array('link'=>array()),array(),0,0,0)", $php);
   }  
   public function testDollarFuncChild2() {
     $hs = new String("\$(#my_page > .gallery)", String::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('my_page',array(),0,0)".
-                    "->hamleRel(1,array('*'=>array(0=>'gallery')),array(),0,0,1)", $php);
+                    "->hamleRel(1,array('*'=>array(0=>'gallery')),array(),0,0,0)", $php);
   } 
   public function testDollarFuncChild3() {
     $hs = new String("\$(#menu > page,cat)", String::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('menu',array(),0,0)".
-                "->hamleRel(1,array('page'=>array(),'cat'=>array()),array(),0,0,1)", $php);
+                "->hamleRel(1,array('page'=>array(),'cat'=>array()),array(),0,0,0)", $php);
   } 
   /**
    * @expectedException \Seufert\Hamle\Exception\ParseError
@@ -207,7 +207,7 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('heroimage',array(),0,0)".
-                    "->hamleRel(1,array('photo'=>array()),array(''=>4),4,0,1)", $php);
+                    "->hamleRel(1,array('photo'=>array()),array(''=>4),4,0,0)", $php);
   }
   public function testDollarFuncChild6() {
     $hs = new String("\$( > *@2)", String::TOKEN_CONTROL);
@@ -227,6 +227,6 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Scope::get(0)->".
-        "hamleRel(2,array('cat'=>array()),array(),0,0,1)", $php);
+        "hamleRel(2,array('cat'=>array()),array(),0,0,0)", $php);
   }   
 }
