@@ -41,7 +41,7 @@ class DynHtml extends Html {
   }
 
   function render($indent = 0, $doIndent = true) {
-    $data = H\String::varToCode(array("base" => $this->baseType, "type" => $this->type, "opt" => $this->opt, "source" => $this->source, "content" => $this->content));
+    $data = H\Text::varToCode(array("base" => $this->baseType, "type" => $this->type, "opt" => $this->opt, "source" => $this->source, "content" => $this->content));
     $out = "<?php " . $this->varname . "=$data; echo Hamle\\Tag\\DynHtml::toStTag(" . $this->varname . ",\$form).";
     $out .= "implode(\"\\n\"," . $this->varname . "['content']).";
     $out .= "Hamle\\Tag\\DynHtml::toEnTag(" . $this->varname . ",\$form)?>\n";
@@ -63,7 +63,7 @@ class DynHtml extends Html {
           if ($v[$k2] instanceof String) $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
         $v = implode(" ", $v);
       }
-      if ($v instanceOf H\String) $v = eval('return ' . $v->toPHP() . ';');
+      if ($v instanceOf H\Text) $v = eval('return ' . $v->toPHP() . ';');
       $out .= $k . "=\"" . htmlspecialchars($v) . "\" ";
     }
     $out .= in_array($d['type'], self::$selfCloseTags) ? "/>" : ">";

@@ -23,40 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\String;
-use Seufert\Hamle\Exception\ParseError;
-
-class Complex extends String {
-  protected $func;
-  protected $sel = null;
+class Select extends Complex {
+  protected $key;
 
   function __construct($s) {
-    $s = explode("->", $s);
-    if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
-    if ($s[0][1] == "(")
-      $this->func = new String\Func($s[0]);
-    elseif ($s[0][1] == "[")
-      $this->func = new String\Scope($s[0]);
-    else
-      $this->func = new SimpleVar($s[0]);
-    array_shift($s);
-    $this->sel = $s;
+    $s = explode("->", $s, 2);
+    $this->key = $s[0];
+    if (count($s) > 1)
+      $this->sel = $s[1];
   }
-
-  function toHTML() {
-    return "<?=" . $this->toPHP() . "?>";
-  }
-
-  function toPHP() {
-    if ($this->sel) {
-      $sel = array();
-      foreach ($this->sel as $s)
-        $sel[] = "hamleGet('$s')";
-      return $this->func->toPHP() . "->" . implode('->', $sel);
-    } else
-      return $this->func->toPHP();
-  }
-
 }

@@ -68,9 +68,9 @@ class Control extends H\Tag {
     if (preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
       $scopeName = $m[1];
       $lookup = substr($this->var, 0, strlen($this->var) - strlen($m[0]));
-      $hsv = new H\String(trim($lookup), H\String::TOKEN_CONTROL);
+      $hsv = new H\Text(trim($lookup), H\Text::TOKEN_CONTROL);
     } else
-      $hsv = new H\String($this->var, H\String::TOKEN_CONTROL);
+      $hsv = new H\Text($this->var, H\Text::TOKEN_CONTROL);
     switch ($this->type) {
       case "each":
         if ($this->var)
@@ -80,7 +80,7 @@ class Control extends H\Tag {
         $out .= "Hamle\\Scope::add({$this->o}); ";
         break;
       case "if":
-        $hsvcomp = new H\String\Comparison($this->var);
+        $hsvcomp = new H\Text\Comparison($this->var);
         $out .= "if(" . $hsvcomp->toPHP() . ") {";
         break;
       case "with":

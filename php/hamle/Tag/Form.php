@@ -42,7 +42,7 @@ class Form extends Tag {
     parent::__construct();
     $param = explode(' ', $param);
     if (count($param) < 2) throw new ParseError("|form requires 2 arguments, form type, and instance");
-    $this->var = new H\String($param[1]);
+    $this->var = new H\Text($param[1]);
     if (preg_match('/^(.*)\((.*)\)/', $param[0], $m))
       $this->form = new $m[1]($m[2]);
     else

@@ -23,11 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 
-class FormField extends String {
+class FormField extends Text {
   protected $var;
 
   function __construct($var) {
@@ -35,7 +35,7 @@ class FormField extends String {
   }
 
   function toPHP() {
-    return '$form->getField(' . String::varToCode($this->var) . ')->getValue()';
+    return '$form->getField(' . Text::varToCode($this->var) . ')->getValue()';
   }
 
   function toHTML() {

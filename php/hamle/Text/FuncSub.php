@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 
-class FuncSub extends Hamle\String\Func {
+class FuncSub extends Hamle\Text\Func {
   protected $dir;
 
   function __construct($s) {
@@ -47,11 +47,11 @@ class FuncSub extends Hamle\String\Func {
   }
 
   function toPHP() {
-    $limit = Hamle\String::varToCode($this->sortlimit['sort']) . "," .
+    $limit = Hamle\Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'] . "," .
         $this->grouptype['grouptype'];
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
     return "hamleRel(" . $this->dir . "," .
-    Hamle\String::varToCode($this->filt['tag']) . ",$limit)$sub";
+    Hamle\Text::varToCode($this->filt['tag']) . ",$limit)$sub";
   }
 }

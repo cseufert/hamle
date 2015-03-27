@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle;
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
 class Func extends SimpleVar {
@@ -98,21 +98,21 @@ class Func extends SimpleVar {
   }
 
   function toPHP() {
-    $limit = String::varToCode($this->sortlimit['sort']) . "," .
+    $limit = Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'];
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
     if ($this->scope) return "Hamle\\Scope::get(0)$sub";
     if (count($this->filt['tag']))
       return "Hamle\\Run::modelTypeTags(" .
-      String::varToCode($this->filt['tag']) . ",$limit)$sub";
+      Text::varToCode($this->filt['tag']) . ",$limit)$sub";
     if (count($this->filt['id']))
       if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) == 1)
         return "Hamle\\Run::modelId(" .
-        String::varToCode(current($this->filt['id']['*'])) .
+        Text::varToCode(current($this->filt['id']['*'])) .
         ",$limit)$sub";
       else
         return "Hamle\\Run::modelTypeId(" .
-        String::varToCode($this->filt['id']) . ",$limit)$sub";
+        Text::varToCode($this->filt['id']) . ",$limit)$sub";
     return "";
   }
 

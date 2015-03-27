@@ -184,9 +184,9 @@ class Tag {
    * @param string $s One line of content
    * @param int $strtype Type of string to parse, hamleString::TOKEN_*
    */
-  function addContent($s, $strtype = String::TOKEN_HTML) {
+  function addContent($s, $strtype = Text::TOKEN_HTML) {
     if (trim($s)) {
-      $parse = new String($s, $strtype);
+      $parse = new Text($s, $strtype);
       $this->content[] = $parse->toHTML();
     }
   }

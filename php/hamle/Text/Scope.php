@@ -23,22 +23,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
+use Seufert\Hamle\Exception\ParseError;
 
-class SimpleVar extends String {
-  protected $var;
+class Scope extends SimpleVar {
+  protected $scope = 0;
 
   function __construct($s) {
-    $this->var = substr($s, 1);
-  }
-
-  function toHTML() {
-    return "<?=" . $this->toPHP() . "?>";
+    $m = array();
+    //var_dump($s);
+    if (!preg_match('/\$\[(-?[0-9]+|[a-zA-Z]+)\]/', $s, $m))
+      throw new ParseError("Unable to match scope");
+    $this->scope = $m[1];
   }
 
   function toPHP() {
-    return "Hamle\\Scope::get()->hamleGet(" . String::varToCode($this->var) . ")";
+    if (is_numeric($this->scope))
+      return "Hamle\\Scope::get(" . Text::varToCode($this->scope) . ")";
+    else
+      return "Hamle\\Scope::getName(" . Text::varToCode($this->scope) . ")";
+  }
+
+  function toHTML() {
+    throw new
+    ParseError("Unable to use Scope operator in HTML Code");
   }
 }

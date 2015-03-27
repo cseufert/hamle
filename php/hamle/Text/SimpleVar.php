@@ -23,15 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-class Select extends Complex {
-  protected $key;
+use Seufert\Hamle\Text;
+
+class SimpleVar extends Text {
+  protected $var;
 
   function __construct($s) {
-    $s = explode("->", $s, 2);
-    $this->key = $s[0];
-    if (count($s) > 1)
-      $this->sel = $s[1];
+    $this->var = substr($s, 1);
+  }
+
+  function toHTML() {
+    return "<?=" . $this->toPHP() . "?>";
+  }
+
+  function toPHP() {
+    return "Hamle\\Scope::get()->hamleGet(" . Text::varToCode($this->var) . ")";
   }
 }

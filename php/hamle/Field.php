@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle;
 
-use Seufert\Hamle\String\FormField;
+use Seufert\Hamle\Text\FormField;
 
 /**
  * HAMLE Form Field

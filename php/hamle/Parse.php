@@ -26,7 +26,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Parse\Filter;
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 
 /**
  * HAML Enhanced - Parser, parses hamle files,
@@ -175,7 +175,7 @@ ENDREGEX;
             $hTag = new Tag\Filter(substr($code, 1));
             $hTag->addContent($text);
             foreach ($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l, String::TOKEN_CODE);
+              $hTag->addContent($l, Text::TOKEN_CODE);
             break;
           case "_": //String Tag
           case "__": //Unescape String Tag
@@ -187,7 +187,7 @@ ENDREGEX;
             $hTag = new Tag\Comment($textcode);
             $hTag->addContent($text);
             foreach ($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l, String::TOKEN_CODE);
+              $hTag->addContent($l, Text::TOKEN_CODE);
             break;
           default:
             if (strpos($classid, "!") === FALSE)

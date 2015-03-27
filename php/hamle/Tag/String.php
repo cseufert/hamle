@@ -38,10 +38,10 @@ class String extends Tag {
     $this->escape = ($tag == "_");
   }
 
-  function addContent($s, $strtype = H\String::TOKEN_HTML) {
+  function addContent($s, $strtype = H\Text::TOKEN_HTML) {
     if (trim($s)) {
       if ($this->escape) {
-        $parse = new H\String($s, $strtype);
+        $parse = new H\Text($s, $strtype);
         $this->content[] = $parse->toHTML();
       } else
         $this->content[] = $s;

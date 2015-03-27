@@ -23,11 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 use Seufert\Hamle\Exception;
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 
-class Comparison extends String {
+class Comparison extends Text {
 
 
   protected $param1, $param2, $operator;
@@ -36,11 +36,11 @@ class Comparison extends String {
   function __construct($s, $mode = self::TOKEN_CONTROL) {
     $m = array();
     if(preg_match('/^(.*) '.self::REGEX_COMP_OPER.' (.*)$/', $s, $m)) {
-      $this->param1 = new String($m[1],String::TOKEN_HTML);
-      $this->param2 = new String($m[3],String::TOKEN_HTML);
+      $this->param1 = new Text($m[1],Text::TOKEN_HTML);
+      $this->param2 = new Text($m[3],Text::TOKEN_HTML);
       $this->operator = $m[2];
     } else
-      $this->param1 = new String($s,String::TOKEN_HTML);
+      $this->param1 = new Text($s,Text::TOKEN_HTML);
   }
 
 //  function __construct(String $p1, String $p2, $operator) {

@@ -5,11 +5,11 @@
  * Date: 4/12/2014
  * Time: 12:04 PM
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 
-class Plain extends String {
+class Plain extends Text {
   protected $s;
   protected $type;
 
@@ -19,7 +19,7 @@ class Plain extends String {
   }
 
   function toPHP() {
-    return String::varToCode($this->s);
+    return Text::varToCode($this->s);
   }
 
   function toHTML() {

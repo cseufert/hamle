@@ -83,9 +83,9 @@ class Html extends H\Tag {
     foreach ($this->opt as $k => $v) {
       if ($k == "class" && !$v) continue;
       if (is_array($v)) $v = implode(" ", $v);
-      if (!$v instanceof H\String)
-        $v = new H\String($v);
-      $k = new H\String($k);
+      if (!$v instanceof H\Text)
+        $v = new H\Text($v);
+      $k = new H\Text($k);
       $out[] = " " . $k->toHTML() . "=\"" . $v->toHTML() . "\"";
     }
     return implode("", $out);

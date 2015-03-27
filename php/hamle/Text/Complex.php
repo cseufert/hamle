@@ -23,31 +23,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\String;
+namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
-class Scope extends SimpleVar {
-  protected $scope = 0;
+class Complex extends Text {
+  protected $func;
+  protected $sel = null;
 
   function __construct($s) {
-    $m = array();
-    //var_dump($s);
-    if (!preg_match('/\$\[(-?[0-9]+|[a-zA-Z]+)\]/', $s, $m))
-      throw new ParseError("Unable to match scope");
-    $this->scope = $m[1];
-  }
-
-  function toPHP() {
-    if (is_numeric($this->scope))
-      return "Hamle\\Scope::get(" . String::varToCode($this->scope) . ")";
+    $s = explode("->", $s);
+    if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
+    if ($s[0][1] == "(")
+      $this->func = new Text\Func($s[0]);
+    elseif ($s[0][1] == "[")
+      $this->func = new Text\Scope($s[0]);
     else
-      return "Hamle\\Scope::getName(" . String::varToCode($this->scope) . ")";
+      $this->func = new SimpleVar($s[0]);
+    array_shift($s);
+    $this->sel = $s;
   }
 
   function toHTML() {
-    throw new
-    ParseError("Unable to use Scope operator in HTML Code");
+    return "<?=" . $this->toPHP() . "?>";
   }
+
+  function toPHP() {
+    if ($this->sel) {
+      $sel = array();
+      foreach ($this->sel as $s)
+        $sel[] = "hamleGet('$s')";
+      return $this->func->toPHP() . "->" . implode('->', $sel);
+    } else
+      return $this->func->toPHP();
+  }
+
 }

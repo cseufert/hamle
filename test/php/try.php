@@ -1,12 +1,12 @@
 <?php
 use Seufert\Hamle\Setup;
 use Seufert\Hamle\Hamle;
-use Seufert\Hamle\String;
+use Seufert\Hamle\Text;
 use Seufert\Hamle\Model\WrapArray;
 
 require_once("../../php/autoload.php");
 
-echo (new String("      div#id.class { color: red; }", String::TOKEN_CODE))->toHTML();
+echo (new Text("      div#id.class { color: red; }", Text::TOKEN_CODE))->toHTML();
 exit();
 class snippetSetup extends Setup {
   function themePath($f) {
