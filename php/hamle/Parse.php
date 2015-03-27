@@ -179,7 +179,7 @@ ENDREGEX;
             break;
           case "_": //String Tag
           case "__": //Unescape String Tag
-            $hTag = new Tag\String($textcode);
+            $hTag = new Tag\Text($textcode);
             $hTag->addContent($text);
             break;
           case "/": // HTML Comment

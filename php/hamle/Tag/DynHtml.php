@@ -60,7 +60,7 @@ class DynHtml extends Html {
     foreach ($d['opt'] as $k => $v) {
       if (is_array($v)) {
         foreach ($v as $k2 => $v2)
-          if ($v[$k2] instanceof String) $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
+          if ($v[$k2] instanceof Text) $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
         $v = implode(" ", $v);
       }
       if ($v instanceOf H\Text) $v = eval('return ' . $v->toPHP() . ';');

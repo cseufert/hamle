@@ -30,7 +30,7 @@ use Seufert\Hamle\Tag;
 /**
  * String Tag
  */
-class String extends Tag {
+class Text extends Tag {
   protected $escape = true;
 
   function __construct($tag) {
