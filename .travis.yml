@@ -9,9 +9,8 @@ php:
   - hhvm
 matrix:
   allow_failures:
-    - php:
-      - hhvm
-      - 7.0
+    - php: hhvm
+    - php: 7.0
 #before_script:
 #  - cd test/php
 script: phpunit test/php
