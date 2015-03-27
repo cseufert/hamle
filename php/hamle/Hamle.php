@@ -170,7 +170,7 @@ class Hamle {
       $this->baseModel = $baseModel;
       $out = ob_get_contents();
       ob_end_clean();
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       ob_end_clean();
       throw $e;
     }
