@@ -19,7 +19,7 @@ class basicTest extends base {
             "</li>".
             "</ul>".
             "</div></body></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -27,7 +27,7 @@ class basicTest extends base {
   public function testShortTags() {
     $hamle = "html\n  meta\n  link\n";
     $html = "<html><meta /><link /></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -40,7 +40,7 @@ class basicTest extends base {
             '<meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.
             '<link href="/css" type="text/css" />'.
             "</html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -54,7 +54,7 @@ class basicTest extends base {
             '  <meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />'.PHP_EOL.
             '  <link href="/css" type="text/css" />'.PHP_EOL.
             "</html>".PHP_EOL;
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     //$this->assertEquals($html, $out);
     $this->compareXmlStrings("<r>".$html."</r>", "<r>".$out."</r>");
@@ -62,42 +62,42 @@ class basicTest extends base {
   public function testAttrSquareBracket() {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
     $html = '<a href="/special[10]">Hello [Mate] [ ]</a>';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAngularArray() {
     $hamle = 'input[name=my-input&ng-bind=myval\[\$index\]]';
     $html = '<input name="my-input" ng-bind="myval[$index]" />';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrDollar() {
     $hamle = "a[href=\$url&class=\$class] {\$title}";
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrMultiDollar() {
     $hamle = 'a[href=$url&class=$class] $title [$url]';
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE [https://www.secure.com]</a>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrEscDollars() {
     $hamle = "html\n  p.quote[data-ref=12\&3 and \\\$4]";
     $html = "<html><p class=\"quote\" data-ref=\"12&amp;3 and \$4\"></p></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
   public function testAttrQuotes() {
     $hamle = "html\n  p.quote[data-ref=My Quote \"]";
     $html = "<html><p class=\"quote\" data-ref=\"My Quote &quot;\"></p></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -106,7 +106,7 @@ class basicTest extends base {
              "  #box\n".
              "    // Comment is Hidden";
     $html = "<html><div id=\"box\"></div></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -115,7 +115,7 @@ class basicTest extends base {
              "  // #box\n".
              "    .message Comment is Hidden";
     $html = "<html></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -125,7 +125,7 @@ class basicTest extends base {
     $html = "<html>\n".
             "  <!-- Just a Comment -->\n".
             "</html>\n";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
@@ -139,7 +139,7 @@ class basicTest extends base {
             "    Next line of Comment\n".
             "   -->\n".
             "</html>\n";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
@@ -149,7 +149,7 @@ class basicTest extends base {
              "     br\n".
              "      _ Box Content Line 2";
     $html = "<html><div id=\"box\">Content Line 1<br />Box Content Line 2</div></html>";
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }

@@ -40,7 +40,7 @@ class snippetTest extends base {
             "</head><body>".
             "<div class=\"content\"></div>".
             "</body></html>";
-    $he->parse($hamle);
+    $he->string($hamle);
     $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -60,7 +60,7 @@ class snippetTest extends base {
         "</head><body>".
         "<div class=\"content\"></div>".
         "</body></html>";
-    $he->parse($hamle);
+    $he->string($hamle);
     $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -80,7 +80,7 @@ class snippetTest extends base {
             "<div id=\"newtest\">New Div Box</div>".
             "</div></div></div>".
             "</body></html>";
-    $he->parse($hamle);
+    $he->string($hamle);
     $out = $he->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -128,7 +128,7 @@ class snippetTest extends base {
   </body>
 </html>
 TESTHTML;
-    $he->parse($hamle);
+    $he->string($hamle);
     $out = $he->output();
     $this->assertEquals(trim($html), trim($out));
     $this->compareXmlStrings($html, $out);

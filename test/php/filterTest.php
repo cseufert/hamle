@@ -18,7 +18,7 @@ class fitlerTest extends base {
   </head>
 </html>
 ';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -43,7 +43,7 @@ class fitlerTest extends base {
             "  <body></body>\n".
             "</html>";
 
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertSame(trim($html), trim($out));
   }
@@ -65,7 +65,7 @@ class fitlerTest extends base {
 /*]]>*/    </script>
 </head>
 ';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }

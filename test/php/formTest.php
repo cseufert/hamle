@@ -47,7 +47,7 @@ class formTest extends base {
   </body>
 </html>
 ';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     //$this->assertEquals($html, $out);
     $this->compareXmlStrings($html, $out);
@@ -81,7 +81,7 @@ class formTest extends base {
   </body>
 </html>
 ';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
@@ -103,7 +103,7 @@ public function testJavascriptVars() {
 /*]]>*/  </script>
 </head>
 ';
-    $this->hamle->parse($hamle);
+    $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
