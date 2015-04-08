@@ -32,13 +32,15 @@ class snippetTest extends base {
              "  head\n".
              "    title \$titlebar\n".
              "  body\n".
-             "    .content\n";
+             "    .content\n".
+             "    .head-test\n";
     $html = "<html><head>\n".
             "   <title>My Page</title>\n".
             '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />'."\n".
             '    <script src="/js/bootstrap.js"></script>'."\n".
             "</head><body>".
             "<div class=\"content\"></div>".
+            "<div class=\"head-test\"></div>".
             "</body></html>";
     $he->string($hamle);
     $out = $he->output();
@@ -50,7 +52,8 @@ class snippetTest extends base {
         "  head\n".
         "    title \$titlebar\n".
         "  body\n".
-        "    .content\n";
+        "    .content\n".
+        "    .head-test-2\n";
     $html = "<html><head>\n".
         '    <script src="/js/jquery.min.js"></script>'."\n".
         "   <title>My Page</title>\n".
@@ -59,6 +62,7 @@ class snippetTest extends base {
         '    <script src="/js/bootstrap.js"></script>'."\n".
         "</head><body>".
         "<div class=\"content\"></div>".
+        "<div class=\"head-test-2\"></div>".
         "</body></html>";
     $he->string($hamle);
     $out = $he->output();
