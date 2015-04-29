@@ -18,11 +18,11 @@ class Plain extends Text {
     $this->type = $type;
   }
 
-  function toPHP($escape = false) {
+  function toPHP() {
     return Text::varToCode($this->s);
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
     if ($this->type == self::TOKEN_CODE)
       return $this->s;
     return htmlspecialchars($this->s);
