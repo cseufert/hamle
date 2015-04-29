@@ -18,7 +18,7 @@ class Plain extends Text {
     $this->type = $type;
   }
 
-  function toPHP() {
+  function toPHP($escape = false) {
     return Text::varToCode($this->s);
   }
 

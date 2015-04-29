@@ -82,11 +82,15 @@ class Text {
       $this->nodes[] = new Text\Plain(substr($s, $pos), $mode);
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
     $out = array();
     foreach ($this->nodes as $string)
-      $out[] = $string->toHTML();
+      $out[] = $string->toHTML($escape);
     return implode("", $out);
+  }
+
+  function toHTMLAtt() {
+    return $this->toHtml(true);
   }
 
   function toPHP() {

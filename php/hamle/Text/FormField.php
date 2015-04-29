@@ -38,7 +38,7 @@ class FormField extends Text {
     return '$form->getField(' . Text::varToCode($this->var) . ')->getValue()';
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
     return '<?=' . $this->toPHP() . '?>';
   }
 }

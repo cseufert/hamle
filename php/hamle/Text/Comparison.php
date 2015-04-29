@@ -81,7 +81,7 @@ class Comparison extends Text {
     }
     return "";
   }
-  function toHTML() {
+  function toHTML($escape = false) {
     throw new Exception\Unimplemented("Unable to output comparison results to HTML");
   }
 }

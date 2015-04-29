@@ -34,7 +34,9 @@ class SimpleVar extends Text {
     $this->var = substr($s, 1);
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
+    if($escape)
+      return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
     return "<?=" . $this->toPHP() . "?>";
   }
 

@@ -86,7 +86,7 @@ class Html extends H\Tag {
       if (!$v instanceof H\Text)
         $v = new H\Text($v);
       $k = new H\Text($k);
-      $out[] = " " . $k->toHTML() . "=\"" . $v->toHTML() . "\"";
+      $out[] = " " . $k->toHTML() . "=\"" . $v->toHTMLAtt() . "\"";
     }
     return implode("", $out);
   }

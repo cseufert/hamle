@@ -116,7 +116,7 @@ class Func extends SimpleVar {
     return "";
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
     throw new
     ParseError("Unable to use Scope operator in HTML Code");
   }

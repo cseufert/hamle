@@ -45,7 +45,9 @@ class Complex extends Text {
     $this->sel = $s;
   }
 
-  function toHTML() {
+  function toHTML($escape = false) {
+    if($escape)
+      return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
     return "<?=" . $this->toPHP() . "?>";
   }
 
