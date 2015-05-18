@@ -228,5 +228,6 @@ class stringTest extends base {
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Scope::get(0)->".
         "hamleRel(2,array('cat'=>array()),array(),0,0,0)", $php);
-  }   
+  }
+
 }

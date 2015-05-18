@@ -194,6 +194,6 @@ class Hamle {
   function disableCache() {
     $this->cache = false;
   }
-  
+
 }
 

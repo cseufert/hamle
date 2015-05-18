@@ -153,5 +153,32 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-  
+
+  public function testIncludeFile() {
+    $hamle = "|include \"hamle/basic1.hamle\"\n";
+    $html = "<html><head><title>This is My TITLE</title></head><body>".
+        "<div class='head'></div>".
+        "<div class='body'></div>".
+        "<div class='foot'></div>".
+        "</body></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
+  /**
+   * @expectedException \Seufert\Hamle\Exception
+   */
+  public function testIncludeFrag() {
+    $hamle = "|include \"#frag\"\n";
+    $html = "<html><head><title>This is My TITLE</title></head><body>".
+        "<div class='head'></div>".
+        "<div class='body'></div>".
+        "<div class='foot'></div>".
+        "</body></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
 }

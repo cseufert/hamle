@@ -80,6 +80,15 @@ class Run {
   }
 
   /**
+   * @param $fragment Name of fragment
+   * @internal Only for use in template system
+   * @return string String to output where |include #fragment was called
+   */
+  static function includeFragment($fragment) {
+    return self::$hamle->setup->getFragment(self::$hamle, substr($fragment, 1));
+  }
+
+  /**
    * Called from template by $() to find a specific model
    * @param array[] $typeTags array of tags with types as key eg ['page'=>[]] or ['product'=>['featured]]
    * @param int $sortDir Sort Direction see hamle::SORT_NATURAL...

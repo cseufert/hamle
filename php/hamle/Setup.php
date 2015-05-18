@@ -123,4 +123,15 @@ class Setup {
   function debugLog($s) {
     //var_dump($s);
   }
+
+  /**
+   * Called when |include "#fragment" is encoutered
+   * @param Hamle $hamle Current Hamle Instance
+   * @param $fragment $fragement Name of Fragment
+   * @throws Exception
+   */
+  function getFragment(Hamle $hamle, $fragment) {
+    throw new Exception("Unable to Include Fragement $fragment");
+  }
+
 }

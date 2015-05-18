@@ -66,6 +66,11 @@ class baseTestSetup extends H\Setup {
               array('title'=>'The Title',  'testform'=>new formTestForm())));
     return parent::getModelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0);
   }
+
+  function templatePath($f) {
+    return __DIR__."/".$f;
+  }
+
 }
 
 class formTestForm extends H\Form {
