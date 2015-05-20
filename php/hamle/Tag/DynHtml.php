@@ -33,8 +33,9 @@ class DynHtml extends Html {
   protected $varname;
   protected $baseType;
 
-  function __construct($tag, $classid, $param = array()) {
-    parent::__construct($tag, $classid, $param);
+  function __construct($tag, $class, $param, $id, $ref) {
+    parent::__construct($tag, $class, $param, $id);
+    $this->source[] = $ref;
     $this->baseType = $tag;
     self::$var++;
     $this->varname = "\$dynhtml" . self::$var;

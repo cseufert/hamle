@@ -34,7 +34,7 @@ class Form extends Tag {
   protected static $sForm, $sCount;
   protected $var;
   /**
-   * @var Form $form Hamle Form Instance for configuring template
+   * @var H\Form $form Hamle Form Instance for configuring template
    */
   protected $form;
 
@@ -61,27 +61,36 @@ class Form extends Tag {
     foreach ($labelTags as $tag)
       if ($tag instanceOf Html)
         foreach ($tag->source as $source) {
-          $fields[$source]->getLabelAttStatic($tag->opt, $tag->type, $tag->content);
+          if(isset($fields[$source]))
+            $fields[$source]->getLabelAttStatic($tag->opt, $tag->type, $tag->content);
+          else
+            $tag->opt['style'] = "display:none;";
         }
     $inputTags = $this->find(array(array("type" => "hint")));
     foreach ($inputTags as $tag)
       if ($tag instanceOf Html)
         foreach ($tag->source as $source) {
-          $fields[$source]->getHintAttStatic($tag->opt, $tag->type, $tag->content);
+          if(isset($fields[$source]))
+            $fields[$source]->getHintAttStatic($tag->opt, $tag->type, $tag->content);
+          else
+            $tag->opt['style'] = "display:none;";
         }
     $inputTags = $this->find(array(array("type" => "input")));
     foreach ($inputTags as $tag)
       if ($tag instanceOf Html)
         foreach ($tag->source as $source) {
-          $fields[$source]->getInputAttStatic($tag->opt, $tag->type, $tag->content);
-          unset($fields[$source]);
+          if(isset($fields[$source])) {
+            $fields[$source]->getInputAttStatic($tag->opt, $tag->type, $tag->content);
+            unset($fields[$source]);
+          } else
+            $tag->opt['style'] = "display:none;";
         }
     foreach ($fields as $n => $f) {
       if (!$f instanceOf Button) {
-        $this->addChild($label = new DynHtml("label", "!$n"));
+        $this->addChild($label = new DynHtml("label", [],[],"",$n));
         $f->getLabelAttStatic($label->opt, $label->type, $label->content);
       }
-      $this->addChild($input = new DynHtml("input", "!$n"));
+      $this->addChild($input = new DynHtml("input", [],[],"",$n));
       $f->getInputAttStatic($input->opt, $input->type, $input->content);
     }
     return "<form " . implode(" ", $out) . "><?php \$form = " . $this->var->toPHP() . "; \$form->process(); ?>";

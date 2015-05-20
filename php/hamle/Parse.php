@@ -190,10 +190,22 @@ ENDREGEX;
               $hTag->addContent($l, Text::TOKEN_CODE);
             break;
           default:
-            if (strpos($classid, "!") === FALSE)
-              $hTag = new Tag\Html($tag, $classid, $params);
+            $attr = array();
+            if(isset($params[0]) && $params[0] == "[") {
+              $param = substr($params, 1, strlen($params) - 2);
+              parse_str($param, $attr);
+            }
+            $class = array(); $id = ""; $ref = "";
+            preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $cid);
+            if (isset($cid[0])) foreach ($cid[0] as $s) {
+              if ($s[0] == "#") $id = substr($s, 1);
+              if ($s[0] == ".") $class[] = substr($s, 1);
+              if ($s[0] == "!") $ref = substr($s, 1);
+            }
+            if($ref)
+              $hTag = new Tag\DynHtml($tag, $class, $attr, $id, $ref);
             else
-              $hTag = new Tag\DynHtml($tag, $classid, $params);
+              $hTag = new Tag\Html($tag, $class, $attr, $id);
             $hTag->addContent($text);
             break;
         }

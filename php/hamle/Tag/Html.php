@@ -39,27 +39,20 @@ class Html extends H\Tag {
       "embed", "hr", "img", "input", "keygen", "link",
       "meta", "param", "source", "track", "wbr");
 
-  function __construct($tag, $classid, $param = array()) {
+  function __construct($tag, $class = array(), $attr = array(), $id = "") {
     parent::__construct();
-    $this->opt = array();
+    $this->opt = $attr;
+    if(isset($attr['class']) && !is_array($attr['class']))
+      $this->opt['class'] = $attr['class']?explode(" ",$attr['class']):array();
     $this->source = array();
     $this->type = $tag ? $tag : "div";
-    if (is_array($param))
-      $this->opt = $param;
-    elseif (isset($param[0]) && $param[0] == "[") {
-      $param = substr($param, 1, strlen($param) - 2);
-      parse_str($param, $this->opt);
+    if($class) {
+      if (isset($this->opt['class']))
+        $this->opt['class'] = array_merge($this->opt['class'], $class);
+      else
+        $this->opt['class'] = $class;
     }
-    if (isset($this->opt['class']) && !is_array($this->opt['class']))
-      $this->opt['class'] = explode(" ", $this->opt['class']);
-    $this->opt += array('class' => array());
-
-    preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $m);
-    if (isset($m[0])) foreach ($m[0] as $s) {
-      if ($s[0] == "#") $this->opt['id'] = substr($s, 1);
-      if ($s[0] == ".") $this->opt['class'][] = substr($s, 1);
-      if ($s[0] == "!") $this->source[] = substr($s, 1);
-    }
+    if($id) $this->opt['id'] = $id;
   }
 
   function renderStTag() {
