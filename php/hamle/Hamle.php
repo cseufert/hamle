@@ -96,7 +96,7 @@ class Hamle {
    * @throws Exception\NotFound If tempalte file cannot be found
    * @return Hamle Returns instance for chaining commands
    */
-  function load($hamleFile) {
+  function load($hamleFile, \Closure $parseFunc = null) {
     $template = $this->setup->templatePath($hamleFile);
       if(!file_exists($template)) 
         throw new Exception\NotFound("Unable to find HAMLE Template ($template)");
@@ -110,7 +110,7 @@ class Hamle {
         $cacheDirty = true;
     if($cacheDirty) {
       $this->setup->debugLog("Parsing File ($template to {$this->cacheFile})");
-      $this->parse(file_get_contents($template));
+      $this->parse($parseFunc?"":file_get_contents($template), $parseFunc);
     } else
       $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
     return $this;
@@ -123,10 +123,13 @@ class Hamle {
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
-  function parse($hamleCode) {
+  function parse($hamleCode, \Closure $parseFunc = null) {
     if(!$this->cacheFile)
         $this->cacheFile = $this->setup->cachePath("string.hamle.php");
-    $this->parse->str($hamleCode);
+    if($parseFunc)
+      $parseFunc($this->parse);
+    else
+      $this->parse->str($hamleCode);
     $this->setup->debugLog("Loading Snippet Files");
     foreach($this->snipFiles as $snip)
       $this->parse->parseSnip(file_get_contents($snip));

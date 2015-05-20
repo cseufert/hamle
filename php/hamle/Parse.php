@@ -43,7 +43,7 @@ class Parse {
   /**
    * @var Tag[] Array of Root Document Tags
    */
-  protected $root;
+  public $root;
   /**
    * @var string Each Line read in from template
    */
