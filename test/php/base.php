@@ -51,6 +51,15 @@ class base extends PHPUnit_Framework_TestCase {
 
 		$this->assertEmpty($delta, "Differences found: $delta");
 	}
+
+  public static function tearDownAfterClass() {
+    parent::tearDownAfterClass();
+    $cacheDir = __DIR__."/../../cache/";
+    foreach(glob($cacheDir."*") as $cacheFile)
+      unlink($cacheFile);
+  }
+
+
 }
 
 class baseTestSetup extends H\Setup {
