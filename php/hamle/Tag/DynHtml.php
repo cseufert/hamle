@@ -49,7 +49,7 @@ class DynHtml extends Html {
     return $out;
   }
 
-  function addChild($tag, $mode = "append") {
+  function addChild(H\Tag $tag, $mode = "append") {
     throw new ParseError("Unable to display content within a Dynamic Tag");
   }
 
