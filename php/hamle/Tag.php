@@ -126,7 +126,7 @@ class Tag {
    * @param Tag $tag Tag to add as child
    * @param string $mode Mode to add child [append|prepend]
    */
-  function addChild($tag, $mode = "append") {
+  function addChild(Tag $tag, $mode = "append") {
     if ($mode == "prepend")
       array_unshift($this->tags, $tag);
     else
