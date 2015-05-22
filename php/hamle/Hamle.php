@@ -57,7 +57,7 @@ class Hamle {
    */
   protected $snipFiles;
 
-  protected $baseModel = null;
+  public $baseModel;
 
   const REL_CHILD = 0x01;  /* Child Relation */
   const REL_PARENT = 0x02; /* Parent Relation */
