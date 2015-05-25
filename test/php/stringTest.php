@@ -125,6 +125,20 @@ class stringTest extends base {
     $this->assertEquals("'I have \\$10.00'", $php);
   }
 
+  public function testDollarScope1() {
+    $hs = new Text("\$[user]", Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::getName('user')", $php);
+  }
+
+  public function testDollarScope2() {
+    $hs = new Text("\$[layout]->view", Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::getName('layout')->hamleGet('view')", $php);
+  }
+
   public function testDollarFunc1() {
     $hs = new Text("\$(user)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
