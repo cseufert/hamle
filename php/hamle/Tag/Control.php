@@ -36,7 +36,7 @@ class Control extends H\Tag {
    * @var string Variable passed to Control Tag
    */
   protected $var;
-  protected $o, $else = false;
+  public $o, $else = false;
   static $instCount = 1;
 
   /**
