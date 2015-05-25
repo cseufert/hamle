@@ -26,17 +26,23 @@ class fitlerTest extends base {
   public function testJavascript() {
     $hamle = "html".PHP_EOL.
              "  head".PHP_EOL.
+             "    title \$title".PHP_EOL.
              '    :javascript'.PHP_EOL.
              '      $(document).ready(function() {'.PHP_EOL.
-             '        console.log($("body").html());'.PHP_EOL.
+             '        var $body = $("body");'.PHP_EOL.
+             '        console.log($body.html());'.PHP_EOL.
+             '        console.log("{$title}");'.PHP_EOL.
              '      });'.PHP_EOL.
              '  body';
     $html = "<html>\n".
             "  <head>\n".
+            "    <title>This is My TITLE</title>\n".
             "    <script type=\"text/javascript\">\n".
             "/*<![CDATA[*/\n".
             "      $(document).ready(function() {\n".
-            "        console.log($(\"body\").html());\n".
+            '        var $body = $("body");'."\n".
+            '        console.log($body.html());'."\n".
+            "        console.log(\"This is My TITLE\");\n".
             "      });\n".
             "/*]]>*/    </script>\n".
             "  </head>\n".
