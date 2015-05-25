@@ -173,7 +173,7 @@ ENDREGEX;
             break;
           case ":": //Filter Tag
             $hTag = new Tag\Filter(substr($code, 1));
-            $hTag->addContent($text);
+            $hTag->addContent($text, Text::TOKEN_CODE);
             foreach ($this->consumeBlock($indent) as $l)
               $hTag->addContent($l, Text::TOKEN_CODE);
             break;
