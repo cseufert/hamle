@@ -244,4 +244,11 @@ class stringTest extends base {
         "hamleRel(2,array('cat'=>array()),array(),0,0,0)", $php);
   }
 
+  public function testDollarHash() {
+    $hs = new Text('"#test:1"', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("'#test:1'", $php);
+  }
+
 }
