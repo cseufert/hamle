@@ -114,6 +114,8 @@ class Text {
       return ($var ? 'TRUE' : 'FALSE');
     } elseif (is_int($var) || is_float($var) || is_numeric($var)) {
       return $var;
+    } elseif ($var instanceof Text) {
+      return $var->toPHP();
     } else {
       return "'" . str_replace(array('$', "'"), array('\\$', "\\'"), $var) . "'";
     }

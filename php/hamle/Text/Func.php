@@ -34,7 +34,7 @@ class Func extends SimpleVar {
   protected $scope = false;
   protected $filt;
   protected $sortlimit;
-  const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@]';
+  const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}]';
 
   function __construct($s) {
     $m = array();
@@ -56,10 +56,10 @@ class Func extends SimpleVar {
     foreach (explode(",", $s) as $str) {
       if (preg_match('/^[a-zA-Z0-9\\_]+/', $str, $m)) $type = $m[0];
       else $type = "*";
-      if (preg_match('/#([a-zA-Z0-9\_]+)/', $str, $m)) $att['id'][$type][] = $m[1];
-      elseif (preg_match_all('/\\.([a-zA-Z0-9\_\-]+)/', $str, $m))
+      if (preg_match('/#([a-zA-Z0-9\_\\${}]+)/', $str, $m)) $att['id'][$type][] = $m[1];
+      elseif (preg_match_all('/\\.([a-zA-Z0-9\_\-\\${}]+)/', $str, $m))
         foreach ($m[1] as $tag)
-          $att['tag'][$type][] = $tag;
+          $att['tag'][$type][] = new Text($tag, Text::TOKEN_CODE);
       else $att['tag'][$type] = array();
     }
     //var_dump($att);

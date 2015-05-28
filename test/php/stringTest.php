@@ -251,4 +251,11 @@ class stringTest extends base {
     $this->assertEquals("'#test:1'", $php);
   }
 
+  public function testDollarFuncVar1() {
+    $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Run::modelTypeTags(array('product'=>array(0=>Hamle\\Scope::get()->hamleGet('tags'))),array(),0,0)", $php);
+  }
+
+
 }
