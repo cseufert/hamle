@@ -103,7 +103,7 @@ class Hamle {
     $this->cacheFile = $this->setup->cachePath(
                   str_replace("/","-",$hamleFile).".php");
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
-    $cacheFileAge = @filemtime($this->cacheFile);
+    $cacheFileAge = is_file($this->cacheFile)?filemtime($this->cacheFile):0;
     $cacheDirty = false;
     foreach(array_merge(array($template),$this->snipFiles) as $f)
       if((!$this->cache) || $cacheFileAge < filemtime($f))
