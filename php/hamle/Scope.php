@@ -53,6 +53,13 @@ class Scope {
     return self::$scopes[$key];
   }
 
+  static function getTopScope() {
+    return end(self::$scopes);
+  }
+  static function getDepth() {
+    return count(self::$scopes);
+  }
+
   static function getName($name) {
     if ($name && isset(self::$namedScopes[$name])) {
       self::$namedScopes[$name]->rewind();

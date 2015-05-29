@@ -167,9 +167,10 @@ class Hamle {
       Run::addInstance($this);
       $baseModel = $this->baseModel;
       $this->baseModel = null;
-      if($baseModel) Scope::add($baseModel);
+      $currentModel = $baseModel == Scope::getTopScope();
+      if(!$currentModel && $baseModel) Scope::add($baseModel);
       require $this->cacheFile;
-      if($baseModel) Scope::done();
+      if(!$currentModel && $baseModel) Scope::done();
       $this->baseModel = $baseModel;
       $out = ob_get_contents();
       ob_end_clean();
