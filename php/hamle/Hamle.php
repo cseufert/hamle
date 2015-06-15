@@ -56,6 +56,10 @@ class Hamle {
    *            The rest of the files are Snippets 
    */
   protected $snipFiles;
+  /**
+   * @var int Timestamp of latest modification to snipppet file
+   */
+  protected $snipMod = 0;
 
   public $baseModel;
 
@@ -86,9 +90,17 @@ class Hamle {
       throw new Exception\Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
     $this->setup = $setup;
     $this->baseModel = $baseModel;
-    $this->snipFiles = $this->setup->snippetFiles();
-    foreach($this->snipFiles as $f)
-      if(!file_exists($f)) throw new Exception\NotFound("Unable to find Snippet File ($f)");
+    $this->initSnipFiles();
+  }
+
+  function initSnipFiles() {
+    if($this->snipMod == 0) {
+      $this->snipFiles = $this->setup->snippetFiles();
+      foreach($this->snipFiles as $f)
+        if(!file_exists($f)) throw new Exception\NotFound("Unable to find Snippet File ($f)");
+        $this->snipFiles = max($this->snipFiles, filemtime($f));
+    }
+
   }
   /**
    * Parse a HAMLE Template File
@@ -104,10 +116,8 @@ class Hamle {
                   str_replace("/","-",$hamleFile).".php");
     $this->setup->debugLog("Set cache file path to ({$this->cacheFile})");
     $cacheFileAge = is_file($this->cacheFile)?filemtime($this->cacheFile):0;
-    $cacheDirty = false;
-    foreach(array_merge(array($template),$this->snipFiles) as $f)
-      if((!$this->cache) || $cacheFileAge < filemtime($f))
-        $cacheDirty = true;
+    $cacheDirty = !$this->cache ||
+        $cacheFileAge < $this->snipMod || $cacheFileAge < filemtime($template);
     if($cacheDirty) {
       $this->setup->debugLog("Parsing File ($template to {$this->cacheFile})");
       $this->parse($parseFunc?"":file_get_contents($template), $parseFunc);
