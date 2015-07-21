@@ -96,9 +96,10 @@ class Hamle {
   function initSnipFiles() {
     if($this->snipMod == 0) {
       $this->snipFiles = $this->setup->snippetFiles();
-      foreach($this->snipFiles as $f)
-        if(!file_exists($f)) throw new Exception\NotFound("Unable to find Snippet File ($f)");
+      foreach($this->snipFiles as $f) {
+        if (!file_exists($f)) throw new Exception\NotFound("Unable to find Snippet File ($f)");
         $this->snipFiles = max($this->snipFiles, filemtime($f));
+      }
     }
 
   }

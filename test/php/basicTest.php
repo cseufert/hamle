@@ -129,6 +129,16 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
+  public function testCustomElement() {
+    $hamle = "html\n".
+        "  cust-elem My Custom Element\n";
+    $html = "<html>\n".
+        "  <cust-elem>My Custom Element</cust-elem>\n".
+        "</html>\n";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->assertEquals($html, $out);
+  }
   public function testCommentHTMLMultiLine() {
     $hamle = "html\n".
              "  / Just a Comment\n".
