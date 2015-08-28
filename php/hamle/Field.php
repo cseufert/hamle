@@ -33,13 +33,20 @@ use Seufert\Hamle\Text\FormField;
  * @author Chris Seufert <chris@seufert.id.au>
  * @package hamle
  *
- * @properties $label Field Label
- * @properties $name Field Name
- * @properties $value Field Value
- * @properties $form Form field is on
- * @properties $required Field is Required
- * @properties $disabled Field is Disabled
- * @properties $readonly Field is Read Only
+ * @property string $label
+ * @method Field label(string $label) Set Label
+ * @property string $name
+ * @property string $value
+ * @method Field value(string $value) Set field value
+ * @property string $default
+ * @method Field default(string $defaultValue) Set field default value
+ * @property string $help
+ * @method Field help(string $help) Set Help Message
+ * @property Form $form
+ * @property bool $required
+ * @property bool $disabled
+ * @method Field disabled(boolean $disabled) Set field disabled
+ * @property bool $readonly
  */
 class Field {
   protected $opt;
