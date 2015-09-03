@@ -11,7 +11,7 @@ matrix:
     - php: hhvm
 #before_script:
 #  - cd test/php
-script: phpunit test/php --coverage-clover=coverage.xml
+script: phpunit --coverage-clover=coverage.xml
 notifications:
   email: true
 after_success:
