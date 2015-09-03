@@ -1,18 +1,18 @@
 # Configuration file for unit test runner.
 language: php
 php:
-  - 5.6
-  - 5.5
   - 5.4
+  - 5.5
+  - 5.6
   - 7.0
-#  - 5.3
   - hhvm
 matrix:
   allow_failures:
     - php: hhvm
-    - php: 7.0
 #before_script:
 #  - cd test/php
-script: phpunit test/php
+script: phpunit test/php --coverage-clover=coverage.xml
 notifications:
-  email: false
+  email: true
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
