@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle;
 /**
- * Basic HAML Setup Class
+ * Basic HAMLE Setup Class
  * This class should be extended to override the Model Methods, 
  * to use your model
  *
@@ -38,7 +38,7 @@ class Setup {
    * @param string $f Filename of cache file
    * @return string Directory to store cache in
    */
-  function cachePath($f) {
+  public function cachePath($f) {
     $s = DIRECTORY_SEPARATOR;
     $dir = implode($s,[__DIR__,"..","..","cache",""]);
     if(!is_dir($dir)) mkdir($dir);
@@ -49,30 +49,26 @@ class Setup {
    * Open the default model when only an ID is specified in the template
    *
    * @param mixed $id Identifier when no type is passed
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field name to sort by
+   * @param array $sort
    * @param int $limit Results Limit
    * @param int $offset Results Offset
    * @return Model Instance of model class that implements hamleModel
    */
-  function getModelDefault($id, $sort = [], $limit = 0, $offset = 0) { return new hamleDemoModel($id); }
+  public function getModelDefault($id, $sort = [], $limit = 0, $offset = 0) { return new Model\Zero(); }
 
   /**
    * Open a specific model type with id
    *
    * @param array[] $typeId Type ID array [type=>[id]] or [page=>[3]]
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field name to sort on
+   * @param array $sort
    * @param int $limit Results Limit
    * @param int $offset Results Offset
+   * @return Model
    * @throws Exception\RunTime
-   * @return Model Instance of model class that implements hamleModel
    */
-  function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0) {
+  public function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0) {
     if(count($typeId) > 1)
       throw new Exception\RunTime("Unable to open more than one ID at a time");
-    foreach($typeId as $type=>$id)
-      return hamleDemoModel::findId($type, current($id));
     return new Model\Zero();
   }
 
@@ -80,14 +76,13 @@ class Setup {
    * Return Iterator containing results from search of tags
    *
    * @param array[] $typeTags Type Tag Array [type=>[tag1,tag2],type2=>[]]
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field name to sort
+   * @param array $sort
    * @param int $limit Results Limit
    * @param int $offset Results Limit
-   * @return Model Instance of Iteratable model class
+   * @return Model Instance of Iterable model class
    */
-  function getModelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
-    return hamleDemoModel::findTag($typeTags);
+  public function getModelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
+    return new Model\Zero();
   }
   /**
    * Give you the ability to adjust paths to template files, this includes files
@@ -96,42 +91,42 @@ class Setup {
    * @param string $f File Name and Path requested
    * @return string File Path to actual template file
    */
-  function templatePath($f) {
+  public function templatePath($f) {
     return $f;
   }
   /**
    * Returns an array of snippets paths for application to the current template
-   * These snippets will be applied to tempaltes |included as well as the 
+   * These snippets will be applied to templates |included as well as the
    * initial template.
    * 
    * @return array Array of file names
    */
-  function snippetFiles() {
+  public function snippetFiles() {
     return array();
   }
 
   /**
    * @return Parse\Filter[] List of HAMLE Parse Filters
    */
-  function getFilters() {
+  public function getFilters() {
     return array();
   }
   /**
    * Function to write debug logs out
    * @param $s string Debug Message String
    */
-  function debugLog($s) {
+  public function debugLog($s) {
     //var_dump($s);
   }
 
   /**
-   * Called when |include "#fragment" is encoutered
+   * Called when |include "#fragment" is encountered
    * @param Hamle $hamle Current Hamle Instance
-   * @param $fragment $fragement Name of Fragment
+   * @param string $fragment Name of Fragment
    * @throws Exception
    */
-  function getFragment(Hamle $hamle, $fragment) {
-    throw new Exception("Unable to Include Fragement $fragment");
+  public function getFragment(Hamle $hamle, $fragment) {
+    throw new Exception("Unable to Include Fragment $fragment");
   }
 
 }
