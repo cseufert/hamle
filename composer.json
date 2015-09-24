@@ -4,7 +4,7 @@
   "type": "library",
   "keywords":["template","templating","model","compiled","markup","forms","html","hamle","jade","haml"],
   "homepage":"https://github.com/cseufert/hamle",
-  "licence":"MIT",
+  "license":"MIT",
   "authors": [{
     "name": "Chris Seufert",
     "email": "chris@seufert.id.au",
