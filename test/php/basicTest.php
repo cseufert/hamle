@@ -66,6 +66,21 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
+  public function testAttrPlusMinusTimes() {
+    $hamle = "a[data-x=a+b&data-y=a*b+c-d/e] Math";
+    $html = '<a data-x="a+b" data-y="a*b+c-d/e">Math</a>';
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testAttrQuote() {
+    $hamle = "a[data-x=\"a\"+'b'] Concat";
+    $html = '<a data-x="&quot;a&quot;+\'b\'">Concat</a>';
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
   public function testAngularArray() {
     $hamle = 'input[name=my-input&ng-bind=myval\[\$index\]]';
     $html = '<input name="my-input" ng-bind="myval[$index]" />';

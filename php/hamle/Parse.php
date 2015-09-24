@@ -193,6 +193,7 @@ ENDREGEX;
             $attr = array();
             if(isset($params[0]) && $params[0] == "[") {
               $param = substr($params, 1, strlen($params) - 2);
+              $param = str_replace('+','%2B', $param);
               parse_str($param, $attr);
             }
             $class = array(); $id = ""; $ref = "";
