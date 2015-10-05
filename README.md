@@ -5,6 +5,7 @@ HAMLE
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cseufert/hamle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cseufert/hamle/?branch=master)
 
 ### Installation via Composer
+
 ```json
 {
   "require": {
