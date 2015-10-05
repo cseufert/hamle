@@ -4,6 +4,8 @@ HAMLE
 [![codecov.io](http://codecov.io/github/cseufert/hamle/coverage.svg?branch=master)](http://codecov.io/github/cseufert/hamle?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cseufert/hamle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cseufert/hamle/?branch=master)
 
+Requires PHP >= 5.4
+
 ### Installation via Composer
 
 ```json
@@ -13,8 +15,6 @@ HAMLE
   }
 }
 ```
-
-PHP >= 5.4
 
 * [Example Implementation](doc/example.md)
 
