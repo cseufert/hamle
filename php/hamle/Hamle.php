@@ -87,7 +87,7 @@ class Hamle {
     if(!$setup instanceOf Setup)
       throw new Exception\Unsupported("Unsupported Setup Helper was passed, it must extends hamleSetup");
     if(!$baseModel instanceOf Model)
-      throw new Exception\Unsupported("Unsupported Model Type was passed, it must implement hamleModel");
+      throw new Exception\Unsupported("Unsupported Model(".get_class($baseModel).") Type was passed, it must implement hamleModel");
     $this->setup = $setup;
     $this->baseModel = $baseModel;
     $this->initSnipFiles();
@@ -101,8 +101,8 @@ class Hamle {
         $this->snipFiles = max($this->snipFiles, filemtime($f));
       }
     }
-
   }
+
   /**
    * Parse a HAMLE Template File
    * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath

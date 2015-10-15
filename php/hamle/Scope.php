@@ -19,7 +19,7 @@ class Scope {
 
   static function add($model, $name = null) {
     if (!$model instanceOf Model)
-      throw new Unsupported("Unsupported Model, Needs to implement hamleModel Interface");
+      throw new Unsupported("Unsupported Model (".get_class($model)."), Needs to implement hamleModel Interface");
     if ($name)
       self::$namedScopes[$name] = $model;
     else
