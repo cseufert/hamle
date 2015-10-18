@@ -34,12 +34,12 @@ class Func extends SimpleVar {
   protected $scope = false;
   protected $filt;
   protected $sortlimit;
-  const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}]';
+  const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}[\]]';
 
   function __construct($s) {
     $m = array();
     if (!preg_match('/^\$\((' . self::REGEX_FUNCSEL . '*)(.*)\)$/', $s, $m))
-      throw new ParseError("Unable to read \$ func in ($s)");
+      throw new ParseError("Unable to read \$ func in '$s'");
     if (trim($m[2]))
       $this->sub = new FuncSub($m[2]);
     if (!trim($m[1])) {
