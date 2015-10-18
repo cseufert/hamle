@@ -46,6 +46,10 @@ class Func extends SimpleVar {
       $this->scope = true;
       return;
     }
+    if ($m[1][0] == '$' && $m[1][1] == '[') {
+      $this->scope = new Scope($m[1]);
+      return;
+    }
     $this->sortlimit = $this->attSortLimit($m[1]);
     $this->filt = $this->attIdTag($m[1]);
   }
@@ -101,7 +105,11 @@ class Func extends SimpleVar {
     $limit = Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'];
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
-    if ($this->scope) return "Hamle\\Scope::get(0)$sub";
+    if ($this->scope) {
+      if($this->scope === true)
+        return "Hamle\\Scope::get(0)$sub";
+      return $this->scope->toPHP().$sub;
+    }
     if (count($this->filt['tag']))
       return "Hamle\\Run::modelTypeTags(" .
       Text::varToCode($this->filt['tag']) . ",$limit)$sub";

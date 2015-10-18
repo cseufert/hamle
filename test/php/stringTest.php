@@ -251,6 +251,26 @@ class stringTest extends base {
     $this->assertEquals("'#test:1'", $php);
   }
 
+  public function testNested() {
+    $hs = new Text('$($[0] > next)', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::get(0)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+  }
+
+  public function testNested2() {
+    $hs = new Text('$($[-1] > next)', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::get(-1)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+  }
+  public function testNestedNamed() {
+    $hs = new Text('$($[prev] > next)', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+  }
+
   public function testDollarFuncVar1() {
     $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
