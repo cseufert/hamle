@@ -34,7 +34,7 @@ class FuncSub extends Hamle\Text\Func {
   function __construct($s) {
     $m = array();
     if (!preg_match('/^ +([><]) +('.self::REGEX_FUNCSEL . '+)(.*)$/', $s, $m))
-      throw new ParseError("Unable to read \$ sub func in ($s)");
+      throw new ParseError("Unable to read \$ sub func in '$s'");
     if ($m[1] == "<") $this->dir = Hamle\Hamle::REL_PARENT;
     elseif ($m[1] == ">") $this->dir = Hamle\Hamle::REL_CHILD;
     else $this->dir = Hamle\Hamle::REL_ANY;
