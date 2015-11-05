@@ -80,7 +80,10 @@ becomes
       * `<group>` is an arbitary id that determines a group type, eg. for differentiating gallery image from header image
       * `<id>` is a unique id, either combined with a type, or globally unique
       * `<tags>` are user defined tags that can be used to help find find data
-      * `<sort>` field to sort on, by default ascending, prefix with - for descending, nothing after for random
+      * `<sort>` field to sort on, by default ascending, prefix with - for 
+      descending, nothing after for random. If you are wanting to sort by 
+      multiple fields, eg sort DESC, and title ASC, then you would do 
+      ```^-sort^title```.
       * `<limit>` Limit results to n
       * `<offset>` Number of results to skip before return
       * The only required fields are `<type>` or `<id>`, depending on implementation of modelFind
