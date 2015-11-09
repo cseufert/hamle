@@ -82,6 +82,21 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')?>", $html);
     $this->assertEquals("'Hello '.Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')", $php);
   }
+  public function testDollarStringSymbol1() {
+    $hs = new Text("Hello \$test_str");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\\Scope::get()->hamleGet('test_str')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('test_str')", $php);
+  }
+  public function testDollarStringSymbol2() {
+    $hs = new Text("Hello \$test-str");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\\Scope::get()->hamleGet('test')?>-str", $html);
+    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('test').'-str'", $php);
+  }
+
 
   public function testDollarCodeString1() {
     $hs = new Text("\"My Title = {\$title}\"",Text::TOKEN_CODE);
