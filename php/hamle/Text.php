@@ -36,7 +36,7 @@ class Text {
   const TOKEN_HTML = 0x06;
   const TOKEN_CODE = 0x04;
 
-  const REGEX_HTML = '/(\\$[a-zA-Z\\_][a-zA-Z0-9\_]*)|({\\$.*?})/';
+  const REGEX_HTML = '/(\\$[a-zA-Z_][a-zA-Z0-9_]*)|({\\$.*?})/';
   const REGEX_CODE = '//';
 
   const FIND_DOLLARFUNC = 0x01;
