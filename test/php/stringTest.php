@@ -13,6 +13,13 @@ class stringTest extends base {
     $this->assertEquals("SimpleFileName.hamle", $html);
     $this->assertEquals("'SimpleFileName.hamle'", $php);
   }
+  public function testZeroString1() {
+    $hs = new Text("0", Text::TOKEN_HTML);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("0", $html);
+    $this->assertEquals("0", $php);
+  }
   public function testDollarString1() {
     $hs = new Text("Hello \$user");
     $html = $hs->toHTML();

@@ -53,7 +53,7 @@ class Text {
     $pos = 0;
     $this->nodes = array();
     $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
-    if (!trim($s)) return;
+    if (strlen(trim($s)) == 0) return;
     if ($mode == self::TOKEN_CONTROL) {
       if (preg_match('/^"(.*)"$/', trim($s), $m)) {
         $this->nodes[] = new Text($m[1]);

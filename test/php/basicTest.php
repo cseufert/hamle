@@ -134,6 +134,14 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
+
+  public function testAttrZero() {
+    $hamle = "html\n  div[width=0]";
+    $html = "<html><div width=\"0\"></div></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
   public function testCommentHTML() {
     $hamle = "html\n".
              "  / Just a Comment\n";
