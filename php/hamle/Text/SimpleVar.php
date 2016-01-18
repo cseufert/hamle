@@ -30,8 +30,15 @@ use Seufert\Hamle\Text;
 class SimpleVar extends Text {
   protected $var;
 
+  protected $filter;
+
   function __construct($s) {
-    $this->var = substr($s, 1);
+    if(FALSE !== $pos = strpos($s,'|')) {
+      $this->var = substr($s,1,$pos-1);
+      $this->filter = new Filter(substr($s, $pos+1), $this);
+    } else {
+      $this->var = substr($s, 1);
+    }
   }
 
   function toHTML($escape = false) {
@@ -41,6 +48,10 @@ class SimpleVar extends Text {
   }
 
   function toPHP() {
+    return $this->filter?$this->filter->toPHP():$this->toPHPVar();
+  }
+
+  function toPHPVar() {
     return "Hamle\\Scope::get()->hamleGet(" . Text::varToCode($this->var) . ")";
   }
 }

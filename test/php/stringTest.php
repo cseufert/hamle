@@ -104,6 +104,22 @@ class stringTest extends base {
     $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('test').'-str'", $php);
   }
 
+  public function testDollarFormat1() {
+    $hs = new Text("Hello {\$length|round(0)}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('length'),0)?>", $html);
+    $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('length'),0)", $php);
+  }
+
+  public function testDollarFormat2() {
+    $hs = new Text("Hello {\$box->length|round(0)}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)?>", $html);
+    $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)", $php);
+  }
+
 
   public function testDollarCodeString1() {
     $hs = new Text("\"My Title = {\$title}\"",Text::TOKEN_CODE);

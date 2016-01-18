@@ -25,29 +25,28 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Text;
 
-use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Text;
 
-class Complex extends Text {
-  protected $func;
-  protected $sel = null;
+class Filter extends Text {
   protected $filter;
 
-  function __construct($s) {
-    if(FALSE !== $pos = strpos($s,'|')) {
-      $this->filter = new Filter(substr($s, $pos+1), $this);
-      $s = substr($s,0,$pos);
+  protected $vars;
+
+  /** @var SimpleVar  */
+  protected $what;
+
+  function __construct($s, Text $what) {
+    if(preg_match("/^([a-z]+)(\\((.*)\\))$/",$s, $m)) {
+      $this->filter = $m[1];
+      $this->vars = isset($m[3])?explode(',',$m[3]):[];
+    } else {
+      throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    $s = explode("->", $s);
-    if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
-    if ($s[0][1] == "(")
-      $this->func = new Text\Func($s[0]);
-    elseif ($s[0][1] == "[")
-      $this->func = new Text\Scope($s[0]);
-    else
-      $this->func = new SimpleVar($s[0]);
-    array_shift($s);
-    $this->sel = $s;
+    if(!in_array($this->filter,['round','strtoupper','strtolower','ucfirst'])) {
+      throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
+    }
+    $this->what = $what;
   }
 
   function toHTML($escape = false) {
@@ -55,17 +54,11 @@ class Complex extends Text {
       return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
     return "<?=" . $this->toPHP() . "?>";
   }
-  function toPHP() {
-    return $this->filter?$this->filter->toPHP():$this->toPHPVar();
-  }
-  function toPHPVar() {
-    if ($this->sel) {
-      $sel = array();
-      foreach ($this->sel as $s)
-        $sel[] = "hamleGet('$s')";
-      return $this->func->toPHP() . "->" . implode('->', $sel);
-    } else
-      return $this->func->toPHP();
-  }
 
+  function toPHP() {
+    $o = [$this->what->toPHPVar()] ;
+    foreach($this->vars as $v)
+      $o[] = $this->varToCode($v);
+    return "{$this->filter}(" . implode(',',$o) . ")";
+  }
 }
