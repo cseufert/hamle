@@ -37,7 +37,7 @@ class Filter extends Text {
   protected $what;
 
   function __construct($s, Text $what) {
-    if(preg_match("/^([a-z]+)(\\((.*)\\))$/",$s, $m)) {
+    if(preg_match("/^([a-z]+)(\\((.*)\\))?$/",$s, $m)) {
       $this->filter = $m[1];
       $this->vars = isset($m[3])?explode(',',$m[3]):[];
     } else {
