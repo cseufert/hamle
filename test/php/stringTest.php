@@ -119,6 +119,13 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)?>", $html);
     $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)", $php);
   }
+  public function testDollarFormat3() {
+    $hs = new Text("Hello {\$box->length|round}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>", $html);
+    $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))", $php);
+  }
 
 
   public function testDollarCodeString1() {
