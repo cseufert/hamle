@@ -31,6 +31,7 @@ use Seufert\Hamle\Exception\ParseError;
 
 class Func extends SimpleVar {
   protected $sub = null;
+  /** @var bool|Scope  */
   protected $scope = false;
   protected $filt;
   protected $sortlimit;
