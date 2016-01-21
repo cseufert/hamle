@@ -103,14 +103,14 @@ class Func extends SimpleVar {
   }
 
   function toPHP() {
+    $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
+    if($this->scope instanceof Scope) {
+      return $this->scope->toPHP() . $sub;
+    } elseif($this->scope === true) {
+      return "Hamle\\Scope::get(0)$sub";
+    }
     $limit = Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'];
-    $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
-    if ($this->scope) {
-      if($this->scope === true)
-        return "Hamle\\Scope::get(0)$sub";
-      return $this->scope->toPHP().$sub;
-    }
     if (count($this->filt['tag']))
       return "Hamle\\Run::modelTypeTags(" .
       Text::varToCode($this->filt['tag']) . ",$limit)$sub";
