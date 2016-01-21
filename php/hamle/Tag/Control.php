@@ -50,14 +50,18 @@ class Control extends H\Tag {
     $this->o = "\$o" . self::$instCount++;
     $this->type = strtolower($tag);
     $this->var = "";
-    if ($parentTag) {
-      $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
-      if ($this->type == "else") {
-        if (!$elseTag instanceOf H\Tag)
-          throw new ParseError("Unable to use else here");
-        if (!in_array($elseTag->type, array('with', 'if')))
+    if ($parentTag && $this->type == "else") {
+      if($parentTag instanceof H\Tag) {
+        $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
+        if($elseTag instanceof H\Tag\Control &&
+            in_array($elseTag->type, array('with', 'if'))
+        ) {
+          $elseTag->else = true;
+        } else {
           throw new ParseError("You can only use else with |with and |if, you tried |{$parentTag->type}");
-        $elseTag->else = true;
+        }
+      } else {
+        throw new ParseError("Unable to use else here");
       }
     }
   }
