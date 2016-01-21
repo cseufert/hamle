@@ -30,7 +30,12 @@ use Seufert\Hamle\Exception\ParseError;
 
 class FuncSub extends Hamle\Text\Func {
   protected $dir;
+  protected $grouptype = ['grouptype'=>0];
 
+  /**
+   * FuncSub constructor.
+   * @param string $s
+   */
   function __construct($s) {
     $m = array();
     if (!preg_match('/^ +([><]) +('.self::REGEX_FUNCSEL . '+)(.*)$/', $s, $m))
@@ -46,6 +51,10 @@ class FuncSub extends Hamle\Text\Func {
       $this->sub = new FuncSub($m[3]);
   }
 
+  /**
+   * Return as PHP Code
+   * @return string
+   */
   function toPHP() {
     $limit = Hamle\Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'] . "," .

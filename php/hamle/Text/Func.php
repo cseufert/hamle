@@ -37,6 +37,10 @@ class Func extends SimpleVar {
   protected $sortlimit;
   const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}[\]]';
 
+  /**
+   * Func constructor.
+   * @param string $s
+   */
   function __construct($s) {
     $m = array();
     if (!preg_match('/^\$\((' . self::REGEX_FUNCSEL . '*)(.*)\)$/', $s, $m))
@@ -102,6 +106,9 @@ class Func extends SimpleVar {
     return $att;
   }
 
+  /**
+   * @return string PHP Code
+   */
   function toPHP() {
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
     if($this->scope instanceof Scope) {
