@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
-use Seufert\Hamle\Parse\Filter;
+use Seufert\Hamle\Parse\Filter as ParseFilter;
 use Seufert\Hamle\Text;
 
 /**
@@ -37,7 +37,7 @@ use Seufert\Hamle\Text;
  */
 class Parse {
   /**
-   * @param array Array of indent levels
+   * @param array $indents Array of indent levels
    */
   protected $indents;
   /**
@@ -45,7 +45,7 @@ class Parse {
    */
   public $root;
   /**
-   * @var string Each Line read in from template
+   * @var array $lines Each Line read in from template
    */
   protected $lines;
   /**
@@ -86,7 +86,7 @@ ENDREGEX;
     $this->lineNo = 0;
   }
 
-  function parseFilter(Filter $filter) {
+  function parseFilter(ParseFilter $filter) {
     foreach ($this->root as $k => $tag) {
       $this->root[$k] = $filter->filterTag($tag);
     }
@@ -94,6 +94,7 @@ ENDREGEX;
 
   function parseSnip($s) {
     //save root tags
+    /** @var Tag[] $roots */
     $roots = $this->root;
     $this->root = array();
     $this->loadLines($s);
@@ -106,7 +107,7 @@ ENDREGEX;
     $fwdSnip = array();
     /** @var Tag\Snippet[] $revSnip */
     $revSnip = array();
-    /** @var Tag $roots */
+    /** @var Tag[] $roots */
     $roots = array();
     foreach ($this->root as $snip)
       if ($snip instanceOf Tag\Snippet) {
