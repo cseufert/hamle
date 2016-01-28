@@ -22,6 +22,8 @@ class base extends PHPUnit_Framework_TestCase {
                         'class'=>"colored",
                         'empty'=>"",
                         'nottrue'=>false,
+                        'csv'=>"a,b,c",
+                        'scsv'=>"a;b;c;",
                         'istrue'=>true))),
                 new baseTestSetup());
 	}

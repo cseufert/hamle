@@ -26,6 +26,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Model\WrapArray;
 use Seufert\Hamle\Text;
 
 class Filter extends Text {
@@ -43,8 +44,11 @@ class Filter extends Text {
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(!in_array($this->filter,['round','strtoupper','strtolower','ucfirst'])) {
+    if(!in_array($this->filter,['itersplit','round','strtoupper','strtolower','ucfirst'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
+    }
+    if($this->filter == "itersplit") {
+      $this->filter = "Seufert\\Hamle\\Text\\Filter::iterSplit";
     }
     $this->what = $what;
   }
@@ -60,5 +64,14 @@ class Filter extends Text {
     foreach($this->vars as $v)
       $o[] = $this->varToCode($v);
     return "{$this->filter}(" . implode(',',$o) . ")";
+  }
+
+  static function iterSplit($v, $sep = ",") {
+    $o = [];
+    foreach(explode($sep, $v) as $k=>$i) {
+      if($i)
+        $o[] = ['v'=>trim($i), 'value'=>trim($i), 'k'=>$k,'key'=>$k];
+    }
+    return new WrapArray($o);
   }
 }

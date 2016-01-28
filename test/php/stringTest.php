@@ -126,7 +126,11 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>", $html);
     $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))", $php);
   }
-
+  public function testDollarExplode1() {
+    $hs = new Text("\$box->length|itersplit(;)",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')", $php);
+  }
 
   public function testDollarCodeString1() {
     $hs = new Text("\"My Title = {\$title}\"",Text::TOKEN_CODE);

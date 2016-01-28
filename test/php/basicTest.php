@@ -214,4 +214,38 @@ class basicTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
+  public function testIterFilter() {
+    $hamle = "html\n".
+        "  ul\n".
+        "    |each \$csv|itersplit\n".
+        "      li \$v";
+    $html = "<html><ul><li>a</li><li>b</li><li>c</li></ul></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+  public function testIterFilterSemi() {
+    $hamle = "html\n".
+        "  ul\n".
+        "    |each \$scsv|itersplit(;)\n".
+        "      li[class=item\$k] \$v";
+    $html = "<html><ul><li class='item0'>a</li><li class='item1'>b</li><li class='item2'>c</li></ul></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+//    $this->assertEquals($html, $out);
+    $this->compareXmlStrings($html, $out);
+
+  }
+  public function testIterFilterEmpty() {
+    $hamle = "html\n".
+        "  ul\n".
+        "    |each \$empty|itersplit(;)\n".
+        "      li \$v";
+    $html = "<html><ul></ul></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
+
 }
