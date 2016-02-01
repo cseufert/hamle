@@ -34,23 +34,28 @@ class Filter extends Text {
 
   protected $vars;
 
-  /** @var SimpleVar  */
+  /** @var SimpleVar */
   protected $what;
 
   function __construct($s, Text $what) {
-    if(preg_match("/^([a-z]+)(\\((.*)\\))?$/",$s, $m)) {
+    if(preg_match("/^([a-z]+)(\\((.*)\\))?$/", $s, $m)) {
       $this->filter = $m[1];
-      $this->vars = isset($m[3])?explode(',',$m[3]):[];
+      $this->vars = isset($m[3]) ? explode(',', $m[3]) : [];
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(!in_array($this->filter,['itersplit','round','strtoupper','strtolower','ucfirst'])) {
+    if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round', 'strtoupper', 'strtolower', 'ucfirst'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
-    if($this->filter == "itersplit") {
-      $this->filter = "Seufert\\Hamle\\Text\\Filter::iterSplit";
+    switch($this->filter) {
+      case "itersplit":
+        $this->filter = "Seufert\\Hamle\\Text\\Filter::iterSplit";
+        break;
+      case "newlinebr":
+        $this->filter = "Seufert\\Hamle\\Text\\Filter::newlineBr";
+        break;
+
     }
-    $this->what = $what;
   }
 
   function toHTML($escape = false) {
@@ -74,4 +79,9 @@ class Filter extends Text {
     }
     return new WrapArray($o);
   }
+
+  static function newlineBr($v) {
+    return str_replace("\n","<br />\n",$v);
+  }
+
 }
