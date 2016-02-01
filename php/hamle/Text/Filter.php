@@ -54,8 +54,8 @@ class Filter extends Text {
       case "newlinebr":
         $this->filter = "Seufert\\Hamle\\Text\\Filter::newlineBr";
         break;
-
     }
+    $this->what = $what;
   }
 
   function toHTML($escape = false) {
