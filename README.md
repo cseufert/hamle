@@ -62,6 +62,7 @@ becomes
   * Usage #2 `.button[data-size=$id&class=$tags]` if $id is 10 and tags = 'Ten Submit' output would be `<button data-size="10" class="Ten Submit" />`
   * Usage #3 `a[data-alt=Button \[1\&2\]] Hi` becomes `<a data-alt="Button [1&amp;2]">Hi</a>`
 * All variable substitution is PHP like, starts with $ (`$title`, `$text`, `{$[-1]->title}`, etc)
+  * Alternative Syntax when in html editor `{$[1]-!title}` or `{$(page.home)-!title}`
   * `{$...}` over `$...` are required when inside a filter block, or accessing a property.
   * Scope History
     * `$[0]` = current model/controller that is in scope
