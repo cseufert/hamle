@@ -39,6 +39,7 @@ class Complex extends Text {
       $s = substr($s,0,$pos);
     }
     $s = explode("->", $s);
+    if(count($s) == 1) $s = explode("-!",$s[0]);
     if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
     if ($s[0][1] == "(")
       $this->func = new Text\Func($s[0]);

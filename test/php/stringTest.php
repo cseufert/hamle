@@ -41,8 +41,22 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=Hamle\\Scope::get(0)->hamleGet('user')?>", $html);
     $this->assertEquals("'Hello '.Hamle\\Scope::get(0)->hamleGet('user')", $php);
   }
+  public function testDollarString3alt() {
+    $hs = new Text("Hello {\$[0]-!user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\\Scope::get(0)->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Scope::get(0)->hamleGet('user')", $php);
+  }
   public function testDollarString4() {
     $hs = new Text("Hello {\$(site)->user}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')", $php);
+  }
+  public function testDollarString4alt() {
+    $hs = new Text("Hello {\$(site)-!user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hello <?=Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')?>", $html);
