@@ -88,6 +88,13 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
+  public function testVue2WayArray() {
+    $hamle = 'input[:name.sync=myInput&v-on:click.once=exec()]';
+    $html = '<input :name.sync="myInput" v-on:click.once="exec()" />'."\n";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->assertEquals($html, $out);
+  }
   public function testAttrDollar() {
     $hamle = "a[href=\$url&class=\$class] {\$title}";
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";

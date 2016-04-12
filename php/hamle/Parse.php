@@ -195,7 +195,8 @@ ENDREGEX;
             if(isset($params[0]) && $params[0] == "[") {
               $param = substr($params, 1, strlen($params) - 2);
               $param = str_replace('+','%2B', $param);
-              parse_str($param, $attr);
+//              parse_str($param, $attr);
+              $attr = $this->parseQueryString($param);
             }
             $class = array(); $id = ""; $ref = "";
             preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $cid);
@@ -220,6 +221,15 @@ ENDREGEX;
         throw new ParseError("Unable to parse line {$this->lineNo}\n\"$line\"/" . preg_last_error());
       $this->lineNo++;
     }
+  }
+
+  function parseQueryString($qs) {
+    $out = [];
+    foreach(explode('&',$qs) as $s) {
+      list($k, $v) = explode('=',$s,2);
+      $out[urldecode($k)] = urldecode($v);
+    }
+    return $out;
   }
 
   function output() {
