@@ -95,6 +95,13 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
+  public function testInlineLogic() {
+    $hamle = 'input[:disabled=!loading \&\& !editable&ok]';
+    $html = '<input :disabled="!loading &amp;&amp; !editable" ok="" />'."\n";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->assertEquals($html, $out);
+  }
   public function testAttrDollar() {
     $hamle = "a[href=\$url&class=\$class] {\$title}";
     $html = "<a href=\"https://www.secure.com\" class=\"colored\">This is My TITLE</a>";
