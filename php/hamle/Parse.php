@@ -228,7 +228,7 @@ ENDREGEX;
     $out = [];
     foreach(explode('&',$qs) as $s) {
       $kv = explode('=',$s,2);
-      $out[urldecode($kv[0])] = isset($kv[1]?urldecode($kv[1]):"");
+      $out[urldecode($kv[0])] = isset($kv[1])?urldecode($kv[1]):null;
     }
     return $out;
   }
