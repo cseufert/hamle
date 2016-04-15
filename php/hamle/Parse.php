@@ -195,6 +195,7 @@ ENDREGEX;
             if(isset($params[0]) && $params[0] == "[") {
               $param = substr($params, 1, strlen($params) - 2);
               $param = str_replace('+','%2B', $param);
+              $param = str_replace('\\&','%26', $param);
 //              parse_str($param, $attr);
               $attr = $this->parseQueryString($param);
             }
