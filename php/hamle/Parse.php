@@ -227,8 +227,8 @@ ENDREGEX;
   function parseQueryString($qs) {
     $out = [];
     foreach(explode('&',$qs) as $s) {
-      list($k, $v) = explode('=',$s,2);
-      $out[urldecode($k)] = urldecode($v);
+      $kv = explode('=',$s,2);
+      $out[urldecode($kv[0])] = isset($kv[1]?urldecode($kv[1]):"");
     }
     return $out;
   }
