@@ -46,16 +46,12 @@ class Filter extends Text {
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round', 'strtoupper', 'strtolower', 'ucfirst'])) {
+    if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round',
+        'strtoupper', 'strtolower', 'ucfirst','replace'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
-    switch($this->filter) {
-      case "itersplit":
-        $this->filter = "Seufert\\Hamle\\Text\\Filter::iterSplit";
-        break;
-      case "newlinebr":
-        $this->filter = "Seufert\\Hamle\\Text\\Filter::newlineBr";
-        break;
+    if(in_array($this->filter,['itersplit','newlinebr', 'replace'])) {
+        $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
     }
     $this->what = $what;
   }
@@ -73,7 +69,7 @@ class Filter extends Text {
     return "{$this->filter}(" . implode(',',$o) . ")";
   }
 
-  static function iterSplit($v, $sep = ",") {
+  static function itersplit($v, $sep = ",") {
     $o = [];
     foreach(explode($sep, $v) as $k=>$i) {
       if($i)
@@ -82,8 +78,12 @@ class Filter extends Text {
     return new WrapArray($o);
   }
 
-  static function newlineBr($v) {
+  static function newlinebr($v) {
     return str_replace("\n","<br />\n",$v);
+  }
+
+  static function replace($v, $src, $dst) {
+    return str_replace($src,$dst,$v);
   }
 
 }
