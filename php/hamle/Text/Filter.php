@@ -41,6 +41,8 @@ class Filter extends Text {
     if(preg_match("/^([a-z]+)(\\((.*)\\))?$/", $s, $m)) {
       $this->filter = $m[1];
       $this->vars = isset($m[3]) ? explode(',', $m[3]) : [];
+      foreach($this->vars as $k=>$v)
+        $this->vars[$k] = str_replace("&comma;",',',$v);
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
