@@ -143,17 +143,17 @@ class stringTest extends base {
   public function testDollarExplode1() {
     $hs = new Text("\$box->length|itersplit(;)",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
-    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')", $php);
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')", $php);
   }
   public function testDollarExplode2() {
     $hs = new Text("\$box->length|itersplit(&comma;)",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
-    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),',')", $php);
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),',')", $php);
   }
   public function testDollarNewlineBr() {
     $hs = new Text("\$desc|newlinebr",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
-    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::newlineBr(Hamle\\Scope::get()->hamleGet('desc'))", $php);
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc'))", $php);
   }
 
   public function testDollarCodeString1() {
