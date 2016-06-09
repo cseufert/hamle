@@ -145,6 +145,11 @@ class stringTest extends base {
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')", $php);
   }
+  public function testDollarExplode2() {
+    $hs = new Text("\$box->length|itersplit(&comma;)",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),',')", $php);
+  }
   public function testDollarNewlineBr() {
     $hs = new Text("\$desc|newlinebr",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
