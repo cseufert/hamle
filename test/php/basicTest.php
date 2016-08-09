@@ -130,6 +130,13 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
+  public function testAttrJson() {
+    $hamle = "html\n    .my-data[data-json={\"icon\":\"fa-folder-o\"}]";
+    $html = "<html><div class=\"my-data\" data-json=\"{&quot;icon&quot;:&quot;fa-folder-o&quot;}\"></div></html>";
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
   public function testCommentSingle() {
     $hamle = "html\n".
              "  #box\n".
