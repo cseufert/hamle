@@ -34,18 +34,18 @@ use Seufert\Hamle\Text\FormField;
  * @package hamle
  *
  * @property string $label
- * @method Field label(string $label) Set Label
+ * @method $this label(string $label) Set Label
  * @property string $name
  * @property string $value
- * @method Field value(string $value) Set field value
+ * @method $this value(string $value) Set field value
  * @property string $default
- * @method Field default(string $defaultValue) Set field default value
+ * @method $this default(string $defaultValue) Set field default value
  * @property string $help
- * @method Field help(string $help) Set Help Message
+ * @method $this help(string $help) Set Help Message
  * @property Form $form
  * @property bool $required
  * @property bool $disabled
- * @method Field disabled(boolean $disabled) Set field disabled
+ * @method $this disabled(boolean $disabled) Set field disabled
  * @property bool $readonly
  */
 class Field {
