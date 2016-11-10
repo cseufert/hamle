@@ -140,6 +140,13 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>", $html);
     $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))", $php);
   }
+  public function testDollarFormat4() {
+    $hs = new Text("Hello {\$box->length|json}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>", $html);
+    $this->assertEquals("'Hello '.json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))", $php);
+  }
   public function testDollarExplode1() {
     $hs = new Text("\$box->length|itersplit(;)",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();

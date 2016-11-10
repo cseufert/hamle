@@ -47,12 +47,15 @@ class Filter extends Text {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
     if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round',
-        'strtoupper', 'strtolower', 'ucfirst','replace'])) {
+        'strtoupper', 'strtolower', 'ucfirst','replace', 'json'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
     if(in_array($this->filter,['itersplit','newlinebr', 'replace'])) {
         $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
     }
+    $mapFilter = ['json'=>'json_encode'];
+    if(isset($mapFilter[$this->filter]))
+      $this->filter = $mapFilter[$this->filter];
     $this->what = $what;
   }
 
