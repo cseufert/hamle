@@ -60,11 +60,15 @@ class Scope {
     return count(self::$scopes);
   }
 
+  static $returnZeroOnNoScope = false;
+
   static function getName($name) {
     if ($name && isset(self::$namedScopes[$name])) {
       self::$namedScopes[$name]->rewind();
       return self::$namedScopes[$name];
     } else
+      if(self::$returnZeroOnNoScope)
+        return new Model\Zero();
       throw new RunTime("Unable to find scope ($name)");
   }
 
