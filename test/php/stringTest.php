@@ -103,6 +103,13 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')?>", $html);
     $this->assertEquals("'Hello '.Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')", $php);
   }
+  public function testDollarString10() {
+    $hs = new Text("Hello {\$( > test.7ba736fc-3d6e-4907-b448-d995bd78a477)->valid}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')", $php);
+  }
   public function testDollarStringSymbol1() {
     $hs = new Text("Hello \$test_str");
     $html = $hs->toHTML();
