@@ -358,6 +358,13 @@ class stringTest extends base {
     $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
   }
 
+  public function testNestedNamed2() {
+    $hs = new Text('$($[prev] > next > next)', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+  }
+
   public function testDollarFuncVar1() {
     $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
