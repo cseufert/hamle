@@ -29,7 +29,8 @@ use Seufert\Hamle\Exception\NoKey;
 use Seufert\Hamle\Model;
 
 class One implements Model {
-  protected $hamleIndex = 0;
+
+  use OneTrait;
 
   function hamleGet($key) {
     throw new NoKey("Cant find Key ($key)");
@@ -38,25 +39,5 @@ class One implements Model {
   function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
                     $offset = 0, $grouptype = 1) {
     return new Zero();
-  }
-
-  function valid() {
-    return $this->hamleIndex == 0;
-  }
-
-  function key() {
-    return $this->hamleIndex;
-  }
-
-  function current() {
-    return $this;
-  }
-
-  function rewind() {
-    $this->hamleIndex = 0;
-  }
-
-  function next() {
-    $this->hamleIndex++;
   }
 }
