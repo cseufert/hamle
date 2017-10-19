@@ -28,7 +28,7 @@ namespace Seufert\Hamle;
 /**
  * HAMLE Form Class
  * 
- * @pachage hamle
+ * @package hamle
  * @author Chris Seufert <chris@seufert.id.au>
  */
 class Form {
