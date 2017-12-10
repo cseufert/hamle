@@ -57,7 +57,7 @@ becomes
 ```
 * HTML tags just go straigt in, no symbol required (eg `DIV`, `P`, `A`, etc)
   * Tag attributes are specified in square brackets as url encoded string
-  * Escape & with \&, ] with \], etc
+  * Escape & with \\&, ] with \\], etc
   * Usage #1 `a[href=/] Home` outputs `<a href="/">Home</a>`
   * Usage #2 `.button[data-size=$id&class=$tags]` if $id is 10 and tags = 'Ten Submit' output would be `<button data-size="10" class="Ten Submit" />`
   * Usage #3 `a[data-alt=Button \[1\&2\]] Hi` becomes `<a data-alt="Button [1&amp;2]">Hi</a>`
