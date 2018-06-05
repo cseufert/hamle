@@ -9,7 +9,7 @@ use Seufert\Hamle as H;
 use Seufert\Hamle\Field;
 use Seufert\Hamle\Model\WrapArray;
 
-class base extends PHPUnit_Framework_TestCase {
+class base extends \PHPUnit\Framework\TestCase{
 	/**
 	 * @var Hamle Hamle Parser
 	 */
