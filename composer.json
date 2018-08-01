@@ -25,5 +25,8 @@
     "psr-4": {
       "Seufert\\Hamle\\": "php/hamle/"
     }
+  },
+  "scripts": {
+    "test": "phpunit"
   }
 }
