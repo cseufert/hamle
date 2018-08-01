@@ -31,18 +31,24 @@ use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
 class Func extends SimpleVar {
-  protected $sub = null;
-  /** @var bool|Scope  */
-  protected $scope = false;
-  protected $filt;
-  protected $sortlimit;
+
   const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}[\]]';
+
+  protected $sub = null;
+
+  /** @var bool|Scope */
+  protected $scope = false;
+
+  protected $filt;
+
+  protected $sortlimit;
+
 
   /**
    * Func constructor.
    * @param string $s
    */
-  function __construct($s) {
+  public function __construct($s) {
     $m = array();
     if (!preg_match('/^\$\((' . self::REGEX_FUNCSEL . '*)(.*)\)$/', $s, $m))
       throw new ParseError("Unable to read \$ func in '$s'");
@@ -60,7 +66,7 @@ class Func extends SimpleVar {
     $this->filt = $this->attIdTag($m[1]);
   }
 
-  function attIdTag(&$s) {
+  public function attIdTag(&$s) {
     $m = array();
     $att = array('id' => array(), 'tag' => array());
     foreach (explode(",", $s) as $str) {
@@ -72,13 +78,12 @@ class Func extends SimpleVar {
           $att['tag'][$type][] = new Text($tag, Text::TOKEN_CODE);
       else $att['tag'][$type] = array();
     }
-    //var_dump($att);
     if (!(count($att['id']) xor count($att['tag'])))
       throw new ParseError("Only tag, type or id can be combined");
     return $att;
   }
 
-  function attSortLimit(&$s) {
+  public function attSortLimit(&$s) {
     $att = array('limit' => 0, 'offset' => 0, 'sort'=> []);
     $m = array();
     if (preg_match('/:(?:([0-9]+)\-)?([0-9]+)/', $s, $m)) {
@@ -98,7 +103,7 @@ class Func extends SimpleVar {
     return $att;
   }
 
-  function attGroupType(&$s) {
+  public function attGroupType(&$s) {
     $att = array('grouptype' => 0);
     $m = array();
     if (preg_match('/@([0-9]+)/', $s, $m)) {
@@ -110,7 +115,7 @@ class Func extends SimpleVar {
   /**
    * @return string PHP Code
    */
-  function toPHP() {
+  public function toPHP() {
     $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
     if($this->scope instanceof Scope) {
       return $this->scope->toPHP() . $sub;
@@ -137,7 +142,7 @@ class Func extends SimpleVar {
    * @param Model|null $parent
    * @return Model
    */
-  function getOrCreateModel(Model $parent = null) {
+  public function getOrCreateModel(Model $parent = null) {
     if($this->scope instanceof Scope) {
       $parent = $this->scope->getOrCreateModel();
     } elseif ($this->scope === true)
@@ -171,8 +176,7 @@ class Func extends SimpleVar {
     return $parent;
   }
 
-  function toHTML($escape = false) {
-    throw new
-    ParseError("Unable to use Scope operator in HTML Code");
+  public function toHTML($escape = false) {
+    throw new ParseError("Unable to use Scope operator in HTML Code");
   }
 }

@@ -31,7 +31,7 @@ use Seufert\Hamle\Model;
 
 class FuncSub extends Hamle\Text\Func {
   protected $dir;
-  protected $grouptype = ['grouptype'=>0];
+  protected $grouptype = ['grouptype' => 0];
 
   /**
    * FuncSub constructor.
