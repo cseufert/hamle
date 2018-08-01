@@ -75,8 +75,8 @@ class FuncSub extends Hamle\Text\Func {
         $this->sortlimit['limit'], $this->sortlimit['offset']);
     }
     if($this->sub)
-      return $this->sub->getOrCreateModel($model);
-    return $model;
+      return $this->sub->getOrCreateModel($model)->current();
+    return $model->current();
   }
 
 }

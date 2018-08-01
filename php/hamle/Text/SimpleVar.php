@@ -58,7 +58,7 @@ class SimpleVar extends Text {
   }
 
   function getOrCreateModel(Model $parent = null) {
-    return \Seufert\Hamle\Scope::get();
+    return \Seufert\Hamle\Scope::get()->current();
   }
 
   /**

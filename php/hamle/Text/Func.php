@@ -170,10 +170,10 @@ class Func extends SimpleVar {
           $this->sortlimit['offset']
         );
     if($this->sub)
-      return $this->sub->getOrCreateModel($parent);
+      return $this->sub->getOrCreateModel($parent)->current();
     if(!$parent)
       throw new \RuntimeException('Unable to create model with no relation');
-    return $parent;
+    return $parent->current();
   }
 
   public function toHTML($escape = false) {
