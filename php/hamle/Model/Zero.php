@@ -27,35 +27,42 @@ namespace Seufert\Hamle\Model;
 
 use Seufert\Hamle\Model;
 
+/**
+ * Zero Model
+ *
+ * This model is an empty model result
+ *
+ * @package Seufert\Hamle\Model
+ */
 class Zero implements Model {
-  function hamleGet($key) {
+  public function hamleGet($key) {
     return new Zero();
   }
 
-  function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
+  public function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
                     $offset = 0, $grouptype = 1) {
     return new Zero();
   }
 
-  function valid() {
+  public function valid() {
     return false;
   }
 
-  function key() {
+  public function key() {
     return 0;
   }
 
-  function current() {
+  public function current() {
     return $this;
   }
 
-  function rewind() {
+  public function rewind() {
   }
 
-  function next() {
+  public function next() {
   }
 
-  function __toString() {
-    return "";
+  public function __toString() {
+    return '';
   }
 }
