@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="php/autoload.php" colors="true" verbose="true">
+<phpunit colors="true" verbose="true">
     <testsuite name="HAMLE">
         <directory>test/php</directory>
     </testsuite>
