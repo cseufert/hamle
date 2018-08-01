@@ -26,6 +26,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Text;
 
 use http\Exception\RuntimeException;
+use Seufert\Hamle\Model;
 use Seufert\Hamle\Run;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
@@ -72,12 +73,25 @@ class Complex extends Text {
       return $this->func->toPHP();
   }
 
+  function getOrCreateModel(Model $parent = null) {
+    if($this->func instanceof Text\Scope)
+      return $this->func->getOrCreateModel($parent);
+    if($this->func instanceof Text\Func)
+      return $this->func->getOrCreateModel($parent);
+  }
+
   /**
    * @param $value
    * @return WriteModel
    */
   function setValue($value) {
-    return $this->func->setValue($value);
+    if(!$this->sel || count($this->sel) != 1)
+      throw new \RuntimeException('Can only set values, when one var name is present');
+    $model = $this->getOrCreateModel();
+    if(!$model instanceof WriteModel)
+      throw new \RuntimeException('Can only set values on Runtime Exceptions');
+    $model->hamleSet($this->sel[0], $value);
+    return $model;
   }
 
 

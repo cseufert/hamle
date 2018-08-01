@@ -26,6 +26,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle;
+use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
@@ -130,6 +131,44 @@ class Func extends SimpleVar {
         return "Hamle\\Run::modelTypeId(" .
         Text::varToCode($this->filt['id']) . ",$limit)$sub";
     return "";
+  }
+
+  /**
+   * @param Model|null $parent
+   * @return Model
+   */
+  function getOrCreateModel(Model $parent = null) {
+    if($this->scope instanceof Scope) {
+      $parent = $this->scope->getOrCreateModel();
+    } elseif ($this->scope === true)
+      $parent = \Seufert\Hamle\Scope::get(0);
+    if (count($this->filt['tag']))
+      $parent = \Seufert\Hamle\Run::modelTypeTags(
+        $this->filt['tag'],
+        $this->sortlimit['sort'],
+        $this->sortlimit['limit'],
+        $this->sortlimit['offset']
+      );
+    if (count($this->filt['id']))
+      if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) === 1)
+        $parent = \Seufert\Hamle\Run::modelId(
+          current($this->filt['id']['*']),
+            $this->sortlimit['sort'],
+            $this->sortlimit['limit'],
+            $this->sortlimit['offset']
+            );
+      else
+        $parent = \Seufert\Hamle\Run::modelTypeId(
+          $this->filt['id'],
+          $this->sortlimit['sort'],
+          $this->sortlimit['limit'],
+          $this->sortlimit['offset']
+        );
+    if($this->sub)
+      return $this->sub->getOrCreateModel($parent);
+    if(!$parent)
+      throw new \RuntimeException('Unable to create model with no relation');
+    return $parent;
   }
 
   function toHTML($escape = false) {
