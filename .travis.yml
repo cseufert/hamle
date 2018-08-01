@@ -13,6 +13,8 @@ matrix:
 before_script:
   - curl -sSf -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.25.phar
   - curl -sSf -o ~/.phpenv/versions/7.0/bin/phpunit https://phar.phpunit.de/phpunit-5.7.25.phar
+  - curl -sSf -o ~/.phpenv/versions/7.1/bin/phpunit https://phar.phpunit.de/phpunit-5.7.25.phar
+  - curl -sSf -o ~/.phpenv/versions/7.2/bin/phpunit https://phar.phpunit.de/phpunit-5.7.25.phar
   #before_script:
 #  - cd test/php
 script: phpunit
