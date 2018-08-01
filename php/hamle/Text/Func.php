@@ -147,14 +147,14 @@ class Func extends SimpleVar {
       $parent = $this->scope->getOrCreateModel();
     } elseif ($this->scope === true)
       $parent = \Seufert\Hamle\Scope::get(0);
-    if (count($this->filt['tag']))
+    if ($this->filt && count($this->filt['tag']))
       $parent = \Seufert\Hamle\Run::modelTypeTags(
         $this->filt['tag'],
         $this->sortlimit['sort'],
         $this->sortlimit['limit'],
         $this->sortlimit['offset']
       );
-    if (count($this->filt['id']))
+    if ($this->filt && count($this->filt['id']))
       if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) === 1)
         $parent = \Seufert\Hamle\Run::modelId(
           current($this->filt['id']['*']),
