@@ -54,4 +54,8 @@ class Zero implements Model {
 
   function next() {
   }
+
+  function __toString() {
+    return "";
+  }
 }
