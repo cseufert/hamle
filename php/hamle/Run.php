@@ -128,7 +128,7 @@ class Run {
    * @internal param string $id id to search for
    * @return Model
    */
-  static function modelTypeID($typeId, $sort = [], $limit = 0, $offset = 0) {
+  static function modelTypeId($typeId, $sort = [], $limit = 0, $offset = 0) {
     return self::$hamle->setup->getModelTypeId($typeId, $sort, $limit, $offset);
   }
 
