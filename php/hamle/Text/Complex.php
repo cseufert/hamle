@@ -89,7 +89,7 @@ class Complex extends Text {
       throw new \RuntimeException('Can only set values, when one var name is present');
     $model = $this->getOrCreateModel();
     if(!$model instanceof WriteModel)
-      throw new \RuntimeException('Can only set values on WriteModels, got '.get_class($model));
+      throw new \RuntimeException('Can only set values on WriteModel, got '.get_class($model));
     $model->hamleSet($this->sel[0], $value);
     return $model;
   }

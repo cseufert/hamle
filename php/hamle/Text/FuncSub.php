@@ -71,7 +71,7 @@ class FuncSub extends Hamle\Text\Func {
     if(!$model->valid()) {
       if(!$parent instanceof Hamle\WriteModel)
         throw new \Exception('Cant create model, ' . get_class($parent) . ' must implement Hamle\\WriteModel.');
-      $model = $parent->hamleCreateRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
+      $model = $parent->current()->hamleCreateRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
         $this->sortlimit['limit'], $this->sortlimit['offset']);
     }
     if($this->sub)
