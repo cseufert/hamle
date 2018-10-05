@@ -56,7 +56,7 @@ class Filter extends Text {
         'strtoupper', 'strtolower', 'ucfirst','replace', 'json'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
-    if(in_array($this->filter,['itersplit','newlinebr', 'replace'])) {
+    if(method_exists(Filter::class, $this->filter)) {
         $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
     }
     $mapFilter = ['json'=>'json_encode'];
