@@ -113,4 +113,9 @@ class Filter extends Text {
     return str_replace($src,$dst,$v);
   }
 
+  static function asCents($v) {
+    $v = str_replace(['$',' ',','],'', $v);
+    return round($v * 100,0);
+  }
+
 }
