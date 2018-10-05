@@ -52,12 +52,10 @@ class Filter extends Text {
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round',
-        'strtoupper', 'strtolower', 'ucfirst','replace', 'json'])) {
-      throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
-    }
     if(method_exists(Filter::class, $this->filter)) {
-        $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
+      $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
+    } elseif(!in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst', 'json'])) {
+      throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
     $mapFilter = ['json'=>'json_encode'];
     if(isset($mapFilter[$this->filter]))
@@ -113,9 +111,9 @@ class Filter extends Text {
     return str_replace($src,$dst,$v);
   }
 
-  static function asCents($v) {
+  static function ascents($v) {
     $v = str_replace(['$',' ',','],'', $v);
-    return round($v * 100,0);
+    return (int) round($v * 100,0);
   }
 
 }
