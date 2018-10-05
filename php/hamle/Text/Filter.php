@@ -37,12 +37,18 @@ class Filter extends Text {
   /** @var SimpleVar */
   protected $what;
 
+  /** @var Filter|null Chained Filter*/
+  protected $chained;
+
   function __construct($s, Text $what) {
-    if(preg_match("/^([a-z]+)(\\((.*)\\))?$/", $s, $m)) {
+    if(preg_match("/^([a-z]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
       $this->filter = $m[1];
-      $this->vars = isset($m[3]) ? explode(',', $m[3]) : [];
+      $this->vars = isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];
       foreach($this->vars as $k=>$v)
         $this->vars[$k] = str_replace("&comma;",',',$v);
+      if(isset($m['chained']) && strlen($m['chained'])) {
+        $this->chained = new Filter($m['chained'],$what);
+      }
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
@@ -65,11 +71,29 @@ class Filter extends Text {
     return "<?=" . $this->toPHP() . "?>";
   }
 
-  function toPHP() {
-    $o = [$this->what->toPHPVar()] ;
+  function toPHPpre() {
+    $pre = '';
+    if($this->chained)
+      $pre = $this->chained->toPHPpre();
+    return "$pre{$this->filter}(";
+  }
+
+  function toPHPpost() {
+    $post = '';
+    if($this->chained)
+      $post = $this->chained->toPHPpost();
+    $o = '';
     foreach($this->vars as $v)
-      $o[] = $this->varToCode($v);
-    return "{$this->filter}(" . implode(',',$o) . ")";
+      $o .= ','.$this->varToCode($v);
+    return "$o)$post";
+  }
+
+  function toPHP() {
+    return $this->toPHPpre().$this->what->toPHPVar().$this->toPHPpost();
+    // $o = [$this->what->toPHPVar()] ;
+    // foreach($this->vars as $v)
+    //   $o[] = $this->varToCode($v);
+    // return "{$this->filter}(" . implode(',',$o) . ")";
   }
 
   static function itersplit($v, $sep = ",") {
