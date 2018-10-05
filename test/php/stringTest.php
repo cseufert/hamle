@@ -177,6 +177,20 @@ class stringTest extends base {
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc'))", $php);
   }
 
+  public function testDollarNewlineJson() {
+    $hs = new Text("\$desc|newlinebr|json",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("json_encode(Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc')))", $php);
+  }
+
+  public function testAsCents() {
+    $hs = new Text("\$price|ascents",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::ascents(Hamle\\Scope::get()->hamleGet('price'))", $php);
+    $this->assertEquals(2501, Text\Filter::ascents("$ 25.01"));
+    $this->assertEquals(123456, Text\Filter::ascents("$ 1,234.562"));
+  }
+
   public function testDollarCodeString1() {
     $hs = new Text("\"My Title = {\$title}\"",Text::TOKEN_CODE);
     $html = $hs->toHTML();
