@@ -101,7 +101,7 @@ class Text {
   }
 
   function doEval() {
-    return eval('return ' . $this->toPHP() . ';');
+    return eval('use Seufert\Hamle; return ' . $this->toPHP() . ';');
   }
 
   static function varToCode($var) {
@@ -119,6 +119,14 @@ class Text {
     } else {
       return "'" . str_replace(array('$', "'"), array('\\$', "\\'"), $var) . "'";
     }
+  }
+
+  /**
+   * @param $value
+   * @return WriteModel
+   */
+  function setValue($value) {
+    throw new \RuntimeException('Unsupported');
   }
 
 }

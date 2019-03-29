@@ -2,7 +2,7 @@
 /*
 This project is Licenced under The MIT License (MIT)
 
-Copyright (c) 2014 Christopher Seufert
+Copyright (c) 2018 Christopher Seufert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,46 +23,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
-namespace Seufert\Hamle\Model;
 
-use Seufert\Hamle\Model;
+namespace Seufert\Hamle;
 
-/**
- * Zero Model
- *
- * This model is an empty model result
- *
- * @package Seufert\Hamle\Model
- */
-class Zero implements Model {
-  public function hamleGet($key) {
-    return new Zero();
-  }
+interface WriteModel extends Model {
 
-  public function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
-                    $offset = 0, $grouptype = 1) {
-    return new Zero();
-  }
+  /**
+   * Set a HAMLE model value
+   *
+   * @param $key
+   * @param $value
+   * @return WriteModel
+   */
+  public function hamleSet($key, $value);
 
-  public function valid() {
-    return false;
-  }
+  /**
+   * Creates an related model
+   * @param int $rel Relation to this object hamle::REL_CHILD, etc
+   * @param array $typeTags Array of types to search containing tags
+   *                                    eg([photo->[landscape,wide]])
+   * @param array $sort Array of SORT fields(key) with DIRECTION(value)
+   * @param int $limit Limit of rows to return
+   * @param int $offset Offset Number of rows to offset results by
+   * @param int $grouptype Type of group
+   * @return WriteModel Return object must implmement WriteModel interface
+   */
+  function hamleCreateRel($rel, $typeTags, $sort = [],
+                    $limit = 0, $offset = 0, $grouptype = 1);
 
-  public function key() {
-    return 0;
-  }
 
-  public function current() {
-    return $this;
-  }
-
-  public function rewind() {
-  }
-
-  public function next() {
-  }
-
-  public function __toString() {
-    return '';
-  }
 }

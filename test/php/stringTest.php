@@ -110,6 +110,13 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>", $html);
     $this->assertEquals("'Hello '.Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')", $php);
   }
+  public function testDollarString11() {
+    $hs = new Text("{\$(_request#get)->application}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("<?=Hamle\Run::modelTypeId(array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')?>", $html);
+    $this->assertEquals("Hamle\Run::modelTypeId(array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')", $php);
+  }
   public function testDollarStringSymbol1() {
     $hs = new Text("Hello \$test_str");
     $html = $hs->toHTML();
@@ -168,6 +175,20 @@ class stringTest extends base {
     $hs = new Text("\$desc|newlinebr",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc'))", $php);
+  }
+
+  public function testDollarNewlineJson() {
+    $hs = new Text("\$desc|newlinebr|json",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("json_encode(Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc')))", $php);
+  }
+
+  public function testAsCents() {
+    $hs = new Text("\$price|ascents",Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals("Seufert\\Hamle\\Text\\Filter::ascents(Hamle\\Scope::get()->hamleGet('price'))", $php);
+    $this->assertEquals(2501, Text\Filter::ascents("$ 25.01"));
+    $this->assertEquals(123456, Text\Filter::ascents("$ 1,234.562"));
   }
 
   public function testDollarCodeString1() {
@@ -356,6 +377,13 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+  }
+
+  public function testNestedNamed2() {
+    $hs = new Text('$($[prev] > next > next)', Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
   }
 
   public function testDollarFuncVar1() {

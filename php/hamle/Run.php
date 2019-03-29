@@ -91,31 +91,28 @@ class Run {
   /**
    * Called from template by $() to find a specific model
    * @param array[] $typeTags array of tags with types as key eg ['page'=>[]] or ['product'=>['featured]]
-   * @param int $sortDir Sort Direction see hamle::SORT_NATURAL...
-   * @param string $sortField Sort Direction defined by hamle::SORT_*
+   * @param array $sort
    * @param int $limit Results Limit
    * @param int $offset Offset Results by
    * @internal param string $sortBy Field name to sort by
    * @return Model
    */
-  static function modelTypeTags($typeTags, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
+  static function modelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
     return self::$hamle->setup->getModelTypeTags($typeTags,
-        $sortDir, $sortField, $limit, $offset);
+        $sort, $limit, $offset);
   }
 
   /**
    * Called from template by $() to find a specific model
    * @param string $id id to search for
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field to sort by
+   * @param array $sort
    * @param int $limit Limit of results
    * @param int $offset Results Offset
    * @throws RunTime
    * @return Model
    */
-  static function modelId($id, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
-    $o = self::$hamle->setup->getModelDefault($id,
-        $sortDir, $sortField, $limit, $offset);
+  static function modelId($id, $sort = [], $limit = 0, $offset = 0) {
+    $o = self::$hamle->setup->getModelDefault($id, $sort, $limit, $offset);
     if (!$o instanceOf Model) throw new RunTime("Application must return instance of hamleModel");
     return $o;
   }
@@ -131,9 +128,8 @@ class Run {
    * @internal param string $id id to search for
    * @return Model
    */
-  static function modelTypeID($typeId, $sortDir = 0, $sortField = "", $limit = 0, $offset = 0) {
-    return self::$hamle->setup->getModelTypeId($typeId,
-        $sortDir, $sortField, $limit, $offset);
+  static function modelTypeId($typeId, $sort = [], $limit = 0, $offset = 0) {
+    return self::$hamle->setup->getModelTypeId($typeId, $sort, $limit, $offset);
   }
 
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true" verbose="true">
+    <testsuite name="HAMLE">
+        <directory>test/php</directory>
+    </testsuite>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">php</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="coverage.xml" />
+    </logging>
+</phpunit>

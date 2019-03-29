@@ -25,8 +25,12 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Text;
 
+use http\Exception\RuntimeException;
+use Seufert\Hamle\Model;
+use Seufert\Hamle\Run;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\WriteModel;
 
 class Complex extends Text {
   protected $func;
@@ -38,8 +42,8 @@ class Complex extends Text {
       $this->filter = new Filter(substr($s, $pos+1), $this);
       $s = substr($s,0,$pos);
     }
-    $s = explode("->", $s);
-    if(count($s) == 1) $s = explode("-!",$s[0]);
+    $s = preg_split("/-[>!]/", $s);
+    // if(count($s) == 1) $s = explode("-!",$s[0]);
     if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
     if ($s[0][1] == "(")
       $this->func = new Text\Func($s[0]);
@@ -68,5 +72,27 @@ class Complex extends Text {
     } else
       return $this->func->toPHP();
   }
+
+  function getOrCreateModel(Model $parent = null) {
+    if($this->func instanceof Text\Scope)
+      return $this->func->getOrCreateModel($parent);
+    if($this->func instanceof Text\Func)
+      return $this->func->getOrCreateModel($parent);
+  }
+
+  /**
+   * @param $value
+   * @return WriteModel
+   */
+  function setValue($value) {
+    if(!$this->sel || count($this->sel) != 1)
+      throw new \RuntimeException('Can only set values, when one var name is present');
+    $model = $this->getOrCreateModel();
+    if(!$model instanceof WriteModel)
+      throw new \RuntimeException('Can only set values on WriteModel, got '.get_class($model));
+    $model->hamleSet($this->sel[0], $value);
+    return $model;
+  }
+
 
 }

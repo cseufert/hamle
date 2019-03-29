@@ -25,7 +25,9 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Text;
 
+use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
+use Seufert\Hamle\WriteModel;
 
 class SimpleVar extends Text {
   protected $var;
@@ -54,4 +56,21 @@ class SimpleVar extends Text {
   function toPHPVar() {
     return "Hamle\\Scope::get()->hamleGet(" . Text::varToCode($this->var) . ")";
   }
+
+  function getOrCreateModel(Model $parent = null) {
+    return \Seufert\Hamle\Scope::get()->current();
+  }
+
+  /**
+   * @param $value
+   * @return WriteModel
+   */
+  function setValue($value) {
+    $model = $this->getOrCreateModel();
+    if(!$model instanceof WriteModel)
+      throw new \RuntimeException('Can only write to model that implements WriteModel');
+    $model->hamleSet($this->var, $value);
+    return $model;
+  }
+
 }

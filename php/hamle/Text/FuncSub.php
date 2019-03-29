@@ -27,16 +27,17 @@ namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Model;
 
 class FuncSub extends Hamle\Text\Func {
   protected $dir;
-  protected $grouptype = ['grouptype'=>0];
+  protected $grouptype = ['grouptype' => 0];
 
   /**
    * FuncSub constructor.
    * @param string $s
    */
-  function __construct($s) {
+  public function __construct($s) {
     $m = array();
     if (!preg_match('/^ +([><]) +('.self::REGEX_FUNCSEL . '+)(.*)$/', $s, $m))
       throw new ParseError("Unable to read \$ sub func in '$s'");
@@ -55,7 +56,7 @@ class FuncSub extends Hamle\Text\Func {
    * Return as PHP Code
    * @return string
    */
-  function toPHP() {
+  public function toPHP() {
     $limit = Hamle\Text::varToCode($this->sortlimit['sort']) . "," .
         $this->sortlimit['limit'] . "," . $this->sortlimit['offset'] . "," .
         $this->grouptype['grouptype'];
@@ -63,4 +64,19 @@ class FuncSub extends Hamle\Text\Func {
     return "hamleRel(" . $this->dir . "," .
     Hamle\Text::varToCode($this->filt['tag']) . ",$limit)$sub";
   }
+
+  public function getOrCreateModel(Model $parent = null) {
+    $model = $parent->hamleRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
+      $this->sortlimit['limit'], $this->sortlimit['offset']);
+    if(!$model->valid()) {
+      if(!$parent instanceof Hamle\WriteModel)
+        throw new \Exception('Cant create model, ' . get_class($parent) . ' must implement Hamle\\WriteModel.');
+      $model = $parent->current()->hamleCreateRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
+        $this->sortlimit['limit'], $this->sortlimit['offset']);
+    }
+    if($this->sub)
+      return $this->sub->getOrCreateModel($model)->current();
+    return $model->current();
+  }
+
 }

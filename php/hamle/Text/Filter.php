@@ -37,21 +37,25 @@ class Filter extends Text {
   /** @var SimpleVar */
   protected $what;
 
+  /** @var Filter|null Chained Filter*/
+  protected $chained;
+
   function __construct($s, Text $what) {
-    if(preg_match("/^([a-z]+)(\\((.*)\\))?$/", $s, $m)) {
+    if(preg_match("/^([a-z]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
       $this->filter = $m[1];
-      $this->vars = isset($m[3]) ? explode(',', $m[3]) : [];
+      $this->vars = isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];
       foreach($this->vars as $k=>$v)
         $this->vars[$k] = str_replace("&comma;",',',$v);
+      if(isset($m['chained']) && strlen($m['chained'])) {
+        $this->chained = new Filter($m['chained'],$what);
+      }
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(!in_array($this->filter, ['itersplit', 'newlinebr', 'round',
-        'strtoupper', 'strtolower', 'ucfirst','replace', 'json'])) {
+    if(method_exists(Filter::class, $this->filter)) {
+      $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
+    } elseif(!in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst', 'json'])) {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
-    }
-    if(in_array($this->filter,['itersplit','newlinebr', 'replace'])) {
-        $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
     }
     $mapFilter = ['json'=>'json_encode'];
     if(isset($mapFilter[$this->filter]))
@@ -65,11 +69,29 @@ class Filter extends Text {
     return "<?=" . $this->toPHP() . "?>";
   }
 
-  function toPHP() {
-    $o = [$this->what->toPHPVar()] ;
+  function toPHPpre() {
+    $pre = '';
+    if($this->chained)
+      $pre = $this->chained->toPHPpre();
+    return "$pre{$this->filter}(";
+  }
+
+  function toPHPpost() {
+    $post = '';
+    if($this->chained)
+      $post = $this->chained->toPHPpost();
+    $o = '';
     foreach($this->vars as $v)
-      $o[] = $this->varToCode($v);
-    return "{$this->filter}(" . implode(',',$o) . ")";
+      $o .= ','.$this->varToCode($v);
+    return "$o)$post";
+  }
+
+  function toPHP() {
+    return $this->toPHPpre().$this->what->toPHPVar().$this->toPHPpost();
+    // $o = [$this->what->toPHPVar()] ;
+    // foreach($this->vars as $v)
+    //   $o[] = $this->varToCode($v);
+    // return "{$this->filter}(" . implode(',',$o) . ")";
   }
 
   static function itersplit($v, $sep = ",") {
@@ -87,6 +109,11 @@ class Filter extends Text {
 
   static function replace($v, $src, $dst) {
     return str_replace($src,$dst,$v);
+  }
+
+  static function ascents($v) {
+    $v = str_replace(['$',' ',','],'', $v);
+    return (int) round($v * 100,0);
   }
 
 }
