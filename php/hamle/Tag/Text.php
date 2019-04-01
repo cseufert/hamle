@@ -39,7 +39,7 @@ class Text extends Tag {
   }
 
   function addContent($s, $strtype = H\Text::TOKEN_HTML) {
-    if (trim($s)) {
+    if (strlen($s)) {
       if ($this->escape) {
         $parse = new H\Text($s, $strtype);
         $this->content[] = $parse->toHTML();
