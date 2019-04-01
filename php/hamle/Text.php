@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
+
 namespace Seufert\Hamle;
 
 /**
@@ -49,43 +50,55 @@ class Text {
   protected $nodes;
 
   function __construct($s, $mode = self::TOKEN_HTML) {
-    $m = array();
+    $m = [];
     $pos = 0;
-    $this->nodes = array();
+    $this->nodes = [];
     $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
-    if (strlen(trim($s)) == 0) return;
-    if ($mode == self::TOKEN_CONTROL) {
-      if (preg_match('/^"(.*)"$/', trim($s), $m)) {
+    if(strlen(trim($s)) == 0) {
+      $this->nodes[] = new Text\Plain($s, $mode);
+      return;
+    }
+    if($mode == self::TOKEN_CONTROL) {
+      if(preg_match('/^"(.*)"$/', trim($s), $m)) {
         $this->nodes[] = new Text($m[1]);
-      } else
+      }
+      else {
         $this->nodes[] = new Text\Complex(trim($s));
+      }
       return;
     }
     preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
-    foreach ($m as $match) {
-      if ($mode & self::FIND_BARDOLLAR && isset($match[2])) {
-        if ($match[2][1] != $pos)
+    foreach($m as $match) {
+      if($mode & self::FIND_BARDOLLAR && isset($match[2])) {
+        if($match[2][1] != $pos) {
           $this->nodes[] = new Text\Plain(
-              substr($s, $pos, $match[2][1] - $pos), $mode);
+            substr($s, $pos, $match[2][1] - $pos), $mode);
+        }
         $this->nodes[] = new Text\Complex(substr($match[2][0], 1, -1));
         $pos = $match[2][1] + strlen($match[2][0]);
-      } elseif ($mode & self::FIND_DOLLARVAR) {
-        if ($match[1][1] > 0 && $s[$match[1][1] - 1] == '\\') continue;
-        if ($match[1][1] != $pos)
+      }
+      else if($mode & self::FIND_DOLLARVAR) {
+        if($match[1][1] > 0 && $s[$match[1][1] - 1] === '\\') {
+          continue;
+        }
+        if($match[1][1] != $pos) {
           $this->nodes[] = new Text\Plain(
-              substr($s, $pos, $match[1][1] - $pos), $mode);
+            substr($s, $pos, $match[1][1] - $pos), $mode);
+        }
         $this->nodes[] = new Text\SimpleVar($match[1][0]);
         $pos = $match[1][1] + strlen($match[1][0]);
       }
     }
-    if ($pos != strlen($s))
+    if($pos != strlen($s)) {
       $this->nodes[] = new Text\Plain(substr($s, $pos), $mode);
+    }
   }
 
   function toHTML($escape = false) {
-    $out = array();
-    foreach ($this->nodes as $string)
+    $out = [];
+    foreach($this->nodes as $string) {
       $out[] = $string->toHTML($escape);
+    }
     return implode("", $out);
   }
 
@@ -94,9 +107,10 @@ class Text {
   }
 
   function toPHP() {
-    $out = array();
-    foreach ($this->nodes as $string)
+    $out = [];
+    foreach($this->nodes as $string) {
       $out[] = $string->toPHP();
+    }
     return implode(".", $out);
   }
 
@@ -105,20 +119,23 @@ class Text {
   }
 
   static function varToCode($var) {
-    if (is_array($var)) {
-      $code = array();
-      foreach ($var as $key => $value)
+    if(is_array($var)) {
+      $code = [];
+      foreach($var as $key => $value) {
         $code[] = self::varToCode($key) . "=>" . self::varToCode($value);
+      }
       return 'array(' . implode(",", $code) . ')'; //remove unnecessary coma
-    } elseif (is_bool($var)) {
-      return ($var ? 'TRUE' : 'FALSE');
-    } elseif (is_int($var) || is_float($var) || is_numeric($var)) {
-      return $var;
-    } elseif ($var instanceof Text) {
-      return $var->toPHP();
-    } else {
-      return "'" . str_replace(array('$', "'"), array('\\$', "\\'"), $var) . "'";
     }
+    if(is_bool($var)) {
+      return ($var ? 'TRUE' : 'FALSE');
+    }
+    if(is_int($var) || is_float($var) || is_numeric($var)) {
+      return $var;
+    }
+    if($var instanceof Text) {
+      return $var->toPHP();
+    }
+    return "'" . str_replace(['$', "'"], ['\\$', "\\'"], $var) . "'";
   }
 
   /**
