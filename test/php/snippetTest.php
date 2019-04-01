@@ -143,7 +143,6 @@ class snippetTest extends base {
 </html>
 TESTHTML;
     $he->string($hamle);
-    var_dump(file_get_contents($he->getCacheFileName()));
     $out = $he->output();
     $this->assertEquals(trim($html), trim($out));
     $this->compareXmlStrings($html, $out);
