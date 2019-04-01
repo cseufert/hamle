@@ -54,11 +54,11 @@ class Text {
     $pos = 0;
     $this->nodes = [];
     $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
-    if(strlen(trim($s)) == 0) {
+    if(trim($s) === '') {
       $this->nodes[] = new Text\Plain($s, $mode);
       return;
     }
-    if($mode == self::TOKEN_CONTROL) {
+    if($mode === self::TOKEN_CONTROL) {
       if(preg_match('/^"(.*)"$/', trim($s), $m)) {
         $this->nodes[] = new Text($m[1]);
       }
@@ -99,11 +99,11 @@ class Text {
     foreach($this->nodes as $string) {
       $out[] = $string->toHTML($escape);
     }
-    return implode("", $out);
+    return implode('', $out);
   }
 
   function toHTMLAtt() {
-    return $this->toHtml(true);
+    return $this->toHTML(true);
   }
 
   function toPHP() {
@@ -122,9 +122,9 @@ class Text {
     if(is_array($var)) {
       $code = [];
       foreach($var as $key => $value) {
-        $code[] = self::varToCode($key) . "=>" . self::varToCode($value);
+        $code[] = self::varToCode($key) . '=>' . self::varToCode($value);
       }
-      return 'array(' . implode(",", $code) . ')'; //remove unnecessary coma
+      return 'array(' . implode(',', $code) . ')'; //remove unnecessary coma
     }
     if(is_bool($var)) {
       return ($var ? 'TRUE' : 'FALSE');
