@@ -3,6 +3,10 @@
 require_once "base.php";
 
 class formTest extends base {
+  protected function setUp() {
+    $this->hamle->setup->minify = false;
+  }
+
   public function testFormBasic1() {
     $hamle = "html" . PHP_EOL .
       "  body" . PHP_EOL .

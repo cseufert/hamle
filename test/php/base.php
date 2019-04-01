@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/xmldiff/src/XmlDiff.php';
+require_once __DIR__.'/../lib/xmldiff/src/XmlDiff.php';
 require_once(__DIR__."/../../php/autoload.php");
 
 use Seufert\Hamle\Field\Button;
@@ -16,6 +16,7 @@ class base extends \PHPUnit\Framework\TestCase{
 	protected $hamle;
 
 	public function __construct() {
+	  parent::__construct();
     $this->hamle = new Hamle(new WrapArray(array(array(
                         'url'=>'https://www.secure.com',
                         'title'=>'This is My TITLE',

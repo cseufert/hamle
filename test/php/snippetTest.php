@@ -13,6 +13,10 @@ require_once("base.php");
 class snippetTest extends base {
   protected $hamleSnip;
 
+  protected function setUp() {
+  }
+
+
   function model() {
     return new WrapArray([[
       'url' => '/img/1',
@@ -95,6 +99,7 @@ class snippetTest extends base {
 
   function testReplaceImgSnippet() {
     $he = new Hamle\Hamle($this->model(), new snippetReplaceImgSetup());
+    $he->setup->minify = false;
     $hamle = "html\n" .
       "  head\n" .
       "    title \$titlebar\n" .
@@ -138,6 +143,7 @@ class snippetTest extends base {
 </html>
 TESTHTML;
     $he->string($hamle);
+    var_dump(file_get_contents($he->getCacheFileName()));
     $out = $he->output();
     $this->assertEquals(trim($html), trim($out));
     $this->compareXmlStrings($html, $out);

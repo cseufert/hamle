@@ -90,14 +90,14 @@ class basicTest extends base {
   }
   public function testVue2WayArray() {
     $hamle = 'input[:name.sync=myInput&v-on:click.once=exec()]';
-    $html = '<input :name.sync="myInput" v-on:click.once="exec()" />'."\n";
+    $html = '<input :name.sync="myInput" v-on:click.once="exec()" />';
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
   }
   public function testInlineLogic() {
     $hamle = 'input[:disabled=!loading \&\& !editable&ok]';
-    $html = '<input :disabled="!loading &amp;&amp; !editable" ok="" />'."\n";
+    $html = '<input :disabled="!loading &amp;&amp; !editable" ok="" />';
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
@@ -166,9 +166,7 @@ class basicTest extends base {
   public function testCommentHTML() {
     $hamle = "html\n".
              "  / Just a Comment\n";
-    $html = "<html>\n".
-            "  <!-- Just a Comment -->\n".
-            "</html>\n";
+    $html = '<html><!-- Just a Comment --></html>';
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
@@ -176,9 +174,7 @@ class basicTest extends base {
   public function testCustomElement() {
     $hamle = "html\n".
         "  cust-elem My Custom Element\n";
-    $html = "<html>\n".
-        "  <cust-elem>My Custom Element</cust-elem>\n".
-        "</html>\n";
+    $html = '<html><cust-elem>My Custom Element</cust-elem></html>';
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);
@@ -187,12 +183,9 @@ class basicTest extends base {
     $hamle = "html\n".
              "  / Just a Comment\n".
              "    Next line of Comment\n";
-    $html = "<html>\n".
-            "  <!-- \n".
-            "    Just a Comment\n".
-            "    Next line of Comment\n".
-            "   -->\n".
-            "</html>\n";
+    $html = "<html><!--   Just a Comment\n".
+            "  Next line of Comment\n -->".
+            "</html>";
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertEquals($html, $out);

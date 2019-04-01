@@ -233,10 +233,10 @@ ENDREGEX;
     return $out;
   }
 
-  function output() {
+  function output($minify = false) {
     $out = "<?php\nuse Seufert\\Hamle;\n?>";
     foreach ($this->root as $tag)
-      $out .= $tag->render();
+      $out .= $tag->render(0, $minify);
     return $out;
 
   }

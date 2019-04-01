@@ -41,20 +41,20 @@ class DynHtml extends Html {
     $this->varname = "\$dynhtml" . self::$var;
   }
 
-  function render($indent = 0, $doIndent = true) {
+  function render($indent = 0, $minify = false) {
     $data = H\Text::varToCode(array("base" => $this->baseType, "type" => $this->type, "opt" => $this->opt, "source" => $this->source, "content" => $this->content));
     $out = "<?php " . $this->varname . "=$data; echo Hamle\\Tag\\DynHtml::toStTag(" . $this->varname . ",\$form).";
     $out .= "implode(\"\\n\"," . $this->varname . "['content']).";
-    $out .= "Hamle\\Tag\\DynHtml::toEnTag(" . $this->varname . ",\$form)?>\n";
+    $out .= "Hamle\\Tag\\DynHtml::toEnTag(" . $this->varname . ",\$form)?>".($minify ? '' : "\n");
     return $out;
   }
 
-  function addChild(H\Tag $tag, $mode = "append") {
-    throw new ParseError("Unable to display content within a Dynamic Tag");
+  function addChild(H\Tag $tag, $mode = 'append') {
+    throw new ParseError('Unable to display content within a Dynamic Tag');
   }
 
   static function toStTag(&$d, H\Form $form) {
-    foreach ($d["source"] as $source) {
+    foreach ($d['source'] as $source) {
       $form->getField($source)->getDynamicAtt($d['base'], $d['opt'], $d['type'], $d['content']);
     }
     $out = "<" . $d['type'] . " ";
@@ -72,6 +72,6 @@ class DynHtml extends Html {
   }
 
   static function toEnTag($d, $form) {
-    return in_array($d['type'], self::$selfCloseTags) ? "" : "</" . $d['type'] . ">";
+    return in_array($d['type'], self::$selfCloseTags) ? '' : "</" . $d['type'] . ">";
   }
 }

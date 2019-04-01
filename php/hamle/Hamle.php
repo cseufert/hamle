@@ -150,7 +150,7 @@ class Hamle {
     foreach($this->setup->getFilters() as $filter)
       $this->parse->parseFilter($filter);
     $this->setup->debugLog("Updating Cache File ({$this->cacheFile})");
-    if(FALSE === file_put_contents($this->cacheFile, $this->parse->output()))
+    if(FALSE === file_put_contents($this->cacheFile, $this->parse->output($this->setup->getMinify())))
       throw new Exception\ParseError(
                       "Unable to write to cache file ({$this->cacheFile})");
   }
@@ -165,6 +165,10 @@ class Hamle {
     $this->cacheFile = $this->setup->cachePath("string.$stringId.hamle.php");
     if(!is_file($this->cacheFile))
       $this->parse($hamleString);
+  }
+
+  function getCacheFileName() {
+    return $this->cacheFile;
   }
 
   /**

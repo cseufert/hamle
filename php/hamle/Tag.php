@@ -137,18 +137,17 @@ class Tag {
    * Render html/php output to disk
    *
    * @param int $indent Number of spaces in current indent level
-   * @param boolean $doIndent Indent this tag
+   * @param bool $minify Output HTML in minified format
    * @return string HTML/PHP Output
    */
-  function render($indent = 0, $doIndent = true) {
-    //if(strtoupper($this->type) == "A") var_dump($this);
-    $ind = $doIndent ? str_pad("", $indent, " ") : "";
-    $oneliner = ((count($this->content) > 1 || $this->tags) ? false : true);
-    $out = $ind . $this->renderStTag() . ($oneliner ? "" : "\n");
-    if ($this->content) $out .= $this->renderContent($ind, $oneliner);
+  function render($indent = 0, $minify = false) {
+    $ind = $minify ? '' : str_pad('', $indent);
+    $oneliner = (!(count($this->content) > 1 || $this->tags));
+    $out = $ind . $this->renderStTag() . ($oneliner || $minify ? '' : "\n");
+    if ($this->content) $out .= $this->renderContent($ind, $oneliner || $minify);
     foreach ($this->tags as $tag)
-      $out .= $tag->render($indent + self::INDENT_SIZE);
-    $out .= ($oneliner ? "" : $ind) . $this->renderEnTag() . "\n";
+      $out .= $tag->render($indent + self::INDENT_SIZE, $minify);
+    $out .= ($minify || $oneliner ? '' : $ind) . $this->renderEnTag() . ($minify ? '' : "\n");
     return $out;
   }
 
@@ -162,7 +161,7 @@ class Tag {
   function renderContent($pad = "", $oneliner = false) {
     $out = "";
     foreach ($this->content as $c)
-      $out .= ($oneliner ? "" : $pad) . $c . ($oneliner ? "" : "\n");
+      $out .= ($oneliner ? '' : $pad) . $c . ($oneliner ? '' : "\n");
     return $out;
   }
 

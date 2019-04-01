@@ -3,6 +3,11 @@
 require_once "base.php";
 
 class fitlerTest extends base {
+
+  protected function setUp() {
+    $this->hamle->setup->minify = false;
+  }
+
   public function testStyle() {
     $hamle = "html".PHP_EOL.
              "  head".PHP_EOL.
@@ -24,6 +29,7 @@ class fitlerTest extends base {
   }
 
   public function testJavascript() {
+    $this->hamle->setup->minify = false;
     $hamle = "html".PHP_EOL.
              "  head".PHP_EOL.
              "    title \$title".PHP_EOL.
@@ -52,6 +58,7 @@ class fitlerTest extends base {
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->assertSame(trim($html), trim($out));
+    $this->hamle->setup->minify = true;
   }
  
     public function testJavascriptVars() {

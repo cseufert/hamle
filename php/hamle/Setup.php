@@ -32,6 +32,8 @@ namespace Seufert\Hamle;
  * @author Chris Seufert <chris@seufert.id.au>
  */
 class Setup {
+  public $minify = true;
+
   /**
    * Returns the full file path to the cache file
    * 
@@ -127,6 +129,14 @@ class Setup {
    */
   public function getFragment(Hamle $hamle, $fragment) {
     throw new Exception("Unable to Include Fragment $fragment");
+  }
+
+  /**
+   * Return if output minifcation should be enabled
+   * @return bool
+   */
+  public function getMinify() {
+    return $this->minify;
   }
 
 }
