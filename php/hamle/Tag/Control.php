@@ -107,7 +107,7 @@ class Control extends H\Tag {
           $out .= "echo Hamle\\Run::includeFile(" . $hsv->toPHP() . ");";
         break;
     }
-    return $out . ' ?>';
+    return $out . "\n?>";
   }
 
   /**
@@ -141,10 +141,17 @@ class Control extends H\Tag {
         break;
     }
     if ($this->else) $out .= "else{";
-    return $out . ' ?>';
+    return $out . "\n?>";
   }
 
-  function render($indent = 0, $doIndent = true) {
-    return parent::render($indent - self::INDENT_SIZE, false);
+  function render($indent = 0, $minify = false) {
+    $ind = $minify ? '' : str_pad('', $indent);
+    $oneliner = (!(count($this->content) > 1 || $this->tags));
+    $out = $this->renderStTag();
+    if ($this->content) $out .= $this->renderContent($ind, $oneliner || $minify);
+    foreach ($this->tags as $tag)
+      $out .= $tag->render($indent, $minify);
+    $out .= $this->renderEnTag();
+    return $out;
   }
 }
