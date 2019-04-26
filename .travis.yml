@@ -17,7 +17,7 @@ notifications:
   email: true
 after_script:
   - cp coverage.xml clover.xml
-  - ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT --debug
+  - ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT
 after_success:
     - bash <(curl -s https://codecov.io/bash)
 sudo: false
