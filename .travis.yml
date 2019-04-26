@@ -1,5 +1,8 @@
 # Configuration file for unit test runner.
 language: php
+env:
+  global:
+    - CC_TEST_REPORTER_ID=d20bcc58cfe00f2e74589c05c623a460eac021155d19f4b5432811617f151535
 php:
   - 7.0
   - 7.1
@@ -8,10 +11,15 @@ php:
 matrix:
   allow_failures:
 before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
   - composer install
+  - ./cc-test-reporter before-build
 script: composer test
 notifications:
   email: true
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
     - bash <(curl -s https://codecov.io/bash)
 sudo: false
