@@ -4,13 +4,9 @@ env:
   global:
     - CC_TEST_REPORTER_ID=d20bcc58cfe00f2e74589c05c623a460eac021155d19f4b5432811617f151535
 php:
-  - 7.0
   - 7.1
   - 7.2
   - 7.3
-matrix:
-  allow_failures:
-    - php: "7.0"
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
@@ -20,6 +16,7 @@ script: composer test
 notifications:
   email: true
 after_script:
+  - cp coverage.xml clover.xml
   - ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT --debug
 after_success:
     - bash <(curl -s https://codecov.io/bash)
