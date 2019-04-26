@@ -3,8 +3,9 @@ HAMLE
 [![Build Status](https://travis-ci.org/cseufert/hamle.svg?branch=master)](https://travis-ci.org/cseufert/hamle)
 [![codecov.io](http://codecov.io/github/cseufert/hamle/coverage.svg?branch=master)](http://codecov.io/github/cseufert/hamle?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cseufert/hamle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cseufert/hamle/?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4446d6497fc258372f01/maintainability)](https://codeclimate.com/github/cseufert/hamle/maintainability)
 
-Requires PHP >= 5.4
+Requires PHP >= 7.1
 
 ### Installation via Composer
 
