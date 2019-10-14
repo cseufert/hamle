@@ -127,7 +127,7 @@ class Setup {
    * @param string $fragment Name of Fragment
    * @throws Exception
    */
-  public function getFragment(Hamle $hamle, $fragment) {
+  public function getFragment(Hamle $hamle, $fragment):string {
     throw new Exception("Unable to Include Fragment $fragment");
   }
 

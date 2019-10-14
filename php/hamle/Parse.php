@@ -192,7 +192,7 @@ ENDREGEX;
           default:
             $attr = array();
             if(isset($params[0]) && $params[0] == "[") {
-              $param = substr($params, 1, strlen($params) - 2);
+              $param = substr($params, 1, -1);
               $param = str_replace(['+', '\\&'], ['%2B', '%26'], $param);
 //              parse_str($param, $attr);
               $attr = $this->parseQueryString($param);

@@ -80,7 +80,7 @@ class Run {
   }
 
   /**
-   * @param $fragment Name of fragment
+   * @param $fragment string Name of fragment
    * @internal Only for use in template system
    * @return string String to output where |include #fragment was called
    */
