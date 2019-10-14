@@ -27,6 +27,13 @@ class stringTest extends base {
     $this->assertEquals(' ', $html);
     $this->assertEquals("' '", $php);
   }
+  public function testDollarCodeString() {
+    $hs = new Text('Hello $user', Text::TOKEN_CODE);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals('Hello $user', $html);
+    $this->assertEquals("'Hello \$user'", $php);
+  }
   public function testDollarString1() {
     $hs = new Text("Hello \$user");
     $html = $hs->toHTML();
@@ -215,7 +222,7 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals('String with $ Dollar Sign', $html);
-    $this->assertEquals('\'String with \\$ Dollar Sign\'', $php);
+    $this->assertEquals('\'String with $ Dollar Sign\'', $php);
   }
   public function testDollarStringEscape2() {
     $hs = new Text('Some & "Some" More');
@@ -237,7 +244,7 @@ class stringTest extends base {
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("I have $10.00", $html);
-    $this->assertEquals("'I have \\$10.00'", $php);
+    $this->assertEquals("'I have \$10.00'", $php);
   }
 
   public function testDollarScope1() {

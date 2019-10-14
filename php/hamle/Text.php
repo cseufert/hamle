@@ -135,7 +135,7 @@ class Text {
     if($var instanceof Text) {
       return $var->toPHP();
     }
-    return "'" . str_replace(['$', "'"], ['\\$', "\\'"], $var) . "'";
+    return "'" . str_replace(['$', "'"], ['$', "\\'"], $var) . "'";
   }
 
   /**
