@@ -131,7 +131,6 @@ ENDREGEX;
   /**
    * Parse HAMLE template, from a string
    * @param string $s String to parse
-   * @return string Parsed HAMLE as HTML
    */
   function str($s) {
     $this->init();
@@ -163,7 +162,7 @@ ENDREGEX;
             elseif ($code == "|form")
               $hTag = new Tag\Form($text);
             elseif ($code == "|formhint")
-              $hTag = new Tag\FormHint($text);
+              $hTag = new Tag\FormHint();
             elseif ($code == "|else") {
               $hTag = new Tag\Control(substr($code, 1), $heir[$i - 1]);
               $hTag->setVar($text);
@@ -194,8 +193,7 @@ ENDREGEX;
             $attr = array();
             if(isset($params[0]) && $params[0] == "[") {
               $param = substr($params, 1, strlen($params) - 2);
-              $param = str_replace('+','%2B', $param);
-              $param = str_replace('\\&','%26', $param);
+              $param = str_replace(['+', '\\&'], ['%2B', '%26'], $param);
 //              parse_str($param, $attr);
               $attr = $this->parseQueryString($param);
             }
