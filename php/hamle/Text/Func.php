@@ -70,10 +70,10 @@ class Func extends SimpleVar {
     $m = array();
     $att = array('id' => array(), 'tag' => array());
     foreach (explode(",", $s) as $str) {
-      if (preg_match('/^[a-zA-Z0-9\\_]+/', $str, $m)) $type = $m[0];
+      if (preg_match('/^[a-zA-Z0-9_]+/', $str, $m)) $type = $m[0];
       else $type = "*";
-      if (preg_match('/#([a-zA-Z0-9\_\\${}]+)/', $str, $m)) $att['id'][$type][] = $m[1];
-      elseif (preg_match_all('/\\.([a-zA-Z0-9\_\-\\${}]+)/', $str, $m))
+      if (preg_match('/#([a-zA-Z0-9_${}]+)/', $str, $m)) $att['id'][$type][] = $m[1];
+      elseif (preg_match_all('/\\.([a-zA-Z0-9_\-${}]+)/', $str, $m))
         foreach ($m[1] as $tag)
           $att['tag'][$type][] = new Text($tag, Text::TOKEN_CODE);
       else $att['tag'][$type] = array();
@@ -86,12 +86,12 @@ class Func extends SimpleVar {
   public function attSortLimit(&$s) {
     $att = array('limit' => 0, 'offset' => 0, 'sort'=> []);
     $m = array();
-    if (preg_match('/:(?:([0-9]+)\-)?([0-9]+)/', $s, $m)) {
+    if (preg_match('/:(?:([0-9]+)-)?([0-9]+)/', $s, $m)) {
       $att['limit'] = $m[2];
       $att['offset'] = $m[1] ? $m[1] : 0;
     }
     $rand = false;
-    if (preg_match_all('/\\^(-?)([a-zA-Z0-9\_]*)/', $s, $m)) {
+    if (preg_match_all('/\\^(-?)([a-zA-Z0-9_]*)/', $s, $m)) {
       foreach($m[0] as $k=>$mv)
         if ($m[2][$k]) {
           $dir = $m[1][$k] == "-"?Hamle\Hamle::SORT_DESCENDING:Hamle\Hamle::SORT_ASCENDING;
