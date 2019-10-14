@@ -25,11 +25,10 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Text;
 
-use http\Exception\RuntimeException;
-use Seufert\Hamle\Model;
-use Seufert\Hamle\Run;
-use Seufert\Hamle\Text;
+use RuntimeException;
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Model;
+use Seufert\Hamle\Text;
 use Seufert\Hamle\WriteModel;
 
 class Complex extends Text {
@@ -45,9 +44,9 @@ class Complex extends Text {
     $s = preg_split("/-[>!]/", $s);
     // if(count($s) == 1) $s = explode("-!",$s[0]);
     if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
-    if ($s[0][1] == "(")
+    if ($s[0][1] === '(')
       $this->func = new Text\Func($s[0]);
-    elseif ($s[0][1] == "[")
+    elseif ($s[0][1] === '[')
       $this->func = new Text\Scope($s[0]);
     else
       $this->func = new SimpleVar($s[0]);
@@ -78,6 +77,7 @@ class Complex extends Text {
       return $this->func->getOrCreateModel($parent);
     if($this->func instanceof Text\Func)
       return $this->func->getOrCreateModel($parent);
+    throw new RuntimeException('Unsupported func type encountered:'.get_class($this->func));
   }
 
   /**
@@ -86,10 +86,10 @@ class Complex extends Text {
    */
   function setValue($value) {
     if(!$this->sel || count($this->sel) != 1)
-      throw new \RuntimeException('Can only set values, when one var name is present');
+      throw new RuntimeException('Can only set values, when one var name is present');
     $model = $this->getOrCreateModel();
     if(!$model instanceof WriteModel)
-      throw new \RuntimeException('Can only set values on WriteModel, got '.get_class($model));
+      throw new RuntimeException('Can only set values on WriteModel, got '.get_class($model));
     $model->hamleSet($this->sel[0], $value);
     return $model;
   }
