@@ -166,6 +166,8 @@ becomes
   * To escape $ sign, use \$
   * use '__' when you do not want to escape any html special chars (ie. you want to include html within your output.
     * eg `__ <!doctype html>`  to print html5 doctype
+    * This will also not attempt to parse any variables (eg {$title})
+  * use `___` when you want unescape html (include variables) This allows rendering variables that contain html to display as html
  
 
 ## Example 
