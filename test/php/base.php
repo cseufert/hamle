@@ -25,6 +25,7 @@ class base extends \PHPUnit\Framework\TestCase{
                         'nottrue'=>false,
                         'csv'=>"a,b,c",
                         'scsv'=>"a;b;c;",
+                        'unescaped' => 'Hi & >',
                         'istrue'=>true))),
                 new baseTestSetup());
 	}

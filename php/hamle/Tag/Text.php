@@ -32,17 +32,19 @@ use Seufert\Hamle\Tag;
  */
 class Text extends Tag {
   protected $escape = true;
+  protected $escapeVars;
 
   function __construct($tag) {
     parent::__construct();
-    $this->escape = ($tag == "_");
+    $this->escape = ($tag !== '__');
+    $this->escapeVars = ($tag === '_');
   }
 
   function addContent($s, $strtype = H\Text::TOKEN_HTML) {
     if (strlen($s)) {
       if ($this->escape) {
         $parse = new H\Text($s, $strtype);
-        $this->content[] = $parse->toHTML();
+        $this->content[] = $parse->toHTML($this->escapeVars);
       } else
         $this->content[] = $s;
     }

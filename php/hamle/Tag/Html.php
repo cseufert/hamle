@@ -26,6 +26,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Tag;
 
 use Seufert\Hamle as H;
+use Seufert\Hamle\Text;
 
 /**
  * HAMLE HTML Tag
@@ -83,4 +84,14 @@ class Html extends H\Tag {
     }
     return implode("", $out);
   }
+
+    function addContent($s, $strtype = Text::TOKEN_HTML)
+    {
+        if (trim($s)) {
+            $parse = new Text($s, $strtype);
+            $this->content[] = $parse->toHTML(true);
+        }
+    }
+
+
 }

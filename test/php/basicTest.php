@@ -81,6 +81,31 @@ class basicTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
+  public function testAttrEscaped() {
+    $hamle = 'div[style=$unescaped]';
+    $html = '<div style="Hi &amp; &gt;"></div>';
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
+  public function testBodyEscaped() {
+    $hamle = 'h1 $unescaped';
+    $html = '<h1>Hi &amp; &gt;</h1>';
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->compareXmlStrings($html, $out);
+  }
+
+  public function testBodyUnescaped() {
+    $hamle = '___ {$unescaped}';
+    $html = 'Hi & >';
+    $this->hamle->string($hamle);
+    $out = $this->hamle->output();
+    $this->assertEquals($html, $out);
+  }
+
+
   public function testAngularArray() {
     $hamle = 'input[name=my-input&ng-bind=myval\[\$index\]]';
     $html = '<input name="my-input" ng-bind="myval[$index]" />';

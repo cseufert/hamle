@@ -53,7 +53,7 @@ class Parse {
    */
 
   const REGEX_PARSE_LINE = <<<'ENDREGEX'
-/^(\s*)(?:(?:([a-zA-Z0-9-]*)((?:[\.#!][\w\-\_]+)*)(\[(?:(?:\{\$[^\}]+\})?[^\\\]{]*?(?:\\.)*?(?:{[^\$])*?)+\])?)|([_\/]{1,2})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
+/^(\s*)(?:(?:([a-zA-Z0-9-]*)((?:[\.#!][\w\-\_]+)*)(\[(?:(?:\{\$[^\}]+\})?[^\\\]{]*?(?:\\.)*?(?:{[^\$])*?)+\])?)|([_\/]{1,3})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
 ENDREGEX;
 
   /**
@@ -179,6 +179,11 @@ ENDREGEX;
             break;
           case "_": //String Tag
           case "__": //Unescape String Tag
+          case "___": //Unescape String Tag (with unescaped vars)
+            $hTag = new Tag\Text($textcode);
+            $hTag->addContent($text);
+            break;
+          case "___": //Unescape String Tag
             $hTag = new Tag\Text($textcode);
             $hTag->addContent($text);
             break;
