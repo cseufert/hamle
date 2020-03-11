@@ -28,7 +28,7 @@ class Scope {
     else
       self::$scopes[] = $model;
     if(self::$scopeHook) {
-        self::$scopeHook($model);
+        (self::$scopeHook)($model);
     }
   }
 
