@@ -17,6 +17,9 @@ class Scope {
   /** @var Model[] Assoc array of Models by Scope Name */
   static $namedScopes = array();
 
+  /** @var null|Callable */
+  static $scopeHook;
+
   static function add($model, $name = null) {
     if (!$model instanceOf Model)
       throw new Unsupported("Unsupported Model (".get_class($model)."), Needs to implement hamleModel Interface");
@@ -24,6 +27,9 @@ class Scope {
       self::$namedScopes[$name] = $model;
     else
       self::$scopes[] = $model;
+    if(self::$scopeHook) {
+        self::$scopeHook($model);
+    }
   }
 
   static function done() {
