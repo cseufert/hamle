@@ -114,9 +114,7 @@ class Tag {
         !(isset($this->opt['id']) && $tic['id'] == $this->opt['id'])
     )
       return false;
-    if (isset($tic['class']) && !(isset($this->opt['class'])
-            && !array_diff($tic['class'], $this->opt['class']))
-    )
+    if (array_diff($tic['class'] ?? [], $this->opt['class'] ?? []))
       return false;
     return true;
   }
