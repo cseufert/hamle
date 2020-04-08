@@ -49,8 +49,8 @@ class Snippet extends Hamle\Tag {
       $out['type'] = $m[0];
     preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $s, $m);
     if (isset($m[0])) foreach ($m[0] as $ss) {
-      if ($s[0] == "#") $out['id'] = substr($ss, 1);
-      if ($s[0] == ".") $out['class'][] = substr($ss, 1);
+      if ($ss[0] === "#") $out['id'] = substr($ss, 1);
+      if ($ss[0] === ".") $out['class'][] = substr($ss, 1);
     }
     return $out;
   }

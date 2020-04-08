@@ -2,3 +2,5 @@
   script[src=/js/jquery.min.js]
 |snippet append html head
   info[loaded=JQuery]
+|snippet append html.no-class head
+  meta[content=Hidden]

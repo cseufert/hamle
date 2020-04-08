@@ -10,14 +10,17 @@ use Seufert\Hamle\Model\WrapArray;
 
 require_once("base.php");
 
-class snippetTest extends base {
+class snippetTest extends base
+{
   protected $hamleSnip;
 
-  protected function setUp() {
+  protected function setUp()
+  {
   }
 
 
-  function model() {
+  function model()
+  {
     return new WrapArray([[
       'url' => '/img/1',
       'title' => 'The TITLE',
@@ -32,7 +35,14 @@ class snippetTest extends base {
     ]);
   }
 
-  function testHeadSnippet() {
+  function testSnipDecodeClassId()
+  {
+    $s = "html.test-class#TestId";
+    $this->assertEquals(['type' => 'html', 'class' => ['test-class'], 'id' => 'TestId'], Hamle\Tag\Snippet::decodeClassId($s));
+  }
+
+  function testHeadSnippet()
+  {
     $he = new Hamle\Hamle($this->model(), new snippetHeadSetup());
     $hamle = "html\n" .
       "  head\n" .
@@ -53,7 +63,8 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
-  function testHead2Snippet() {
+  function testHead2Snippet()
+  {
     $he = new Hamle\Hamle($this->model(), new snippetHead2Setup());
     $hamle = "html\n" .
       "  head\n" .
@@ -76,7 +87,8 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
-  function testTypeClassIDSnippet() {
+  function testTypeClassIDSnippet()
+  {
     $he = new Hamle\Hamle($this->model(), new snippetTypeClassIDSetup());
     $hamle = "html\n" .
       "  head\n" .
@@ -97,7 +109,8 @@ class snippetTest extends base {
     $this->compareXmlStrings($html, $out);
   }
 
-  function testReplaceImgSnippet() {
+  function testReplaceImgSnippet()
+  {
     $he = new Hamle\Hamle($this->model(), new snippetReplaceImgSetup());
     $he->setup->minify = false;
     $hamle = "html\n" .
@@ -149,43 +162,55 @@ TESTHTML;
   }
 }
 
-class snippetHeadSetup extends Hamle\Setup {
-  function templatePath($f) {
+class snippetHeadSetup extends Hamle\Setup
+{
+  function templatePath($f)
+  {
     return __DIR__ . "/hamle/$f";
   }
 
-  function snippetFiles() {
+  function snippetFiles()
+  {
     return [__DIR__ . "/hamle/snippets/bootstrap.hamle-snip"];
   }
 }
 
-class snippetHead2Setup extends Hamle\Setup {
-  function templatePath($f) {
+class snippetHead2Setup extends Hamle\Setup
+{
+  function templatePath($f)
+  {
     return __DIR__ . "/hamle/$f";
   }
 
-  function snippetFiles() {
+  function snippetFiles()
+  {
     return [__DIR__ . "/hamle/snippets/bootstrap.hamle-snip",
       __DIR__ . "/hamle/snippets/jquery.hamle-snip"];
   }
 }
 
-class snippetTypeClassIDSetup extends Hamle\Setup {
-  function templatePath($f) {
+class snippetTypeClassIDSetup extends Hamle\Setup
+{
+  function templatePath($f)
+  {
     return __DIR__ . "/hamle/$f";
   }
 
-  function snippetFiles() {
+  function snippetFiles()
+  {
     return [__DIR__ . "/hamle/snippets/typeclassid.hamle-snip"];
   }
 }
 
-class snippetReplaceImgSetup extends Hamle\Setup {
-  function templatePath($f) {
+class snippetReplaceImgSetup extends Hamle\Setup
+{
+  function templatePath($f)
+  {
     return __DIR__ . "/hamle/$f";
   }
 
-  function snippetFiles() {
+  function snippetFiles()
+  {
     return [__DIR__ . "/hamle/snippets/replace-img.hamle-snip"];
   }
 }
