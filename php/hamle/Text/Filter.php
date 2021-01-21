@@ -40,8 +40,13 @@ class Filter extends Text {
   /** @var Filter|null Chained Filter*/
   protected $chained;
 
+
+
+  /** @var Callable|null Filter resolver, must return function name, or null */
+  static $filterResolver = null;
+
   function __construct($s, Text $what) {
-    if(preg_match("/^([a-z]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
+    if(preg_match("/^([a-z_]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
       $this->filter = $m[1];
       $this->vars = isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];
       foreach($this->vars as $k=>$v)
@@ -53,13 +58,15 @@ class Filter extends Text {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
     if(method_exists(Filter::class, $this->filter)) {
-      $this->filter = "Seufert\\Hamle\\Text\\Filter::{$this->filter}";
-    } elseif(!in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst', 'json'])) {
+      $this->filter = Filter::class.'::'.$this->filter;
+    } elseif(in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst'])) {
+    } elseif($this->filter === 'json') {
+      $this->filter = 'json_encode';
+    } elseif(self::$filterResolver && $filter = (self::$filterResolver)($this->filter)) {
+      $this->filter = $filter;
+    } else {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
     }
-    $mapFilter = ['json'=>'json_encode'];
-    if(isset($mapFilter[$this->filter]))
-      $this->filter = $mapFilter[$this->filter];
     $this->what = $what;
   }
 

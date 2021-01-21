@@ -5,7 +5,7 @@ use Seufert\Hamle\Text;
 require_once "base.php";
 
 class stringTest extends base {
-  
+
   public function testPlainString1() {
     $hs = new Text("\"SimpleFileName.hamle\"", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
@@ -267,7 +267,7 @@ class stringTest extends base {
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelTypeTags(array('user'=>array()),array(),0,0)", $php);
   }
-  
+
   public function testDollarFunc2() {
     $hs = new Text("\$(user#3)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
@@ -316,24 +316,24 @@ class stringTest extends base {
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('my_page',array(),0,0)".
                       "->hamleRel(1,array('link'=>array()),array(),0,0,0)", $php);
-  }  
+  }
   public function testDollarFuncChild2() {
     $hs = new Text("\$(#my_page > .gallery)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('my_page',array(),0,0)".
                     "->hamleRel(1,array('*'=>array(0=>'gallery')),array(),0,0,0)", $php);
-  } 
+  }
   public function testDollarFuncChild3() {
     $hs = new Text("\$(#menu > page,cat)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelId('menu',array(),0,0)".
                 "->hamleRel(1,array('page'=>array(),'cat'=>array()),array(),0,0,0)", $php);
-  } 
+  }
   /**
    * @expectedException \Seufert\Hamle\Exception\ParseError
-   * @aexpectedExceptionMessage Unable to specify child by ID in '#me...' 
+   * @aexpectedExceptionMessage Unable to specify child by ID in '#me...'
    */
   public function testDollarFuncChild4() {
     $hs = new Text("\$(#my_page > #me)", Text::TOKEN_CONTROL);
@@ -404,6 +404,20 @@ class stringTest extends base {
     $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Hamle\\Run::modelTypeTags(array('product'=>array(0=>Hamle\\Scope::get()->hamleGet('tags'))),array(),0,0)", $php);
+  }
+
+  public function testFilterFunc() {
+    $oldFR = Text\Filter::$filterResolver;
+    Text\Filter::$filterResolver = static function($s) {
+      return $s == 'format_date' ?'Test::formatDate' : null;
+    };
+    $hs = new Text('Date {$date|format_date}');
+    $php = $hs->toPHP();
+    $this->assertEquals("'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'))", $php);
+    $hs = new Text('Date {$date|format_date(Y-m-d)}');
+    $php = $hs->toPHP();
+    $this->assertEquals("'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'),'Y-m-d')", $php);
+    Text\Filter::$filterResolver = $oldFR;
   }
 
 
