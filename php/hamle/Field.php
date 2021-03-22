@@ -113,10 +113,7 @@ class Field {
   function getValue() {
     if (!is_null($this->setValue)) return $this->setValue;
     if (isset($_REQUEST[$this->form . "_" . $this->name])) {
-      if (get_magic_quotes_runtime())
-        return stripslashes($_REQUEST[$this->form . "_" . $this->name]);
-      else
-        return $_REQUEST[$this->form . "_" . $this->name];
+      return $_REQUEST[$this->form . "_" . $this->name];
     }
     return $this->opt['default'];
   }
