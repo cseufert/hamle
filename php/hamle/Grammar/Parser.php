@@ -289,7 +289,7 @@ class Parser {
     private $peg_c59;
 
     private function peg_f0($i) { return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); }
-    private function peg_f1($text) { return ['type' => 'text', 'body' => join('',$text)]; }
+    private function peg_f1($text) { return ['type' => 'string', 'body' => join('',$text)]; }
     private function peg_f2($body) { return ['type' => 'expr', 'body' => $body]; }
     private function peg_f3($name) { return ['type' => 'scopeThis', 'name' => $name]; }
     private function peg_f4($expr, $filter) { return array_merge($expr, ['filter' => $filter]); }
