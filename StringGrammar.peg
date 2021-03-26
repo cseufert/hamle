@@ -1,7 +1,7 @@
 start = object
 
 object = i:(TextChars ComplexExpr object) {
-                        /** <?php return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); ?> **/
+                        /** <?php return $i; return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); ?> **/
                          return [i[0],i[1]].concat(i[2]).filter(v => v.type !== 'text' || v.body !== ''); }
        / TextChars
 TextChars = text: TextChar* { /** <?php return ['type' => 'string', 'body' => join('',$text)]; ?> **/
@@ -34,7 +34,7 @@ VarExprPart = "$" "[" id:SignedInteger "]" { /** <?php return ['type'=>'scopeId'
 
 QueryFilter = query:QueryFilterStage " " rel:[><] " " sub:QueryFilterStage { /** <?php return ['query'=>$query, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; ?> **/
                                                                             return {query, sub, rel:rel === '>'?'child':'parent'}}
-            / " " rel:[><] " " sub:QueryFilterStage { /** <?php return ['query'=>null, 'sub'=> $query, 'rel' => $rel === '>' ? 'child':'parent']; ?> **/
+            / " " rel:[><] " " sub:QueryFilterStage { /** <?php return ['query'=>null, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; ?> **/
                                                       return {query:null, sub, rel:rel === '>'?'child':'parent'}}
             / query: QueryFilterStage { /** <?php return ['query'=>$query]; ?> **/
                                         return {query}}

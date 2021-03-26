@@ -288,7 +288,7 @@ class Parser {
     private $peg_c58;
     private $peg_c59;
 
-    private function peg_f0($i) { return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); }
+    private function peg_f0($i) { return $i; return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); }
     private function peg_f1($text) { return ['type' => 'string', 'body' => join('',$text)]; }
     private function peg_f2($body) { return ['type' => 'expr', 'body' => $body]; }
     private function peg_f3($name) { return ['type' => 'scopeThis', 'name' => $name]; }
@@ -299,7 +299,7 @@ class Parser {
     private function peg_f8($query) { return array_merge(['type'=>'query'], $query); }
     private function peg_f9($name) { return ['type'=>'scopeThis', "name"=>$name]; }
     private function peg_f10($query, $rel, $sub) { return ['query'=>$query, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; }
-    private function peg_f11($rel, $sub) { return ['query'=>null, 'sub'=> $query, 'rel' => $rel === '>' ? 'child':'parent']; }
+    private function peg_f11($rel, $sub) { return ['query'=>null, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; }
     private function peg_f12($query) { return ['query'=>$query]; }
     private function peg_f13($id, $query) { return array_merge([['q'=>'type', 'id'=> $id]], $query); }
     private function peg_f14($query) { return array_merge([['q'=>'type', 'id'=> '*']], $query); }

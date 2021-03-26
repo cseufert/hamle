@@ -46,6 +46,7 @@ class Filter extends Text {
   static $filterResolver = null;
 
   function __construct($s, Text $what) {
+    var_dump($s, $what);
     if(preg_match("/^([a-z_]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
       $this->filter = $m[1];
       $this->vars = isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];

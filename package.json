@@ -1,0 +1,12 @@
+{
+  "name": "hamle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/cseufert/hamle",
+  "author": "Chris Seufert <chris@modd.com.au>",
+  "license": "MIT",
+  "devDependencies": {
+    "pegjs": "^0.10.0",
+    "phpegjs": "^1.0.0-beta7"
+  }
+}

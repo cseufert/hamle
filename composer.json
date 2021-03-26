@@ -15,8 +15,9 @@
     "source": "https://github.com/cseufert/hamle"
   },
   "require": {
-    "php": ">=7.0.0",
-    "psr/log": "~1.0"
+    "php": ">=7.4.0",
+    "psr/log": "~1.0",
+    "ext-mbstring": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "6.*"

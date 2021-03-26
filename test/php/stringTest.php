@@ -145,7 +145,6 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=Hamle\\Scope::get()->hamleGet('test')?>-str", $html);
     $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('test').'-str'", $php);
   }
-
   public function testDollarFormat1() {
     $hs = new Text("Hello {\$length|round(0)}");
     $html = $hs->toHTML();
@@ -175,30 +174,37 @@ class stringTest extends base {
     $this->assertEquals("Hello <?=json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>", $html);
     $this->assertEquals("'Hello '.json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))", $php);
   }
+  public function testDollarFormat5() {
+    $hs = new Text("Hello {\$box->length|round({\$[-1]->decimals})}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals("Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),Hamle\\Scope::get(-1)->hamleGet('decimals'))?>", $html);
+    $this->assertEquals("'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),Hamle\\Scope::get(-1)->hamleGet('decimals'))", $php);
+  }
   public function testDollarExplode1() {
-    $hs = new Text("\$box->length|itersplit(;)",Text::TOKEN_CONTROL);
+    $hs = new Text('{$box->length|itersplit(";")}',Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')", $php);
   }
   public function testDollarExplode2() {
-    $hs = new Text("\$box->length|itersplit(&comma;)",Text::TOKEN_CONTROL);
+    $hs = new Text("{\$box->length|itersplit(',')}",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),',')", $php);
   }
   public function testDollarNewlineBr() {
-    $hs = new Text("\$desc|newlinebr",Text::TOKEN_CONTROL);
+    $hs = new Text("{\$desc|newlinebr}",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc'))", $php);
   }
 
   public function testDollarNewlineJson() {
-    $hs = new Text("\$desc|newlinebr|json",Text::TOKEN_CONTROL);
+    $hs = new Text("{\$desc|newlinebr|json}",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("json_encode(Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc')))", $php);
   }
 
   public function testAsCents() {
-    $hs = new Text("\$price|ascents",Text::TOKEN_CONTROL);
+    $hs = new Text("{\$price|ascents}",Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals("Seufert\\Hamle\\Text\\Filter::ascents(Hamle\\Scope::get()->hamleGet('price'))", $php);
     $this->assertEquals(2501, Text\Filter::ascents("$ 25.01"));
@@ -414,7 +420,7 @@ class stringTest extends base {
     $hs = new Text('Date {$date|format_date}');
     $php = $hs->toPHP();
     $this->assertEquals("'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'))", $php);
-    $hs = new Text('Date {$date|format_date(Y-m-d)}');
+    $hs = new Text('Date {$date|format_date("Y-m-d")}');
     $php = $hs->toPHP();
     $this->assertEquals("'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'),'Y-m-d')", $php);
     Text\Filter::$filterResolver = $oldFR;

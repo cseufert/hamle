@@ -26,13 +26,18 @@ THE SOFTWARE.
 
 namespace Seufert\Hamle;
 
+use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Grammar\Parser;
+use Seufert\Hamle\Text\Filter;
+
 /**
  * HAMLE String Conversion Library
  *
  * @author Chris Seufert <chris@seufert.id.au>
  * @package hamle
  */
-class Text {
+class Text
+{
   const TOKEN_CONTROL = 0x07;
   const TOKEN_HTML = 0x06;
   const TOKEN_CODE = 0x04;
@@ -49,90 +54,302 @@ class Text {
    */
   protected $nodes;
 
-  function __construct($s, $mode = self::TOKEN_HTML) {
-    $m = [];
-    $pos = 0;
-    $this->nodes = [];
-    $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
-    if(trim($s) === '') {
-      $this->nodes[] = new Text\Plain($s, $mode);
-      return;
+  protected $tree;
+
+  function __construct($s, $mode = self::TOKEN_HTML)
+  {
+    $this->tree = (new Parser())->parse($s);
+    if ($this->tree['type'] ?? null) {
+      $this->tree = [$this->tree];
     }
-    if($mode === self::TOKEN_CONTROL) {
-      if(preg_match('/^"(.*)"$/', trim($s), $m)) {
-        $this->nodes[] = new Text($m[1]);
-      }
-      else {
-        $this->nodes[] = new Text\Complex(trim($s));
-      }
-      return;
-    }
-    preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
-    foreach($m as $match) {
-      if($mode & self::FIND_BARDOLLAR && isset($match[2])) {
-        if($match[2][1] != $pos) {
-          $this->nodes[] = new Text\Plain(
-            substr($s, $pos, $match[2][1] - $pos), $mode);
-        }
-        $this->nodes[] = new Text\Complex(substr($match[2][0], 1, -1));
-        $pos = $match[2][1] + strlen($match[2][0]);
-      }
-      else if($mode & self::FIND_DOLLARVAR) {
-        if($match[1][1] > 0 && $s[$match[1][1] - 1] === '\\') {
-          continue;
-        }
-        if($match[1][1] != $pos) {
-          $this->nodes[] = new Text\Plain(
-            substr($s, $pos, $match[1][1] - $pos), $mode);
-        }
-        $this->nodes[] = new Text\SimpleVar($match[1][0]);
-        $pos = $match[1][1] + strlen($match[1][0]);
-      }
-    }
-    if($pos != strlen($s)) {
-      $this->nodes[] = new Text\Plain(substr($s, $pos), $mode);
-    }
+//    $m = [];
+//    $pos = 0;
+//    $this->nodes = [];
+//    $rFlag = PREG_OFFSET_CAPTURE + PREG_SET_ORDER;
+//    if(trim($s) === '') {
+//      $this->nodes[] = new Text\Plain($s, $mode);
+//      return;
+//    }
+//    if($mode === self::TOKEN_CONTROL) {
+//      if(preg_match('/^"(.*)"$/', trim($s), $m)) {
+//        $this->nodes[] = new Text($m[1]);
+//      }
+//      else {
+//        $this->nodes[] = new Text\Complex(trim($s));
+//      }
+//      return;
+//    }
+//    preg_match_all(self::REGEX_HTML, $s, $m, $rFlag);
+//    foreach($m as $match) {
+//      if($mode & self::FIND_BARDOLLAR && isset($match[2])) {
+//        if($match[2][1] != $pos) {
+//          $this->nodes[] = new Text\Plain(
+//            substr($s, $pos, $match[2][1] - $pos), $mode);
+//        }
+//        $this->nodes[] = new Text\Complex(substr($match[2][0], 1, -1));
+//        $pos = $match[2][1] + strlen($match[2][0]);
+//      }
+//      else if($mode & self::FIND_DOLLARVAR) {
+//        if($match[1][1] > 0 && $s[$match[1][1] - 1] === '\\') {
+//          continue;
+//        }
+//        if($match[1][1] != $pos) {
+//          $this->nodes[] = new Text\Plain(
+//            substr($s, $pos, $match[1][1] - $pos), $mode);
+//        }
+//        $this->nodes[] = new Text\SimpleVar($match[1][0]);
+//        $pos = $match[1][1] + strlen($match[1][0]);
+//      }
+//    }
+//    if($pos != strlen($s)) {
+//      $this->nodes[] = new Text\Plain(substr($s, $pos), $mode);
+//    }
   }
 
-  function toHTML($escape = false) {
-    $out = [];
-    foreach($this->nodes as $string) {
-      $out[] = $string->toHTML($escape);
+  private static function addFilter(string $o, array $filter): string
+  {
+    $func = $filter['func'];
+    if (method_exists(Filter::class, $func)) {
+      $func = Filter::class . '::' . $func;
+    } elseif (in_array($func, ['round', 'strtoupper', 'strtolower', 'ucfirst'])) {
+    } elseif ($func === 'json') {
+      $func = 'json_encode';
+    } elseif (Filter::$filterResolver && $filter = (Filter::$filterResolver)($func)) {
+      $func = $filter;
+    } else {
+      throw new ParseError("Unknown Filter Type \"{$func}\"");
     }
-    return implode('', $out);
+    $args = join(',', array_map(function($v) {
+      if(is_array($v) && $v['type'] ?? false === 'expr') {
+        return self::renderExpr($v);
+      } else
+        return self::varToCode($v);
+    } , $filter['args']));
+    if(strlen($args)) $args = ','.$args;
+    $o = "$func($o" . $args . ")";
+    if($filter['chain'] ?? false) {
+      $o = self::addFilter($o, $filter['chain']);
+    }
+    return $o;
   }
 
-  function toHTMLAtt() {
+  static function renderScopeThis($n)
+  {
+    $o = 'Hamle\Scope::get()->hamleGet(' . self::varToCode($n['name']) . ')';
+    $o = self::addParams($o, $n['param'] ?? []);
+    return $o;
+  }
+
+  static function renderScopeId($n)
+  {
+    $o = 'Hamle\Scope::get(' . $n['id'] . ')';
+    $o = self::addParams($o, $n['param'] ?? []);
+    return $o;
+  }
+
+  static function renderScopeName($n)
+  {
+    $o = 'Hamle\Scope::getName(' . self::varToCode($n['name']) . ')';
+    $o = self::addParams($o, $n['param']);
+    return $o;
+  }
+
+  static function addParams(string $o, array $params)
+  {
+    while ($params['type'] ?? null === 'sub') {
+      $o .= '->hamleGet(' . self::varToCode($params['name']) . ')';
+      $params = $params['params'] ?? [];
+    }
+    return $o;
+  }
+
+  static function addRel(string $o, array $query, string $rel): string
+  {
+    $r = $rel === 'child' ? Hamle::REL_CHILD : Hamle::REL_PARENT;
+    $o = $o . "->hamleRel(" . self::varToCode($r) . ',' . self::queryParams($query, true) . ')';
+    return $o;
+  }
+
+  static function queryParams(array $query, bool $addGroup = false)
+  {
+    $lastType = '*';
+    $typeTags = [];
+    $limit = 0;
+    $offset = 0;
+    $group = 0;
+    $sort = [];
+    $o = '';
+    foreach ($query as $q) {
+      switch ($q['q']) {
+        case 'type':
+          $typeTags[$lastType = $q['id']] = [];
+          break;
+        case 'tag':
+          $typeTags[$lastType][] = $q['id'];
+          break;
+        case 'group':
+          $group = $q['id'];
+          break;
+      }
+    }
+    $opt = [
+      self::varToCode($typeTags),
+      self::varToCode($sort),
+      self::varToCode($limit),
+      self::varToCode($offset)
+    ];
+    if ($addGroup)
+      $opt[] = self::varToCode($group);
+    return join(',', $opt);
+  }
+
+  static function queryId(array $query)
+  {
+    $type = '';
+    $id = '';
+    $limit = 0;
+    $offset = 0;
+    $sort = [];
+    foreach ($query as $q) {
+      switch ($q['q']) {
+        case 'type':
+          $type = $q['id'];
+          break;
+        case 'id':
+          $id = $q['id'];
+          break;
+      }
+    }
+    $opt = [
+      self::varToCode([$type => [$id]]),
+      self::varToCode($sort),
+      self::varToCode($limit),
+      self::varToCode($offset)
+    ];
+    return 'Hamle\Run::modelTypeId(' . join(',', $opt) . ')';
+  }
+
+  static function renderQuery($n)
+  {
+    $o = '';
+    $id = null;
+    $type = [];
+    foreach ($n['query'] ?? [] as $q) {
+      if ($q['q'] === 'id')
+        $id = $q['id'] ?? null;
+      if ($q['q'] === 'type')
+        $type = $q['id'];
+    }
+    if ($n['query'] === null) {
+      $o = 'Hamle\Scope::get(0)';
+    } elseif ($id !== null) {
+      $o = self::queryId($n['query']);
+    } else {
+      $o = 'Hamle\Run::modelTypeTags(' . self::queryParams($n['query']) . ')';
+    }
+    if ($n['sub'] ?? []) {
+      $o = self::addRel($o, $n['sub'], $n['rel']);
+    }
+    if ($n['param'] ?? []) {
+      $o = self::addParams($o, $n['param']);
+    }
+    return $o;
+  }
+
+  static function renderExpr(array $expr)
+  {
+    switch ($expr['body']['type']) {
+      case 'scopeThis':
+        $o = self::renderScopeThis($expr['body']);
+        break;
+      case 'scopeId':
+        $o = self::renderScopeId($expr['body']);
+        break;
+      case 'scopeName':
+        $o = self::renderScopeName($expr['body']);
+        break;
+      case 'query':
+        $o = self::renderQuery($expr['body']);
+        break;
+      default:
+        throw new \RuntimeException('Invalid Node: ' . $expr['body']['type']);
+    }
+    if ($expr['body']['filter'] ?? false) {
+      $o = self::addFilter($o, $expr['body']['filter']);
+    }
+    return $o;
+  }
+
+  function toHTML($escape = false)
+  {
+    $out = '';
+    foreach ($this->tree as $node) {
+      switch ($node['type']) {
+        case 'string':
+          if ($node['body'] !== '')
+            $out .= $node['body'];
+          break;
+        case 'scopeThis':
+          $out .= '<?=' . self::renderScopeThis($node) . '?>';
+          break;
+        case 'expr':
+          $out .= '<?=' . self::renderExpr($node) . "?>";
+          break;
+        default:
+          throw new \RuntimeException('Invalid Node:' . $node['type']);
+      }
+    }
+    return $out;
+  }
+
+  function toHTMLAtt()
+  {
     return $this->toHTML(true);
   }
 
-  function toPHP() {
+  function toPHP()
+  {
     $out = [];
-    foreach($this->nodes as $string) {
-      $out[] = $string->toPHP();
+    foreach ($this->tree as $node) {
+      switch ($node['type']) {
+        case 'string':
+          if ($node['body'] !== '')
+            $out[] = self::varToCode($node['body']);
+          break;
+        case 'scopeThis':
+          $out[] = self::renderScopeThis($node);
+          break;
+        case 'expr':
+          $out [] = self::renderExpr($node);
+          break;
+        default:
+          throw new \RuntimeException('Invalid Node:' . $node['type']);
+      }
     }
-    return implode(".", $out);
+    return join('.', $out);
   }
 
-  function doEval() {
+  function doEval()
+  {
     return eval('use Seufert\Hamle; return ' . $this->toPHP() . ';');
   }
 
-  static function varToCode($var) {
-    if(is_array($var)) {
+  static function varToCode($var)
+  {
+    if (is_array($var)) {
       $code = [];
-      foreach($var as $key => $value) {
+      foreach ($var as $key => $value) {
         $code[] = self::varToCode($key) . '=>' . self::varToCode($value);
       }
       return 'array(' . implode(',', $code) . ')'; //remove unnecessary coma
     }
-    if(is_bool($var)) {
+    if (is_bool($var)) {
       return ($var ? 'TRUE' : 'FALSE');
     }
-    if(is_int($var) || is_float($var) || is_numeric($var)) {
+    if (is_int($var) || is_float($var) || is_numeric($var)) {
       return $var;
     }
-    if($var instanceof Text) {
+    if ($var instanceof Text) {
       return $var->toPHP();
     }
     return "'" . str_replace(['$', "'"], ['$', "\\'"], $var) . "'";
@@ -142,7 +359,8 @@ class Text {
    * @param $value
    * @return WriteModel
    */
-  function setValue($value) {
+  function setValue($value)
+  {
     throw new \RuntimeException('Unsupported');
   }
 
