@@ -29,6 +29,8 @@ namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Grammar\Parser;
 use Seufert\Hamle\Text\Filter;
+use Seufert\Hamle\TextNode\Doc;
+use Seufert\Hamle\TextNode\Literal;
 
 /**
  * HAMLE String Conversion Library
@@ -49,18 +51,20 @@ class Text
   const FIND_DOLLARVAR = 0x02;
   const FIND_BARDOLLAR = 0x04;
 
-  /**
-   * @var \Seufert\Hamle\Text[] Array of Child String Objects
-   */
-  protected $nodes;
+  const START_RULE_MAP = [self::TOKEN_HTML => 'HtmlInput', self::TOKEN_CODE => 'CodeInput',self::TOKEN_CONTROL => 'ControlInput'];
+
+  protected $mode;
 
   protected $tree;
 
   function __construct($s, $mode = self::TOKEN_HTML)
   {
-    $this->tree = (new Parser())->parse($s);
-    if ($this->tree['type'] ?? null) {
-      $this->tree = [$this->tree];
+//    var_dump($s);
+    $this->mode = $mode;
+    $this->tree = (new Parser())->parse($s,['startRule' => self::START_RULE_MAP[$mode]]);
+//    var_dump($this->tree);
+    if(!$this->tree instanceof Doc) {
+      $this->tree = new Doc(is_array($this->tree) ? $this->tree : [$this->tree]);
     }
 //    $m = [];
 //    $pos = 0;
@@ -150,7 +154,7 @@ class Text
   static function renderScopeName($n)
   {
     $o = 'Hamle\Scope::getName(' . self::varToCode($n['name']) . ')';
-    $o = self::addParams($o, $n['param']);
+    $o = self::addParams($o, $n['param'] ?? []);
     return $o;
   }
 
@@ -282,12 +286,16 @@ class Text
 
   function toHTML($escape = false)
   {
+    return $this->tree->toHTML($escape, $this->mode !== self::TOKEN_CODE);
     $out = '';
     foreach ($this->tree as $node) {
       switch ($node['type']) {
         case 'string':
           if ($node['body'] !== '')
             $out .= $node['body'];
+          break;
+        case 'scopeName':
+          $out .= '<?=' . self::renderScopeName($node) . '?>';
           break;
         case 'scopeThis':
           $out .= '<?=' . self::renderScopeThis($node) . '?>';
@@ -309,6 +317,7 @@ class Text
 
   function toPHP()
   {
+    return $this->tree->toPHP();
     $out = [];
     foreach ($this->tree as $node) {
       switch ($node['type']) {

@@ -69,12 +69,22 @@ class Control extends H\Tag {
   function renderStTag() {
     $out = "<" . "?php ";
     $scopeName = "";
-    if (preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
-      $scopeName = $m[1];
-      $lookup = substr($this->var, 0, strlen($this->var) - strlen($m[0]));
-      $hsv = new H\Text(trim($lookup), H\Text::TOKEN_CONTROL);
-    } else
-      $hsv = new H\Text($this->var, H\Text::TOKEN_CONTROL);
+    if($this->type === 'if') {
+      $hsvcomp = new H\Text\Comparison($this->var);
+      $out .= "if(" . $hsvcomp->toPHP() . ") {";
+      return $out."\n?>";
+    } elseif($this->type === 'else') {
+      $out .= "/* else */";
+      return $out."\n?>";
+    }
+    if($this->var) {
+      if (preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
+        $scopeName = $m[1];
+        $lookup = substr($this->var, 0, strlen($this->var) - strlen($m[0]));
+        $hsv = new H\Text(trim($lookup), H\Text::TOKEN_CONTROL);
+      } else
+        $hsv = new H\Text($this->var, H\Text::TOKEN_CONTROL);
+    }
     switch ($this->type) {
       case "each":
         if ($this->var)
@@ -82,10 +92,6 @@ class Control extends H\Tag {
         else
           $out .= "foreach(Hamle\\Scope::get() as {$this->o}) { \n";
         $out .= "Hamle\\Scope::add({$this->o}); ";
-        break;
-      case "if":
-        $hsvcomp = new H\Text\Comparison($this->var);
-        $out .= "if(" . $hsvcomp->toPHP() . ") {";
         break;
       case "with":
         if ($scopeName)
@@ -96,16 +102,10 @@ class Control extends H\Tag {
           $out .= "Hamle\\Scope::add({$this->o});\n;";
         }
         break;
-      case "else":
-        $out .= "/* else */";
-        break;
       case "include":
         $file = $hsv->toHTML();
-        if($file[0] == "#")
-          $out .= "echo Hamle\\Run::includeFragment(".$hsv->toPHP().");";
-        else
-          $out .= "echo Hamle\\Run::includeFile(" . $hsv->toPHP() . ");";
-        break;
+        $fn = $file[0] === '#' ? 'includeFragment' : 'includeFile';
+        $out .= "echo Hamle\\Run::$fn({$hsv->toPHP()});";
     }
     return $out . "\n?>";
   }

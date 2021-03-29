@@ -1,6 +1,8 @@
 <?php
-
 use Seufert\Hamle\Text;
+
+//chdir(__DIR__.'/../..');
+//`node js/CompilePHPGrammar.js`;
 
 require_once "base.php";
 
@@ -52,15 +54,15 @@ class stringTest extends base {
     $hs = new Text("Hello {\$[0]->user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hello <?=Hamle\\Scope::get(0)->hamleGet('user')?>", $html);
-    $this->assertEquals("'Hello '.Hamle\\Scope::get(0)->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=Hamle\\Scope::get()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
   }
   public function testDollarString3alt() {
     $hs = new Text("Hello {\$[0]-!user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hello <?=Hamle\\Scope::get(0)->hamleGet('user')?>", $html);
-    $this->assertEquals("'Hello '.Hamle\\Scope::get(0)->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=Hamle\\Scope::get()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
   }
   public function testDollarString4() {
     $hs = new Text("Hello {\$(site)->user}");
@@ -100,8 +102,8 @@ class stringTest extends base {
     $hs = new Text("$[0]->user",Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("<?=Hamle\\Scope::get(0)->hamleGet('user')?>", $html);
-    $this->assertEquals("Hamle\\Scope::get(0)->hamleGet('user')", $php);
+    $this->assertEquals("<?=Hamle\\Scope::get()->hamleGet('user')?>", $html);
+    $this->assertEquals("Hamle\\Scope::get()->hamleGet('user')", $php);
   }
   public function testDollarString8() {
     $hs = new Text('{$[test]->user}',Text::TOKEN_HTML);
@@ -121,8 +123,8 @@ class stringTest extends base {
     $hs = new Text("Hello {\$( > test.7ba736fc-3d6e-4907-b448-d995bd78a477)->valid}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hello <?=Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>", $html);
-    $this->assertEquals("'Hello '.Hamle\Scope::get(0)->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')", $php);
+    $this->assertEquals("Hello <?=Hamle\Scope::get()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>", $html);
+    $this->assertEquals("'Hello '.Hamle\Scope::get()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')", $php);
   }
   public function testDollarString11() {
     $hs = new Text("{\$(_request#get)->application}");
@@ -337,12 +339,11 @@ class stringTest extends base {
     $this->assertEquals("Hamle\\Run::modelId('menu',array(),0,0)".
                 "->hamleRel(1,array('page'=>array(),'cat'=>array()),array(),0,0,0)", $php);
   }
-  /**
-   * @expectedException \Seufert\Hamle\Exception\ParseError
-   * @aexpectedExceptionMessage Unable to specify child by ID in '#me...'
-   */
+
   public function testDollarFuncChild4() {
+    $this->expectException(\Seufert\Hamle\Grammar\SyntaxError::class);
     $hs = new Text("\$(#my_page > #me)", Text::TOKEN_CONTROL);
+    var_dump($hs->toPHP());
   }
   public function testDollarFuncChild5() {
     $hs = new Text("\$(#heroimage > photo:4^)", Text::TOKEN_CONTROL);
@@ -355,7 +356,7 @@ class stringTest extends base {
     $hs = new Text("\$( > *@2)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Scope::get(0)->".
+    $this->assertEquals("Hamle\\Scope::get()->".
         "hamleRel(1,array('*'=>array()),array(),0,0,2)", $php);
   }
   public function testDollarFuncSort1() {
@@ -368,7 +369,7 @@ class stringTest extends base {
     $hs = new Text("\$( < cat)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Scope::get(0)->".
+    $this->assertEquals("Hamle\\Scope::get()->".
         "hamleRel(2,array('cat'=>array()),array(),0,0,0)", $php);
   }
 
@@ -383,7 +384,7 @@ class stringTest extends base {
     $hs = new Text('$($[0] > next)', Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Scope::get(0)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
+    $this->assertEquals("Hamle\\Scope::get()->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
   }
 
   public function testNested2() {
@@ -406,11 +407,11 @@ class stringTest extends base {
     $this->assertEquals("Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)->hamleRel(1,array('next'=>array()),array(),0,0,0)", $php);
   }
 
-  public function testDollarFuncVar1() {
-    $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
-    $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Run::modelTypeTags(array('product'=>array(0=>Hamle\\Scope::get()->hamleGet('tags'))),array(),0,0)", $php);
-  }
+//  public function testDollarFuncVar1() {
+//    $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
+//    $php = $hs->toPHP();
+//    $this->assertEquals("Hamle\\Run::modelTypeTags(array('product'=>array(0=>Hamle\\Scope::get()->hamleGet('tags'))),array(),0,0)", $php);
+//  }
 
   public function testFilterFunc() {
     $oldFR = Text\Filter::$filterResolver;

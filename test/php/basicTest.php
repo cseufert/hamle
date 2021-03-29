@@ -23,7 +23,7 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-  
+
   public function testShortTags() {
     $hamle = "html\n  meta\n  link\n";
     $html = "<html><meta /><link /></html>";
@@ -31,7 +31,7 @@ class basicTest extends base {
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-  
+
   public function testAttr1() {
     $hamle= "html\n".
             "  meta[name=viewport&content=user-scalable=no,width=device-width,maximum-scale=1.0]\n".
@@ -266,7 +266,7 @@ class basicTest extends base {
   public function testIterFilterSemi() {
     $hamle = "html\n".
         "  ul\n".
-        "    |each \$scsv|itersplit(;)\n".
+        "    |each \$scsv|itersplit(';')\n".
         "      li[class=item\$k] \$v";
     $html = "<html><ul><li class='item0'>a</li><li class='item1'>b</li><li class='item2'>c</li></ul></html>";
     $this->hamle->string($hamle);
@@ -278,7 +278,7 @@ class basicTest extends base {
   public function testIterFilterEmpty() {
     $hamle = "html\n".
         "  ul\n".
-        "    |each \$empty|itersplit(;)\n".
+        "    |each \$empty|itersplit(';')\n".
         "      li \$v";
     $html = "<html><ul></ul></html>";
     $this->hamle->string($hamle);

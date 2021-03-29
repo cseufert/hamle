@@ -1,43 +1,85 @@
-start = object
+start = HtmlInput
 
-object = i:(TextChars ComplexExpr object) {
-                        /** <?php return $i; return array_filter(array_merge([$i[0],$i[1]],$i[2]), fn($v) => !is_array($v) || $v['type'] !== 'text' || $v['body'] !== ''); ?> **/
+HtmlInput = i:(HtmlChars AnyExpr HtmlInput) {
+                        /** <?php $return = array();
+                                  array_walk_recursive($i, function($a) use (&$return) { $return[] = $a; });
+                                  return $return;
+                        ?> **/
                          return [i[0],i[1]].concat(i[2]).filter(v => v.type !== 'text' || v.body !== ''); }
-       / TextChars
-TextChars = text: TextChar* { /** <?php return ['type' => 'string', 'body' => join('',$text)]; ?> **/
+            / HtmlChars
+
+CodeInput = i:(CodeChars ComplexExpr CodeInput) {
+                                    /** <?php $return = array();
+                                              array_walk_recursive($i, function($a) use (&$return) { $return[] = $a; });
+                                              return $return;
+                                     ?> **/
+                                     return [i[0],i[1]].concat(i[2]).filter(v => v.type !== 'text' || v.body !== ''); }
+             / CodeChars
+
+ControlInput = ComplexExpr / ExprBody / StringLiteral
+
+AnyExpr = ComplexExpr / SimpleVar
+
+HtmlChars = text: HtmlChar* { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$text)); ?> **/
+                              return {type:'string', body: text.join('')}; }
+
+CodeChars = text: CodeChar* { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$text)); ?> **/
                               return {type:'string', body: text.join('')}; }
 
 
-ComplexExpr = "{" body:ExprBody "}" { /** <?php return ['type' => 'expr', 'body' => $body]; ?> **/
+ComplexExpr = "{" body:ExprBody "}" { /** <?php return $body; ?> **/
                                        return {type:'expr', body};}
-           / SimpleVar
 
-SimpleVar = "$" name:Identifier { /** <?php return ['type' => 'scopeThis', 'name' => $name]; ?> **/
+SimpleVar = "$" name:Identifier { /** <?php
+        return new \Seufert\Hamle\TextNode\ScopeId(null, null, new \Seufert\Hamle\TextNode\ModelParam($name)); ?> **/
                                    return {type:'scopeThis', name};}
 
-ExprBody = expr:GetVarExpr filter:filterexpr { /** <?php return array_merge($expr, ['filter' => $filter]); ?> **/
+ExprBody = expr:VarExprPart chain:VarParamFilter* {
+                   /** <?php if(!$chain) return $expr;
+                       $top = array_pop($chain);
+                       while($chain) { $top = array_pop($chain)->withChain($top); } return $expr->withChain($top); ?> **/
                                                return {...expr, filter};}
            / GetVarExpr
 
-GetVarExpr = expr:VarExprPart ExprParamArrow param:VarExprSub { /** <?php return array_merge($expr, ['param'=> $param]); ?> **/
-                                                                return { ...expr, param};}
+GetVarExpr = expr:VarExprPart ExprParamArrow param:VarExprSub
         / VarExprPart
 
-VarExprPart = "$" "[" id:SignedInteger "]" { /** <?php return ['type'=>'scopeId', 'id'=> (int) $id]; ?> **/
-                                             return {type:"scopeId", id: parseInt(id, 10)};}
-        / "$" "[" name: Identifier "]" { /** <?php return ['type'=>'scopeName', 'name'=>  $name]; ?> **/
-                                         return {type:"scopeName", name}; }
-        / "$" "(" query: QueryFilter ")" { /** <?php return array_merge(['type'=>'query'], $query); ?> **/
-                                           return {type:"query", ...query};}
-        / "$" name: Identifier { /** <?php return ['type'=>'scopeThis', "name"=>$name]; ?> **/
-                                 return {type:'scopeThis', name};}
+VarParamFilter = ExprParamArrow sub: VarExprSubName {
+                          /** <?php return $sub; ?> **/
+                          return { ...expr, param};}
+                / "|" filter:filter {
+                          /** <?php return $filter; ?> **/
+                }
 
-QueryFilter = query:QueryFilterStage " " rel:[><] " " sub:QueryFilterStage { /** <?php return ['query'=>$query, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; ?> **/
+VarExprSubName = name: Identifier {
+                                   /** <?php return new \Seufert\Hamle\TextNode\ModelParam($name, null); ?> **/
+                                   return {type:"sub", name};
+                                   }
+
+VarExprPart = VarScopeId / VarScopeName
+        / "$" "(" query: QueryFilter ")" { /** <?php return $query; ?> **/
+                                           return {type:"query", ...query};}
+        / SimpleVar
+
+VarScopeId = "$" "[" id:SignedInteger "]" {
+              /** <?php return new \Seufert\Hamle\TextNode\ScopeId($id); ?> **/
+              return {type:"scopeId", id: parseInt(id, 10)};
+          }
+
+VarScopeName = "$" "[" name: Identifier "]" {
+               /** <?php return new \Seufert\Hamle\TextNode\ScopeName($name); ?> **/
+               return {type:"scopeName", name};
+           }
+
+QueryFilter = query:QueryFilterStage chain:QueryRelation* { /** <?php return (new \Seufert\Hamle\TextNode\Query($query))->withImmStack($chain); ?> **/
                                                                             return {query, sub, rel:rel === '>'?'child':'parent'}}
-            / " " rel:[><] " " sub:QueryFilterStage { /** <?php return ['query'=>null, 'sub'=> $sub, 'rel' => $rel === '>' ? 'child':'parent']; ?> **/
+            / scope: (VarScopeId / VarScopeName) chain:QueryRelation* { /** <?php return $scope->withImmStack($chain); ?> **/
                                                       return {query:null, sub, rel:rel === '>'?'child':'parent'}}
-            / query: QueryFilterStage { /** <?php return ['query'=>$query]; ?> **/
+            / chain:QueryRelation+ { /** <?php return (new \Seufert\Hamle\TextNode\ScopeId(null))->withImmStack($chain); ?> **/
+                                                      return {query:null, sub, rel:rel === '>'?'child':'parent'}}
+            / query: QueryFilterStage { /** <?php return new \Seufert\Hamle\TextNode\Query($query); ?> **/
                                         return {query}}
+
 
 QueryFilterStage = id: IdentifierDash query: QueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> $id]], $query); ?> **/
                                                                     return [{q:'type', id}, ...query];}
@@ -46,46 +88,73 @@ QueryFilterStage = id: IdentifierDash query: QueryFilterModifier* { /** <?php re
                    / query:QueryFilterModifier+ { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
                                                   return [{q:'type', id:'*'}, ...query];}
 
-QueryFilterModifier = "," id:IdentifierDash { /** <?php return ['q'=>'type', 'id'=> $id]; ?> **/
-                                              return {q:'type', id};}
-                    / "." id:TagIdentifier { /** <?php return ['q'=>'tag', 'id'=> $id]; ?> **/
-                                             return {q:'tag', id};}
-                    / "#" id:IdentifierDash { /** <?php return ['q'=>'id', 'id'=> $id]; ?> **/
-                                              return {q:'id', id};}
-                    / "@" id:Integer { /** <?php return ['q'=>'group', 'id'=> $id]; ?> **/
-                                       return {q:'group', id};}
-                    / ":" limit:Integer "-" offset:Integer { /** <?php return ['q'=>'range', 'limit'=> $limit, 'offset' => $offset]; ?> **/
-                                                             return {q:'range', limit, offset};}
-                    / ":" limit:Integer { /** <?php return ['q'=>'range', 'limit'=> $limit, 'offset' => 0]; ?> **/
-                                          return {q:'range', limit, offset:0};}
+QueryRelation = " " rel:[><] " " sub:QueryRelationStage {
+                    /** <?php return \Seufert\Hamle\TextNode\RelQuery::for($rel, $sub); ?> **/
+                    return {query, sub, rel:rel === '>'?'child':'parent'}
+              }
 
-VarExprSub = name: Identifier ExprParamArrow param:VarExprSub { /** <?php return ['type'=>'param', 'name'=>$name,'param'=> $param]; ?> **/
-                                                                return {type:"param", name, param};}
+QueryRelationStage = id: IdentifierDash query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> $id]], $query); ?> **/
+                                                                    return [{q:'type', id}, ...query];}
+                   / "*" query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
+                                                       return [{q:'type', id:'*'}, ...query];}
+                   / query:ChildQueryFilterModifier+ { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
+                                                  return [{q:'type', id:'*'}, ...query];}
+
+QueryFilterModifier = "#" id:AlphaNum { /** <?php return ['q'=>'id', 'id'=> $id]; ?> **/
+                                                                    return {q:'id', id};}
+                    / ChildQueryFilterModifier
+
+ChildQueryFilterModifier =  "," id:IdentifierDash { /** <?php return ['q'=>'type', 'id'=> $id]; ?> **/
+                                                   return {q:'type', id};}
+                         / "." id:TagIdentifier { /** <?php return ['q'=>'tag', 'id'=> $id]; ?> **/
+                                                  return {q:'tag', id};}
+                         / "^" id:IdentifierDash? { /** <?php return ['q'=>'sort', 'id'=> $id]; ?> **/
+                                                   return {q:'id', id};}
+                         / "@" id:Integer { /** <?php return ['q'=>'group', 'id'=> $id]; ?> **/
+                                            return {q:'group', id};}
+                         / ":" offset:Integer "-" limit:Integer { /** <?php return ['q'=>'range', 'limit'=> $limit, 'offset' => $offset]; ?> **/
+                                                                  return {q:'range', limit, offset};}
+                         / ":" limit:Integer { /** <?php return ['q'=>'range', 'limit'=> $limit, 'offset' => 0]; ?> **/
+                                               return {q:'range', limit, offset:0};}
+
+
+VarExprSub = name: Identifier ExprParamArrow param:VarExprSub {
+                 /** <?php return new \Seufert\Hamle\TextNode\ModelParam($name, $param); ?> **/
+                 return {type:"param", name, param};}
            / name: Identifier {
-                                /** <?php return ['type'=>'sub', 'name'=> $name]; ?> **/
-                                return {type:"sub", name};
-                              }
+                  /** <?php return new \Seufert\Hamle\TextNode\ModelParam($name, null); ?> **/
+                  return {type:"sub", name};
+           }
 
 ExprParamArrow = "-" ">" / "-" "!"
 
-filterexpr = "|" f:filter chain:filterexpr { /** <?php return array_merge($f, ['chain' => $chain]); ?> **/
-                                             return {...f, chain};}
-         / "|" f: filter { /** <?php return $f; ?> **/
-                           return f;}
-filter = func:Identifier "(" args:arglist* ")" { /** <?php return ['type'=>'filter', 'func' => $func, 'args'=> $args]; ?> **/
-                                                 return {type:'filter', func, args};}
-       / func: Identifier { /** <?php return ['type'=>'filter', 'func'=>$func, 'args'=> []]; ?> **/
-                            return {type:'filter', func, args:[]};}
+filterexpr = "|" f:filter chain:filterexpr {
+                  /** <?php return $f->withChain($chain); ?> **/
+                  return {...f, chain};
+              }
+         / "|" f: filter { /** <?php return $f; ?> **/ return f;}
+
+filter = func:Identifier "(" args:arglist* ")" {
+                /** <?php return new \Seufert\Hamle\TextNode\FilterFunc($func, null, $args); ?> **/
+                return {type:'filter', func, args};
+            }
+       / func: Identifier {
+                /** <?php return new \Seufert\Hamle\TextNode\FilterFunc($func); ?> **/
+                return {type:'filter', func, args:[]};
+            }
 arglist = arg: argument " "* "," " "* { /** <?php return $arg; ?> **/ return arg;}
         / argument
+
 argument = SignedFloat / SignedInteger / SimpleVar / ComplexExpr / StringLiteral
 
-SignedFloat = s:"-"? n:[0-9]+ "." d:[0-9]+ { /** <?php return (float)"$s$n.$d"; ?> **/
-                                             return parseFloat((s||'')+n.join("")+"."+d.join(""))}
+SignedFloat = s:"-"? n:[0-9]+ "." d:[0-9]+ {
+                       /** <?php return \Seufert\Hamle\TextNode\FloatLit((float)"$s$n.$d"); ?> **/
+                                 return parseFloat((s||'')+n.join("")+"."+d.join(""))
+             }
 
 StringLiteral "string"
   = parts:('"' DoubleStringCharacters? '"' / "'" SingleStringCharacters? "'") {
-      /** <?php return $parts[1]; ?> **/
+      /** <?php return new \Seufert\Hamle\TextNode\StringLit($parts[1]); ?> **/
       return parts[1];
     }
 
@@ -124,7 +193,7 @@ EscapeCharacter = SingleEscapeCharacter
 Integer = n:[0-9]+ { /** <?php return (int)join('', $n); ?> **/ return parseInt(n.join(''), 10);}
 
 SignedInteger = sign:"-"? n:[0-9]+ {
-    /** <?php return (int)($sign.join('', $n)); ?> **/
+    /** <?php return new \Seufert\Hamle\TextNode\IntLit((int)($sign.join('', $n))); ?> **/
     return parseInt((sign || '')+n.join(''), 10);
   }
 
@@ -132,14 +201,20 @@ NonEscapeCharacter
   = (!EscapeCharacter / LineTerminator) char:SourceCharacter { /** <?php return $char; ?> **/ return char; }
 
 Identifier = name:[a-zA-Z_]+ { /** <?php return join('',$name); ?> **/ return name.join('')}
-IdentifierDash = p:[a-zA-Z_] s:[0-9a-zA-Z_-]+ { /** <?php return $p.join('', $s); ?> **/ return [p].concat(s).join('')}
+IdentifierDash = p:[a-zA-Z_-] s:[0-9a-zA-Z_-]+ { /** <?php return $p.join('', $s); ?> **/ return [p].concat(s).join('')}
+AlphaNum = s:[0-9a-zA-Z_-]+ { /** <?php return join('', $s); ?> **/ return s.join('')}
 TagIdentifier = name:[0-9a-zA-Z_-]+ { /** <?php return join('',$name); ?> **/ return name.join('');}
 
-// Character in Text
-TextChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
-     / c:"{" c2:!"$" { /** <?php return $c; ?> **/ return c;}
+// Character in Html Mode
+HtmlChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
+     / c:"{" !"$" { /** <?php return $c; ?> **/ return c;}
      / [^{$]
      / c: "$" ![a-z] { /** <?php return $c; ?> **/ return c;}
+
+// Character in Code Mode
+CodeChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
+     / c:"{" !"$" { /** <?php return $c; ?> **/ return c;}
+     / c: [^{] { /** <?php return $c; ?> **/ return c;}
 
 LineTerminator
   = [\n\r\u2028\u2029]
