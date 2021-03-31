@@ -52,25 +52,27 @@ class basicTest extends base
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);
   }
-  public function testWeirdStartIndent()
-  {
-    $hamle =
-      "  div\n" .
-      "html\n" .
-      "  meta[name=viewport&content=user-scalable=no,width=device-width,maximum-scale=1.0]\n" .
-      "  link[href=/css&type=text/css]\n";
-    $html =
-      "<div></div>" .
-      "<html>" .
-      '<meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />' .
-      '<link href="/css" type="text/css" />' .
-      "</html>" .
-      $this->hamle->string($hamle);
-    $out = $this->hamle->output();
-    $this->markTestSkipped("Needs Fixing");
-    //    $this->assertEquals($html, $out);
-    //    $this->compareXmlStrings($html, $out);
-  }
+  // @todo Fix this case
+  //  public function testWeirdStartIndent()
+  //  {
+  //    $hamle =
+  //      "  div\n" .
+  //      "html\n" .
+  //      "  meta[name=viewport&content=user-scalable=no,width=device-width,maximum-scale=1.0]\n" .
+  //      "  link[href=/css&type=text/css]\n";
+  //    $html =
+  //      "<div></div>" .
+  //      "<html>" .
+  //      '<meta name="viewport" content="user-scalable=no,width=device-width,maximum-scale=1.0" />' .
+  //      '<link href="/css" type="text/css" />' .
+  //      "</html>" .
+  //      $this->hamle->string($hamle);
+  //    $out = $this->hamle->output();
+  //    $this->markTestSkipped("Needs Fixing");
+  //    //    $this->assertEquals($html, $out);
+  //    //    $this->compareXmlStrings($html, $out);
+  //  }
+
   public function testAttrSquareBracket()
   {
     $hamle = "a[href=/special\[10\]] Hello [Mate] [ ]";
