@@ -8,52 +8,58 @@
 use Seufert\Hamle;
 use Seufert\Hamle\Model\WrapArray;
 
-require_once("base.php");
+require_once "base.php";
 
 class snippetTest extends base
 {
   protected $hamleSnip;
 
-  protected function setUp()
-  {
-  }
-
-
   function model()
   {
-    return new WrapArray([[
-      'url' => '/img/1',
-      'title' => 'The TITLE',
-      'titlebar' => "My Page",
-      'alt' => 'My Image #1',
-      'nottrue' => false,
-      'istrue' => true], [
-      'url' => '/img/2',
-      'title' => 'The TITLE',
-      'titlebar' => "My Page",
-      'alt' => 'My Image #2'],
+    return new WrapArray([
+      [
+        "url" => "/img/1",
+        "title" => "The TITLE",
+        "titlebar" => "My Page",
+        "alt" => "My Image #1",
+        "nottrue" => false,
+        "istrue" => true,
+      ],
+      [
+        "url" => "/img/2",
+        "title" => "The TITLE",
+        "titlebar" => "My Page",
+        "alt" => "My Image #2",
+      ],
     ]);
   }
 
   function testSnipDecodeClassId()
   {
     $s = "html.test-class#TestId";
-    $this->assertEquals(['type' => 'html', 'class' => ['test-class'], 'id' => 'TestId'], Hamle\Tag\Snippet::decodeClassId($s));
+    $this->assertEquals(
+      ["type" => "html", "class" => ["test-class"], "id" => "TestId"],
+      Hamle\Tag\Snippet::decodeClassId($s)
+    );
   }
 
   function testHeadSnippet()
   {
     $he = new Hamle\Hamle($this->model(), new snippetHeadSetup());
-    $hamle = "html\n" .
+    $hamle =
+      "html\n" .
       "  head\n" .
       "    title \$titlebar\n" .
       "  body\n" .
       "    .content\n" .
       "    .head-test\n";
-    $html = "<html><head>\n" .
+    $html =
+      "<html><head>\n" .
       "   <title>My Page</title>\n" .
-      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' . "\n" .
-      '    <script src="/js/bootstrap.js"></script>' . "\n" .
+      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' .
+      "\n" .
+      '    <script src="/js/bootstrap.js"></script>' .
+      "\n" .
       "</head><body>" .
       "<div class=\"content\"></div>" .
       "<div class=\"head-test\"></div>" .
@@ -66,18 +72,24 @@ class snippetTest extends base
   function testHead2Snippet()
   {
     $he = new Hamle\Hamle($this->model(), new snippetHead2Setup());
-    $hamle = "html\n" .
+    $hamle =
+      "html\n" .
       "  head\n" .
       "    title \$titlebar\n" .
       "  body\n" .
       "    .content\n" .
       "    .head-test-2\n";
-    $html = "<html><head>\n" .
-      '    <script src="/js/jquery.min.js"></script>' . "\n" .
+    $html =
+      "<html><head>\n" .
+      '    <script src="/js/jquery.min.js"></script>' .
+      "\n" .
       "   <title>My Page</title>\n" .
-      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' . "\n" .
-      '    <info loaded="JQuery"></info>' . "\n" .
-      '    <script src="/js/bootstrap.js"></script>' . "\n" .
+      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' .
+      "\n" .
+      '    <info loaded="JQuery"></info>' .
+      "\n" .
+      '    <script src="/js/bootstrap.js"></script>' .
+      "\n" .
       "</head><body>" .
       "<div class=\"content\"></div>" .
       "<div class=\"head-test-2\"></div>" .
@@ -90,14 +102,16 @@ class snippetTest extends base
   function testTypeClassIDSnippet()
   {
     $he = new Hamle\Hamle($this->model(), new snippetTypeClassIDSetup());
-    $hamle = "html\n" .
+    $hamle =
+      "html\n" .
       "  head\n" .
       "    title \$titlebar\n" .
       "  body\n" .
       "    .content\n" .
       "      #new\n" .
       "        .test\n";
-    $html = "<html><head>\n" .
+    $html =
+      "<html><head>\n" .
       "   <title>My Page</title>\n" .
       "</head><body>" .
       "<div class=\"content\"><div id=\"new\"><div class=\"test\">" .
@@ -113,7 +127,8 @@ class snippetTest extends base
   {
     $he = new Hamle\Hamle($this->model(), new snippetReplaceImgSetup());
     $he->setup->minify = false;
-    $hamle = "html\n" .
+    $hamle =
+      "html\n" .
       "  head\n" .
       "    title \$titlebar\n" .
       "  body\n" .
@@ -184,8 +199,10 @@ class snippetHead2Setup extends Hamle\Setup
 
   function snippetFiles()
   {
-    return [__DIR__ . "/hamle/snippets/bootstrap.hamle-snip",
-      __DIR__ . "/hamle/snippets/jquery.hamle-snip"];
+    return [
+      __DIR__ . "/hamle/snippets/bootstrap.hamle-snip",
+      __DIR__ . "/hamle/snippets/jquery.hamle-snip",
+    ];
   }
 }
 
