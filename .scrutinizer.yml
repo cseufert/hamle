@@ -1,0 +1,16 @@
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
+    coverage:
+      tests:
+        override:
+          - command: composer test
+            coverage:
+              file: coverage.xml   # <- Set this to where we find the coverage data.
+              #    The path is relative to the current directory.
+              format: clover
+tools:
+  external_code_coverage: true
