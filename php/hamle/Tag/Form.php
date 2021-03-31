@@ -78,7 +78,7 @@ class Form extends Tag
           } else {
             $tag->opt['style'] = 'display:none;';
           }
-        };
+        }
       }
     }
     $inputTags = $this->find([['type' => 'hint']]);
@@ -94,7 +94,7 @@ class Form extends Tag
           } else {
             $tag->opt['style'] = 'display:none;';
           }
-        };
+        }
       }
     }
     $inputTags = $this->find([['type' => 'input']]);
@@ -111,7 +111,7 @@ class Form extends Tag
           } else {
             $tag->opt['style'] = 'display:none;';
           }
-        };
+        }
       }
     }
     foreach ($fields as $n => $f) {

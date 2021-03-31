@@ -83,7 +83,7 @@ class Func extends SimpleVar
       } elseif (preg_match_all('/\\.([a-zA-Z0-9_\-${}]+)/', $str, $m)) {
         foreach ($m[1] as $tag) {
           $att['tag'][$type][] = new Text($tag, Text::TOKEN_CODE);
-        };
+        }
       } else {
         $att['tag'][$type] = [];
       }

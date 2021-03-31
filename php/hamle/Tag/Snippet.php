@@ -65,7 +65,7 @@ class Snippet extends Hamle\Tag
         if ($ss[0] === '.') {
           $out['class'][] = substr($ss, 1);
         }
-      };
+      }
     }
     return $out;
   }
@@ -91,7 +91,7 @@ class Snippet extends Hamle\Tag
       foreach ($matchTags as $tag) {
         foreach ($this->tags as $t) {
           $tag->addChild($t, $this->type);
-        };
+        }
       }
     } elseif ($this->type == 'replace') {
       $rootTag->replace($this->path, $this);
