@@ -53,17 +53,19 @@ class snippetTest extends base
       "  body\n" .
       "    .content\n" .
       "    .head-test\n";
-    $html =
-      "<html><head>\n" .
-      "   <title>My Page</title>\n" .
-      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' .
-      "\n" .
-      '    <script src="/js/bootstrap.js"></script>' .
-      "\n" .
-      "</head><body>" .
-      "<div class=\"content\"></div>" .
-      "<div class=\"head-test\"></div>" .
-      "</body></html>";
+    $html = <<<HTML
+<html>
+  <head>
+    <script src="/js/bootstrap.js"/>
+    <title>My Page</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="content"></div>
+    <div class="head-test"></div>
+  </body>
+</html>
+HTML;
     $he->string($hamle);
     $out = $he->output();
     $this->compareXmlStrings($html, $out);
@@ -79,21 +81,22 @@ class snippetTest extends base
       "  body\n" .
       "    .content\n" .
       "    .head-test-2\n";
-    $html =
-      "<html><head>\n" .
-      '    <script src="/js/jquery.min.js"></script>' .
-      "\n" .
-      "   <title>My Page</title>\n" .
-      '    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />' .
-      "\n" .
-      '    <info loaded="JQuery"></info>' .
-      "\n" .
-      '    <script src="/js/bootstrap.js"></script>' .
-      "\n" .
-      "</head><body>" .
-      "<div class=\"content\"></div>" .
-      "<div class=\"head-test-2\"></div>" .
-      "</body></html>";
+    $html = <<<ENDHTML
+  <html>
+    <head>
+      <script src="/js/jquery.min.js"/>
+      <script src="/js/bootstrap.js"/>
+      <title>My Page</title>
+      <info loaded="JQuery"/>
+      <link href="/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+      <div class="content"/>
+      <div class="head-test-2"/>
+    </body>
+  </html>
+ENDHTML;
+
     $he->string($hamle);
     $out = $he->output();
     $this->compareXmlStrings($html, $out);

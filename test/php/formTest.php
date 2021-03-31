@@ -48,7 +48,6 @@ class formTest extends base
 <html>
   <body>
     <form action="" method="post" name="formTestForm" enctype="multipart/form-data">
-      <input type="hidden" name="formTestForm__submit" value="submit" />
       <div class="ftitle">
         <label for="formTestForm_title" class="Hamle_Field">title</label>
         <input type="text" name="formTestForm_title" class="Hamle_Field" value="" tabindex="1" required="required" id="formTestForm_title" />
@@ -67,6 +66,7 @@ class formTest extends base
       </div>
       <label for="formTestForm_memo" class="Hamle_Field_Memo" >memo</label>
       <textarea name="formTestForm_memo" class="Hamle_Field_Memo" id="formTestForm_memo">Some &lt;Funky&gt; Text&quot;\'</textarea>
+      <input type="hidden" name="formTestForm__submit" value="submit" />
     </form>
   </body>
 </html>

@@ -98,16 +98,17 @@ class fitlerTest extends base
       PHP_EOL .
       "    });" .
       PHP_EOL;
-    $html = '
+    $html = <<<HTML
 <head>
   <script type="text/javascript">
 /*<![CDATA[*/
-      $(document).ready(function() {
-        console.log("This is My TITLE");
-      });
-/*]]>*/    </script>
+    $(document).ready(function() {
+      console.log("This is My TITLE");
+      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');
+    });
+/*]]>*/  </script>
 </head>
-';
+HTML;
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);

@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . "/../lib/xmldiff/src/XmlDiff.php";
 require_once __DIR__ . "/../../php/autoload.php";
 
 use Seufert\Hamle\Field\Button;
@@ -39,6 +38,11 @@ class base extends \PHPUnit\Framework\TestCase
 
   public function compareXmlStrings($expected, $actual)
   {
+    $this->assertXmlStringEqualsXmlString(
+      "<root>" . $expected . "</root>",
+      "<root>" . $actual . "</root>"
+    );
+    return;
     $docExpected = new DOMDocument();
 
     try {
