@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 use Seufert\Hamle\Hamle;
 use Seufert\Hamle\Text;
@@ -22,16 +20,24 @@ class RelQuery implements Chainable
     $this->filters = $filters;
   }
 
-
-  static function for(string $rel, array $filters) {
-    return new self($rel === '>'?Hamle::REL_CHILD:Hamle::REL_PARENT, $filters);
+  static function for(string $rel, array $filters)
+  {
+    return new self(
+      $rel === ">" ? Hamle::REL_CHILD : Hamle::REL_PARENT,
+      $filters
+    );
   }
 
-  public function apply(string $s):string {
-
-    $s=  $s."->hamleRel({$this->rel}," . Query::queryParams($this->filters, true) . ')';
-    if($this->chain) $s = $this->chain->apply($s);
+  public function apply(string $s): string
+  {
+    $s =
+      $s .
+      "->hamleRel({$this->rel}," .
+      Query::queryParams($this->filters, true) .
+      ")";
+    if ($this->chain) {
+      $s = $this->chain->apply($s);
+    }
     return $s;
   }
-
 }

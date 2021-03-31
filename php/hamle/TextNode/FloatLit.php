@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 class FloatLit implements Literal
 {
@@ -15,6 +13,6 @@ class FloatLit implements Literal
 
   public function string(): string
   {
-    return (string)$this->float;
+    return (string) $this->float;
   }
 }

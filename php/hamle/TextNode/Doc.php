@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 use Seufert\Hamle\Text;
 
@@ -15,7 +13,6 @@ class Doc
 
   public function __construct(array $body)
   {
-
     $this->body = $body;
   }
 
@@ -25,25 +22,25 @@ class Doc
     foreach ($this->body as $n) {
       if ($n instanceof Literal) {
         $s = $n->string();
-        if ('' !== $s) {
+        if ("" !== $s) {
           $out[] = Text::varToCode($s);
         }
       } else {
         $out[] = $n->toPHP();
       }
     }
-    return join('.', $out);
+    return join(".", $out);
   }
 
-  public function toHtml(bool $escVar = false,bool $escFixed = true): string
+  public function toHtml(bool $escVar = false, bool $escFixed = true): string
   {
     $out = [];
     if ($escVar) {
-      $openTag = '<?=htmlspecialchars(';
-      $closeTag = ')?>';
+      $openTag = "<?=htmlspecialchars(";
+      $closeTag = ")?>";
     } else {
-      $openTag = '<?=';
-      $closeTag = '?>';
+      $openTag = "<?=";
+      $closeTag = "?>";
     }
     $code = false;
     foreach ($this->body as $n) {
@@ -53,7 +50,9 @@ class Doc
           $code = false;
         }
         $s = $n->string();
-        if($escFixed) $s = htmlspecialchars($s);
+        if ($escFixed) {
+          $s = htmlspecialchars($s);
+        }
         $out[] = $s;
       } else {
         if (!$code) {
@@ -63,7 +62,9 @@ class Doc
         $out[] = $n->toPHP();
       }
     }
-    if ($code) $out[] = $closeTag;
-    return join('', $out);
+    if ($code) {
+      $out[] = $closeTag;
+    }
+    return join("", $out);
   }
 }

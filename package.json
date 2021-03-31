@@ -6,7 +6,9 @@
   "author": "Chris Seufert <chris@modd.com.au>",
   "license": "MIT",
   "devDependencies": {
+    "@prettier/plugin-php": "^0.16.2",
     "pegjs": "^0.10.0",
-    "phpegjs": "^1.0.0-beta7"
+    "phpegjs": "^1.0.0-beta7",
+    "prettier": "^2.2.1"
   }
 }

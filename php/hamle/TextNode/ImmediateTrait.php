@@ -1,19 +1,15 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 trait ImmediateTrait
 {
-
   public function withImmediate(?Chainable $immediate = null)
   {
     $new = clone $this;
     $new->immediate = $immediate;
     return $new;
   }
-
 
   /**
    * @param Chainable[] $stack

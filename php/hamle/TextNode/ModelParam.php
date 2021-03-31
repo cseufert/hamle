@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 use Seufert\Hamle\Text;
 
@@ -20,12 +18,12 @@ class ModelParam implements Chainable
     $this->chain = $chain;
   }
 
-
   public function apply(string $out): string
   {
     $o = "{$out}->hamleGet(" . Text::varToCode($this->name) . ")";
-    if($this->chain)
+    if ($this->chain) {
       $o = $this->chain->apply($o);
+    }
     return $o;
   }
 }

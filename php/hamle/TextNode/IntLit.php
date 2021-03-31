@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 class IntLit implements Literal
 {
@@ -15,6 +13,6 @@ class IntLit implements Literal
 
   public function string(): string
   {
-    return (string)$this->int;
+    return (string) $this->int;
   }
 }

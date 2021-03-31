@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seufert\Hamle\TextNode;
-
 
 use Seufert\Hamle\Text;
 
@@ -16,14 +14,18 @@ class ScopeId implements Evaluated
 
   public ?Chainable $immediate;
 
-  public function __construct(?IntLit $id, ?Chainable $chain = null, ?Chainable $immediate = null)
-  {
+  public function __construct(
+    ?IntLit $id,
+    ?Chainable $chain = null,
+    ?Chainable $immediate = null
+  ) {
     $this->id = $id ? $id->int : 0;
     $this->chain = $chain;
     $this->immediate = $immediate;
   }
 
-  public function withImmediate(RelQuery $query) {
+  public function withImmediate(RelQuery $query)
+  {
     $new = clone $this;
     $new->immediate = $query;
     return $new;
@@ -36,9 +38,12 @@ class ScopeId implements Evaluated
     } else {
       $o = "Hamle\\Scope::get({$this->id})";
     }
-    if ($this->immediate) $o = $this->immediate->apply($o);
-    if ($this->chain) $o = $this->chain->apply($o);
+    if ($this->immediate) {
+      $o = $this->immediate->apply($o);
+    }
+    if ($this->chain) {
+      $o = $this->chain->apply($o);
+    }
     return $o;
   }
-
 }
