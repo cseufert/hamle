@@ -7,7 +7,7 @@ build:
     coverage:
       tests:
         override:
-          - command: composer test
+          - command: XDEBUG_MODE=coverage composer test
             coverage:
               file: coverage.xml   # <- Set this to where we find the coverage data.
               #    The path is relative to the current directory.

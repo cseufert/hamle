@@ -87,7 +87,7 @@ class Form
         $this->onSubmit($clicked);
       } catch (Exception\FormInvalid $e) {
         $this->hint = $e->getMessage();
-      };
+      }
     }
   }
 
