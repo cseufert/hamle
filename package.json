@@ -10,5 +10,12 @@
     "pegjs": "^0.10.0",
     "phpegjs": "^1.0.0-beta7",
     "prettier": "^2.2.1"
+  },
+  "prettier": {
+    "bracketSpacing": false,
+    "phpVersion": "7.4",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
   }
 }
