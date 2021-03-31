@@ -130,12 +130,12 @@ class Parse
     foreach ($fwdSnip as $snip) {
       foreach ($roots as $root) {
         $snip->apply($root);
-      };
+      }
     }
     foreach ($revSnip as $snip) {
       foreach ($roots as $root) {
         $snip->apply($root);
-      };
+      }
     }
     $this->root = $roots;
   }
@@ -241,7 +241,7 @@ class Parse
                   if ($s[0] == '!') {
                     $ref = substr($s, 1);
                   }
-                };
+                }
               }
               if ($ref) {
                 $hTag = new Tag\DynHtml($tag, $class, $attr, $id, $ref);
