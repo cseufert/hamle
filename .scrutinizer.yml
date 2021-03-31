@@ -14,3 +14,13 @@ build:
               format: clover
 tools:
   external_code_coverage: true
+filter:
+  excluded_paths:
+    - 'test/*'
+checks:
+  php: true
+coding_style:
+  php:
+    indentation:
+      general:
+        size: 2
