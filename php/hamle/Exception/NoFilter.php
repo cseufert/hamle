@@ -26,4 +26,6 @@ THE SOFTWARE.
 
 namespace Seufert\Hamle\Exception;
 
-class NoFilter extends Filter { }
+class NoFilter extends Filter
+{
+}

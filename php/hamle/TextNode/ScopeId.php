@@ -34,7 +34,7 @@ class ScopeId implements Evaluated
   function toPHP(): string
   {
     if ($this->id === 0) {
-      $o = "Hamle\\Scope::get()";
+      $o = 'Hamle\\Scope::get()';
     } else {
       $o = "Hamle\\Scope::get({$this->id})";
     }

@@ -32,38 +32,62 @@ use Seufert\Hamle\Text;
  * HAMLE HTML Tag
  * Use to represent plain HTML Tags
  */
-class Html extends H\Tag {
+class Html extends H\Tag
+{
   /**
    * @var array Options for html tags (eg, href, class, style, etc)
    */
-  static protected $selfCloseTags = array("area", "base", "br", "col", "command",
-      "embed", "hr", "img", "input", "keygen", "link",
-      "meta", "param", "source", "track", "wbr");
+  protected static $selfCloseTags = [
+    'area',
+    'base',
+    'br',
+    'col',
+    'command',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'keygen',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
+  ];
 
-  function __construct($tag, $class = array(), $attr = array(), $id = "") {
+  function __construct($tag, $class = [], $attr = [], $id = '')
+  {
     parent::__construct();
     $this->opt = $attr;
-    if(isset($attr['class']) && !is_array($attr['class']))
-      $this->opt['class'] = $attr['class']?explode(" ",$attr['class']):array();
-    $this->source = array();
-    $this->type = $tag ? $tag : "div";
-    if($class) {
-      if (isset($this->opt['class']))
-        $this->opt['class'] = array_merge($this->opt['class'], $class);
-      else
-        $this->opt['class'] = $class;
+    if (isset($attr['class']) && !is_array($attr['class'])) {
+      $this->opt['class'] = $attr['class'] ? explode(' ', $attr['class']) : [];
     }
-    if($id) $this->opt['id'] = $id;
+    $this->source = [];
+    $this->type = $tag ? $tag : 'div';
+    if ($class) {
+      if (isset($this->opt['class'])) {
+        $this->opt['class'] = array_merge($this->opt['class'], $class);
+      } else {
+        $this->opt['class'] = $class;
+      }
+    }
+    if ($id) {
+      $this->opt['id'] = $id;
+    }
   }
 
-  function renderStTag() {
-    $close = in_array($this->type, self::$selfCloseTags) ? " />" : ">";
+  function renderStTag()
+  {
+    $close = in_array($this->type, self::$selfCloseTags) ? ' />' : '>';
     return "<{$this->type}" . $this->optToTags() . $close;
   }
 
-  function renderEnTag() {
-    if (in_array($this->type, self::$selfCloseTags))
-      return "";
+  function renderEnTag()
+  {
+    if (in_array($this->type, self::$selfCloseTags)) {
+      return '';
+    }
     return "</{$this->type}>";
   }
 
@@ -72,26 +96,30 @@ class Html extends H\Tag {
    *
    * @return string HTML Attributes
    */
-  function optToTags() {
-    $out = array();
+  function optToTags()
+  {
+    $out = [];
     foreach ($this->opt as $k => $v) {
-      if ($k == "class" && !$v) continue;
-      if (is_array($v)) $v = implode(" ", $v);
-      if (!$v instanceof H\Text)
+      if ($k == 'class' && !$v) {
+        continue;
+      }
+      if (is_array($v)) {
+        $v = implode(' ', $v);
+      }
+      if (!$v instanceof H\Text) {
         $v = new H\Text($v);
+      }
       $k = new H\Text($k);
-      $out[] = " " . $k->toHTML() . "=\"" . $v->toHTMLAtt() . "\"";
+      $out[] = ' ' . $k->toHTML() . "=\"" . $v->toHTMLAtt() . "\"";
     }
-    return implode("", $out);
+    return implode('', $out);
   }
 
-    function addContent($s, $strtype = Text::TOKEN_HTML)
-    {
-        if (trim($s)) {
-            $parse = new Text($s, $strtype);
-            $this->content[] = $parse->toHTML(true);
-        }
+  function addContent($s, $strtype = Text::TOKEN_HTML)
+  {
+    if (trim($s)) {
+      $parse = new Text($s, $strtype);
+      $this->content[] = $parse->toHTML(true);
     }
-
-
+  }
 }

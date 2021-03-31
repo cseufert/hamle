@@ -27,7 +27,8 @@ namespace Seufert\Hamle\Parse;
 
 use Seufert\Hamle\Tag;
 
-interface Filter {
+interface Filter
+{
   /**
    * Filter HAMLE Tag
    * @param \Seufert\Hamle\Tag $tag

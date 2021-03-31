@@ -29,7 +29,8 @@ use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Model\WrapArray;
 use Seufert\Hamle\Text;
 
-class Filter extends Text {
+class Filter extends Text
+{
   protected $filter;
 
   protected $vars;
@@ -40,30 +41,42 @@ class Filter extends Text {
   /** @var Filter|null Chained Filter*/
   protected $chained;
 
-
-
   /** @var Callable|null Filter resolver, must return function name, or null */
   static $filterResolver = null;
 
-  function __construct($s, Text $what) {
+  function __construct($s, Text $what)
+  {
     var_dump($s, $what);
-    if(preg_match("/^([a-z_]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/", $s, $m)) {
+    if (
+      preg_match(
+        "/^([a-z_]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/",
+        $s,
+        $m,
+      )
+    ) {
       $this->filter = $m[1];
-      $this->vars = isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];
-      foreach($this->vars as $k=>$v)
-        $this->vars[$k] = str_replace("&comma;",',',$v);
-      if(isset($m['chained']) && strlen($m['chained'])) {
-        $this->chained = new Filter($m['chained'],$what);
+      $this->vars =
+        isset($m['vars']) && strlen($m['vars']) ? explode(',', $m['vars']) : [];
+      foreach ($this->vars as $k => $v) {
+        $this->vars[$k] = str_replace('&comma;', ',', $v);
+      }
+      if (isset($m['chained']) && strlen($m['chained'])) {
+        $this->chained = new Filter($m['chained'], $what);
       }
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if(method_exists(Filter::class, $this->filter)) {
-      $this->filter = Filter::class.'::'.$this->filter;
-    } elseif(in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst'])) {
-    } elseif($this->filter === 'json') {
+    if (method_exists(Filter::class, $this->filter)) {
+      $this->filter = Filter::class . '::' . $this->filter;
+    } elseif (
+      in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst'])
+    ) {
+    } elseif ($this->filter === 'json') {
       $this->filter = 'json_encode';
-    } elseif(self::$filterResolver && $filter = (self::$filterResolver)($this->filter)) {
+    } elseif (
+      self::$filterResolver &&
+      ($filter = (self::$filterResolver)($this->filter))
+    ) {
       $this->filter = $filter;
     } else {
       throw new ParseError("Unknown Filter Type \"{$this->filter}\"");
@@ -71,57 +84,69 @@ class Filter extends Text {
     $this->what = $what;
   }
 
-  function toHTML($escape = false) {
-    if($escape)
-      return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
-    return "<?=" . $this->toPHP() . "?>";
+  function toHTML($escape = false)
+  {
+    if ($escape) {
+      return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
+    }
+    return '<?=' . $this->toPHP() . '?>';
   }
 
-  function toPHPpre() {
+  function toPHPpre()
+  {
     $pre = '';
-    if($this->chained)
+    if ($this->chained) {
       $pre = $this->chained->toPHPpre();
+    }
     return "$pre{$this->filter}(";
   }
 
-  function toPHPpost() {
+  function toPHPpost()
+  {
     $post = '';
-    if($this->chained)
+    if ($this->chained) {
       $post = $this->chained->toPHPpost();
+    }
     $o = '';
-    foreach($this->vars as $v)
-      $o .= ','.$this->varToCode($v);
+    foreach ($this->vars as $v) {
+      $o .= ',' . $this->varToCode($v);
+    }
     return "$o)$post";
   }
 
-  function toPHP() {
-    return $this->toPHPpre().$this->what->toPHPVar().$this->toPHPpost();
+  function toPHP()
+  {
+    return $this->toPHPpre() . $this->what->toPHPVar() . $this->toPHPpost();
     // $o = [$this->what->toPHPVar()] ;
     // foreach($this->vars as $v)
     //   $o[] = $this->varToCode($v);
     // return "{$this->filter}(" . implode(',',$o) . ")";
   }
 
-  static function itersplit($v, $sep = ",") {
+  static function itersplit($v, $sep = ',')
+  {
     $o = [];
-    foreach(explode($sep, $v) as $k=>$i) {
-      if($i)
-        $o[] = ['v'=>trim($i), 'value'=>trim($i), 'k'=>$k,'key'=>$k];
+    foreach (explode($sep, $v) as $k => $i) {
+      if ($i) {
+        $o[] = ['v' => trim($i), 'value' => trim($i), 'k' => $k, 'key' => $k];
+      }
     }
     return new WrapArray($o);
   }
 
-  static function newlinebr($v) {
-    return str_replace("\n","<br />\n",$v);
+  static function newlinebr($v)
+  {
+    return str_replace("\n", "<br />\n", $v);
   }
 
-  static function replace($v, $src, $dst) {
-    return str_replace($src,$dst,$v);
+  static function replace($v, $src, $dst)
+  {
+    return str_replace($src, $dst, $v);
   }
 
-  static function ascents($v) {
-    $v = str_replace(['$',' ',','],'', $v);
-    return (int) round($v * 100,0);
+  static function ascents($v)
+  {
+    $v = str_replace(['$', ' ', ','], '', $v);
+    return (int) round($v * 100, 0);
   }
-
 }

@@ -22,25 +22,25 @@ class Doc
     foreach ($this->body as $n) {
       if ($n instanceof Literal) {
         $s = $n->string();
-        if ("" !== $s) {
+        if ('' !== $s) {
           $out[] = Text::varToCode($s);
         }
       } else {
         $out[] = $n->toPHP();
       }
     }
-    return join(".", $out);
+    return join('.', $out);
   }
 
   public function toHtml(bool $escVar = false, bool $escFixed = true): string
   {
     $out = [];
     if ($escVar) {
-      $openTag = "<?=htmlspecialchars(";
-      $closeTag = ")?>";
+      $openTag = '<?=htmlspecialchars(';
+      $closeTag = ')?>';
     } else {
-      $openTag = "<?=";
-      $closeTag = "?>";
+      $openTag = '<?=';
+      $closeTag = '?>';
     }
     $code = false;
     foreach ($this->body as $n) {
@@ -65,6 +65,6 @@ class Doc
     if ($code) {
       $out[] = $closeTag;
     }
-    return join("", $out);
+    return join('', $out);
   }
 }

@@ -25,13 +25,16 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Text;
 
-class Select extends Complex {
+class Select extends Complex
+{
   protected $key;
 
-  function __construct($s) {
-    $s = explode("->", $s, 2);
+  function __construct($s)
+  {
+    $s = explode('->', $s, 2);
     $this->key = $s[0];
-    if (count($s) > 1)
+    if (count($s) > 1) {
       $this->sel = $s[1];
+    }
   }
 }

@@ -31,6 +31,7 @@ namespace Seufert\Hamle;
  * @package hamle
  *
  */
-class Exception extends \Exception {
+class Exception extends \Exception
+{
   //put your code here
 }

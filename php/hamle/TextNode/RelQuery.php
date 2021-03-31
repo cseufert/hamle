@@ -23,8 +23,8 @@ class RelQuery implements Chainable
   static function for(string $rel, array $filters)
   {
     return new self(
-      $rel === ">" ? Hamle::REL_CHILD : Hamle::REL_PARENT,
-      $filters
+      $rel === '>' ? Hamle::REL_CHILD : Hamle::REL_PARENT,
+      $filters,
     );
   }
 
@@ -34,7 +34,7 @@ class RelQuery implements Chainable
       $s .
       "->hamleRel({$this->rel}," .
       Query::queryParams($this->filters, true) .
-      ")";
+      ')';
     if ($this->chain) {
       $s = $this->chain->apply($s);
     }

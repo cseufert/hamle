@@ -27,18 +27,22 @@ namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle\Text;
 
-class FormField extends Text {
+class FormField extends Text
+{
   protected $var;
 
-  function __construct($var) {
+  function __construct($var)
+  {
     $this->var = $var;
   }
 
-  function toPHP() {
+  function toPHP()
+  {
     return '$form->getField(' . Text::varToCode($this->var) . ')->getValue()';
   }
 
-  function toHTML($escape = false) {
+  function toHTML($escape = false)
+  {
     return '<?=' . $this->toPHP() . '?>';
   }
 }

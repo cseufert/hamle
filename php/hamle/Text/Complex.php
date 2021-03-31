@@ -31,68 +31,89 @@ use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\WriteModel;
 
-class Complex extends Text {
+class Complex extends Text
+{
   protected $func;
   protected $sel = null;
   protected $filter;
 
-  function __construct($s) {
-    if(FALSE !== $pos = strpos($s,'|')) {
-      $this->filter = new Filter(substr($s, $pos+1), $this);
-      $s = substr($s,0,$pos);
+  function __construct($s)
+  {
+    if (false !== ($pos = strpos($s, '|'))) {
+      $this->filter = new Filter(substr($s, $pos + 1), $this);
+      $s = substr($s, 0, $pos);
     }
-    $s = preg_split("/-[>!]/", $s);
+    $s = preg_split('/-[>!]/', $s);
     // if(count($s) == 1) $s = explode("-!",$s[0]);
-    if (!$s[0]) throw new ParseError("Unable to parse Complex Expression");
-    if ($s[0][1] === '(')
+    if (!$s[0]) {
+      throw new ParseError('Unable to parse Complex Expression');
+    }
+    if ($s[0][1] === '(') {
       $this->func = new Text\Func($s[0]);
-    elseif ($s[0][1] === '[')
+    } elseif ($s[0][1] === '[') {
       $this->func = new Text\Scope($s[0]);
-    else
+    } else {
       $this->func = new SimpleVar($s[0]);
+    }
     array_shift($s);
     $this->sel = $s;
   }
 
-  function toHTML($escape = false) {
-    if($escape)
-      return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
-    return "<?=" . $this->toPHP() . "?>";
+  function toHTML($escape = false)
+  {
+    if ($escape) {
+      return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
+    }
+    return '<?=' . $this->toPHP() . '?>';
   }
-  function toPHP() {
-    return $this->filter?$this->filter->toPHP():$this->toPHPVar();
+  function toPHP()
+  {
+    return $this->filter ? $this->filter->toPHP() : $this->toPHPVar();
   }
-  function toPHPVar() {
+  function toPHPVar()
+  {
     if ($this->sel) {
-      $sel = array();
-      foreach ($this->sel as $s)
+      $sel = [];
+      foreach ($this->sel as $s) {
         $sel[] = "hamleGet('$s')";
-      return $this->func->toPHP() . "->" . implode('->', $sel);
-    } else
+      }
+      return $this->func->toPHP() . '->' . implode('->', $sel);
+    } else {
       return $this->func->toPHP();
+    }
   }
 
-  function getOrCreateModel(Model $parent = null) {
-    if($this->func instanceof Text\Scope)
+  function getOrCreateModel(Model $parent = null)
+  {
+    if ($this->func instanceof Text\Scope) {
       return $this->func->getOrCreateModel($parent);
-    if($this->func instanceof Text\Func)
+    }
+    if ($this->func instanceof Text\Func) {
       return $this->func->getOrCreateModel($parent);
-    throw new RuntimeException('Unsupported func type encountered:'.get_class($this->func));
+    }
+    throw new RuntimeException(
+      'Unsupported func type encountered:' . get_class($this->func),
+    );
   }
 
   /**
    * @param $value
    * @return WriteModel
    */
-  function setValue($value) {
-    if(!$this->sel || count($this->sel) != 1)
-      throw new RuntimeException('Can only set values, when one var name is present');
+  function setValue($value)
+  {
+    if (!$this->sel || count($this->sel) != 1) {
+      throw new RuntimeException(
+        'Can only set values, when one var name is present',
+      );
+    }
     $model = $this->getOrCreateModel();
-    if(!$model instanceof WriteModel)
-      throw new RuntimeException('Can only set values on WriteModel, got '.get_class($model));
+    if (!$model instanceof WriteModel) {
+      throw new RuntimeException(
+        'Can only set values on WriteModel, got ' . get_class($model),
+      );
+    }
     $model->hamleSet($this->sel[0], $value);
     return $model;
   }
-
-
 }

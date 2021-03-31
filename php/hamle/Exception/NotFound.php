@@ -29,4 +29,6 @@ use Seufert\Hamle\Exception;
 /**
  * HAMLE Exception - File Not Found
  */
-class NotFound extends Exception { }
+class NotFound extends Exception
+{
+}

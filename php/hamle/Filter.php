@@ -9,17 +9,20 @@ namespace Seufert\Hamle;
  *
  */
 
-abstract class Filter {
-  static function stTag() {
-    return "";
+abstract class Filter
+{
+  static function stTag()
+  {
+    return '';
   }
 
-  static function filterText($s) {
+  static function filterText($s)
+  {
     return $s;
   }
 
-  static function ndTag() {
-    return "";
+  static function ndTag()
+  {
+    return '';
   }
-
 }

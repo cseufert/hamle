@@ -33,7 +33,7 @@ class ScopeName implements Evaluated
 
   public function toPHP(): string
   {
-    $o = "Hamle\\Scope::getName(" . Text::varToCode($this->name) . ")";
+    $o = 'Hamle\\Scope::getName(' . Text::varToCode($this->name) . ')';
     if ($this->immediate) {
       $o = $this->immediate->apply($o);
     }

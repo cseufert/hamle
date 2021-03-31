@@ -27,11 +27,12 @@ namespace Seufert\Hamle;
 
 /**
  * HAMLE Form Class
- * 
+ *
  * @package hamle
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Form {
+class Form
+{
   /**
    * @var Field[] Form Fields
    */
@@ -43,45 +44,59 @@ class Form {
    * Setup Method
    * Fills the $this->fields array with hamleFields
    */
-  function setup() {
-    throw new Exception\RunTime("You must configure the form in the setup ".
-      "function, by adding fields to the \$this->fields array");
+  function setup()
+  {
+    throw new Exception\RunTime(
+      'You must configure the form in the setup ' .
+        "function, by adding fields to the \$this->fields array",
+    );
   }
-  
-  function __construct() {
+
+  function __construct()
+  {
     $this->_data = func_get_args();
     $this->_name = get_called_class();
     $this->setup();
     $fields = $this->_fields;
-    $this->_fields = array();
-    foreach($fields as $v) {
+    $this->_fields = [];
+    foreach ($fields as $v) {
       $this->_fields[$v->name] = $v;
       $v->form($this->_name);
     }
     $this->postInit();
   }
-  function postInit() {}
-  
-  function process() {
-    $clicked = "";
-    foreach($this->_fields as $f)
-      if($f instanceOf Field\Button)
-        if($f->isClicked())
+  function postInit()
+  {
+  }
+
+  function process()
+  {
+    $clicked = '';
+    foreach ($this->_fields as $f) {
+      if ($f instanceof Field\Button) {
+        if ($f->isClicked()) {
           $clicked = $f;
-    foreach($this->_fields as $f)
-      $f->doProcess($clicked?true:false);
-    if($clicked)
+        }
+      }
+    }
+    foreach ($this->_fields as $f) {
+      $f->doProcess($clicked ? true : false);
+    }
+    if ($clicked) {
       try {
         $this->onSubmit($clicked);
-      } catch(Exception\FormInvalid $e) {
+      } catch (Exception\FormInvalid $e) {
         $this->hint = $e->getMessage();
-      }
+      };
+    }
   }
-  
-  function isValid() {
+
+  function isValid()
+  {
     $valid = true;
-    foreach($this->_fields as $f)
+    foreach ($this->_fields as $f) {
       $valid = $f->valid && $valid;
+    }
     return $valid;
   }
   /**
@@ -89,27 +104,38 @@ class Form {
    * @param Field\Button $button
    * @throws Exception\NoKey
    */
-  function onSubmit($button) { }
-  
-  function getFields() {
-    return $this->_fields;
-  }
-  function getField($n) {
-    if(!isset($this->_fields[$n]))
-      throw new Exception\NoKey("unable to find form field ($n)");
-    return $this->_fields[$n];
-  }
-  function __get($n) {
-    return $this->getField($n);
-  }
-  
-  function getHTMLProp() {
-    return array('action'=>'','method'=>'post','name'=>$this->_name,
-                                        'enctype'=>'multipart/form-data');
+  function onSubmit($button)
+  {
   }
 
-  function preEndTag() {
+  function getFields()
+  {
+    return $this->_fields;
+  }
+  function getField($n)
+  {
+    if (!isset($this->_fields[$n])) {
+      throw new Exception\NoKey("unable to find form field ($n)");
+    }
+    return $this->_fields[$n];
+  }
+  function __get($n)
+  {
+    return $this->getField($n);
+  }
+
+  function getHTMLProp()
+  {
+    return [
+      'action' => '',
+      'method' => 'post',
+      'name' => $this->_name,
+      'enctype' => 'multipart/form-data',
+    ];
+  }
+
+  function preEndTag()
+  {
     echo "<input type='hidden' name='{$this->_name}__submit' value='submit' />";
   }
-  
 }

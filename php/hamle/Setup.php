@@ -44,7 +44,7 @@ class Setup
   public function cachePath($f)
   {
     $s = DIRECTORY_SEPARATOR;
-    $dir = implode($s, [__DIR__, "..", "..", "cache", ""]);
+    $dir = implode($s, [__DIR__, '..', '..', 'cache', '']);
     if (!is_dir($dir)) {
       mkdir($dir);
     }
@@ -78,7 +78,7 @@ class Setup
   public function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0)
   {
     if (count($typeId) > 1) {
-      throw new Exception\RunTime("Unable to open more than one ID at a time");
+      throw new Exception\RunTime('Unable to open more than one ID at a time');
     }
     return new Model\Zero();
   }

@@ -33,18 +33,20 @@ use Seufert\Hamle\Model;
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Run {
+class Run
+{
   /**
    * @var Hamle Current HAMLE instance
    */
-  static protected $hamle;
-  static protected $hamleList = array();
+  protected static $hamle;
+  protected static $hamleList = [];
 
   /**
    * Add a hamle instance to the stack
    * @param Hamle $hamle Hamle Instance
    */
-  static function addInstance(Hamle $hamle) {
+  static function addInstance(Hamle $hamle)
+  {
     self::$hamleList[] = $hamle;
     self::$hamle = $hamle;
   }
@@ -52,12 +54,14 @@ class Run {
   /**
    * Remove hamle Instance from the stack
    */
-  static function popInstance() {
+  static function popInstance()
+  {
     array_pop(self::$hamleList);
-    if (self::$hamleList)
+    if (self::$hamleList) {
       self::$hamle = self::$hamleList[count(self::$hamleList) - 1];
-    else
-      self::$hamle = NULL;
+    } else {
+      self::$hamle = null;
+    }
   }
 
   /**
@@ -66,7 +70,8 @@ class Run {
    * @param string $data Data to pass to filter
    * @return string Fitlered data
    */
-  static function filter($name, $data) {
+  static function filter($name, $data)
+  {
     return strrev($data);
   }
 
@@ -75,7 +80,8 @@ class Run {
    * @param string $path Path to file to include
    * @return string HTML Code
    */
-  static function includeFile($path) {
+  static function includeFile($path)
+  {
     return self::$hamle->load($path)->output();
   }
 
@@ -84,7 +90,8 @@ class Run {
    * @internal Only for use in template system
    * @return string String to output where |include #fragment was called
    */
-  static function includeFragment($fragment) {
+  static function includeFragment($fragment)
+  {
     return self::$hamle->setup->getFragment(self::$hamle, substr($fragment, 1));
   }
 
@@ -97,9 +104,14 @@ class Run {
    * @internal param string $sortBy Field name to sort by
    * @return Model
    */
-  static function modelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
-    return self::$hamle->setup->getModelTypeTags($typeTags,
-        $sort, $limit, $offset);
+  static function modelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0)
+  {
+    return self::$hamle->setup->getModelTypeTags(
+      $typeTags,
+      $sort,
+      $limit,
+      $offset,
+    );
   }
 
   /**
@@ -111,9 +123,12 @@ class Run {
    * @throws RunTime
    * @return Model
    */
-  static function modelId($id, $sort = [], $limit = 0, $offset = 0) {
+  static function modelId($id, $sort = [], $limit = 0, $offset = 0)
+  {
     $o = self::$hamle->setup->getModelDefault($id, $sort, $limit, $offset);
-    if (!$o instanceOf Model) throw new RunTime("Application must return instance of hamleModel");
+    if (!$o instanceof Model) {
+      throw new RunTime('Application must return instance of hamleModel');
+    }
     return $o;
   }
 
@@ -128,9 +143,8 @@ class Run {
    * @internal param string $id id to search for
    * @return Model
    */
-  static function modelTypeId($typeId, $sort = [], $limit = 0, $offset = 0) {
+  static function modelTypeId($typeId, $sort = [], $limit = 0, $offset = 0)
+  {
     return self::$hamle->setup->getModelTypeId($typeId, $sort, $limit, $offset);
   }
-
-
 }

@@ -22,13 +22,13 @@ class FilterFunc implements Chainable
     $this->chain = $chain;
     $this->args = $args;
     if (method_exists(Filter::class, $func)) {
-      $this->func = Filter::class . "::" . $func;
+      $this->func = Filter::class . '::' . $func;
     } elseif (
-      in_array($func, ["round", "strtoupper", "strtolower", "ucfirst"])
+      in_array($func, ['round', 'strtoupper', 'strtolower', 'ucfirst'])
     ) {
       $this->func = $func;
-    } elseif ($func === "json") {
-      $this->func = "json_encode";
+    } elseif ($func === 'json') {
+      $this->func = 'json_encode';
     } elseif (
       Filter::$filterResolver &&
       ($filter = (Filter::$filterResolver)($func))
@@ -45,10 +45,10 @@ class FilterFunc implements Chainable
       fn($v) => $v instanceof Literal
         ? Text::varToCode($v->string())
         : $v->toPHP(),
-      $this->args
+      $this->args,
     );
     array_unshift($args, $out);
-    $o = "{$this->func}(" . join(",", $args) . ")";
+    $o = "{$this->func}(" . join(',', $args) . ')';
     if ($this->chain) {
       $o = $this->chain->apply($o);
     }

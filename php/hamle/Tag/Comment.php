@@ -27,28 +27,36 @@ namespace Seufert\Hamle\Tag;
 
 use Seufert\Hamle\Tag;
 
-class Comment extends Tag {
+class Comment extends Tag
+{
   protected $commentstyle;
 
-  function __construct($type) {
-    if ($type == "/")
-      $this->commentstyle = "HTML";
+  function __construct($type)
+  {
+    if ($type == '/') {
+      $this->commentstyle = 'HTML';
+    }
   }
 
-  function renderStTag() {
-    return $this->commentstyle == "HTML" ? "<!-- " : "";
+  function renderStTag()
+  {
+    return $this->commentstyle == 'HTML' ? '<!-- ' : '';
   }
 
-  function renderContent($pad = "", $oneliner = false) {
-    if ($this->commentstyle == "HTML")
-      if (count($this->content) > 1)
-        return $pad . "  " . implode("\n$pad", $this->content) . "\n";
-      else
+  function renderContent($pad = '', $oneliner = false)
+  {
+    if ($this->commentstyle == 'HTML') {
+      if (count($this->content) > 1) {
+        return $pad . '  ' . implode("\n$pad", $this->content) . "\n";
+      } else {
         return current($this->content);
-    return "";
+      }
+    }
+    return '';
   }
 
-  function renderEnTag() {
-    return $this->commentstyle == "HTML" ? " -->" : "";
+  function renderEnTag()
+  {
+    return $this->commentstyle == 'HTML' ? ' -->' : '';
   }
 }

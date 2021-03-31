@@ -20,7 +20,7 @@ class ModelParam implements Chainable
 
   public function apply(string $out): string
   {
-    $o = "{$out}->hamleGet(" . Text::varToCode($this->name) . ")";
+    $o = "{$out}->hamleGet(" . Text::varToCode($this->name) . ')';
     if ($this->chain) {
       $o = $this->chain->apply($o);
     }

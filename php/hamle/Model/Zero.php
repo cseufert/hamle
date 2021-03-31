@@ -34,35 +34,49 @@ use Seufert\Hamle\Model;
  *
  * @package Seufert\Hamle\Model
  */
-class Zero implements Model {
-  public function hamleGet($key) {
+class Zero implements Model
+{
+  public function hamleGet($key)
+  {
     return new Zero();
   }
 
-  public function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
-                    $offset = 0, $grouptype = 1) {
+  public function hamleRel(
+    $rel,
+    $typeTags,
+    $sort = [],
+    $limit = 0,
+    $offset = 0,
+    $grouptype = 1
+  ) {
     return new Zero();
   }
 
-  public function valid() {
+  public function valid()
+  {
     return false;
   }
 
-  public function key() {
+  public function key()
+  {
     return 0;
   }
 
-  public function current() {
+  public function current()
+  {
     return $this;
   }
 
-  public function rewind() {
+  public function rewind()
+  {
   }
 
-  public function next() {
+  public function next()
+  {
   }
 
-  public function __toString() {
+  public function __toString()
+  {
     return '';
   }
 }

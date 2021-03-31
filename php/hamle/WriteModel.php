@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 namespace Seufert\Hamle;
 
-interface WriteModel extends Model {
-
+interface WriteModel extends Model
+{
   /**
    * Set a HAMLE model value
    *
@@ -48,8 +48,12 @@ interface WriteModel extends Model {
    * @param int $grouptype Type of group
    * @return WriteModel Return object must implmement WriteModel interface
    */
-  function hamleCreateRel($rel, $typeTags, $sort = [],
-                    $limit = 0, $offset = 0, $grouptype = 1);
-
-
+  function hamleCreateRel(
+    $rel,
+    $typeTags,
+    $sort = [],
+    $limit = 0,
+    $offset = 0,
+    $grouptype = 1
+  );
 }

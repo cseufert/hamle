@@ -27,8 +27,10 @@ namespace Seufert\Hamle\Tag;
 
 use Seufert\Hamle\Tag;
 
-class FormHint extends Tag {
-  function renderStTag() {
+class FormHint extends Tag
+{
+  function renderStTag()
+  {
     return '<?=$form->hint?"<div>{$form->hint}</div>":""?>';
   }
 }

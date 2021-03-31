@@ -31,12 +31,14 @@ use Seufert\Hamle\Exception\ParseError;
  * HAMLE Control Tag
  * Used for tags starting with the pipe (|) symbol
  */
-class Control extends H\Tag {
+class Control extends H\Tag
+{
   /**
    * @var string Variable passed to Control Tag
    */
   protected $var;
-  public $o, $else = false;
+  public $o,
+    $else = false;
   static $instCount = 1;
 
   /**
@@ -45,64 +47,75 @@ class Control extends H\Tag {
    * @param \Seufert\Hamle\Tag $parentTag
    * @throws ParseError
    */
-  function __construct($tag, $parentTag = null) {
+  function __construct($tag, $parentTag = null)
+  {
     parent::__construct();
     $this->o = "\$o" . self::$instCount++;
     $this->type = strtolower($tag);
-    $this->var = "";
-    if ($parentTag && $this->type == "else") {
-      if($parentTag instanceof H\Tag) {
+    $this->var = '';
+    if ($parentTag && $this->type == 'else') {
+      if ($parentTag instanceof H\Tag) {
         $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
-        if($elseTag instanceof H\Tag\Control &&
-            in_array($elseTag->type, array('with', 'if'))
+        if (
+          $elseTag instanceof H\Tag\Control &&
+          in_array($elseTag->type, ['with', 'if'])
         ) {
           $elseTag->else = true;
         } else {
-          throw new ParseError("You can only use else with |with and |if, you tried |{$parentTag->type}");
+          throw new ParseError(
+            "You can only use else with |with and |if, you tried |{$parentTag->type}",
+          );
         }
       } else {
-        throw new ParseError("Unable to use else here");
+        throw new ParseError('Unable to use else here');
       }
     }
   }
 
-  function renderStTag() {
-    $out = "<" . "?php ";
-    $scopeName = "";
-    if($this->type === 'if') {
+  function renderStTag()
+  {
+    $out = '<' . '?php ';
+    $scopeName = '';
+    if ($this->type === 'if') {
       $hsvcomp = new H\Text\Comparison($this->var);
-      $out .= "if(" . $hsvcomp->toPHP() . ") {";
-      return $out."\n?>";
-    } elseif($this->type === 'else') {
-      $out .= "/* else */";
-      return $out."\n?>";
+      $out .= 'if(' . $hsvcomp->toPHP() . ') {';
+      return $out . "\n?>";
+    } elseif ($this->type === 'else') {
+      $out .= '/* else */';
+      return $out . "\n?>";
     }
-    if($this->var) {
+    if ($this->var) {
       if (preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
         $scopeName = $m[1];
         $lookup = substr($this->var, 0, strlen($this->var) - strlen($m[0]));
         $hsv = new H\Text(trim($lookup), H\Text::TOKEN_CONTROL);
-      } else
+      } else {
         $hsv = new H\Text($this->var, H\Text::TOKEN_CONTROL);
+      }
     }
     switch ($this->type) {
-      case "each":
-        if ($this->var)
-          $out .= "foreach(" . $hsv->toPHP() . " as {$this->o}) { \n";
-        else
+      case 'each':
+        if ($this->var) {
+          $out .= 'foreach(' . $hsv->toPHP() . " as {$this->o}) { \n";
+        } else {
           $out .= "foreach(Hamle\\Scope::get() as {$this->o}) { \n";
+        }
         $out .= "Hamle\\Scope::add({$this->o}); ";
         break;
-      case "with":
-        if ($scopeName)
-          $out .= "Hamle\\Scope::add(" . $hsv->toPHP() . ", \"$scopeName\");\n;";
-        else {
-          $out .= "if(({$this->o} = " . $hsv->toPHP() . ") && " .
-              "{$this->o}->valid()) {\n";
+      case 'with':
+        if ($scopeName) {
+          $out .=
+            'Hamle\\Scope::add(' . $hsv->toPHP() . ", \"$scopeName\");\n;";
+        } else {
+          $out .=
+            "if(({$this->o} = " .
+            $hsv->toPHP() .
+            ') && ' .
+            "{$this->o}->valid()) {\n";
           $out .= "Hamle\\Scope::add({$this->o});\n;";
         }
         break;
-      case "include":
+      case 'include':
         $file = $hsv->toHTML();
         $fn = $file[0] === '#' ? 'includeFragment' : 'includeFile';
         $out .= "echo Hamle\\Run::$fn({$hsv->toPHP()});";
@@ -113,44 +126,53 @@ class Control extends H\Tag {
   /**
    * @param string $s Variable String for control tag
    */
-  function setVar($s) {
+  function setVar($s)
+  {
     $this->var = trim($s);
   }
 
-  function renderEnTag() {
+  function renderEnTag()
+  {
     $out = '<' . '?php ';
     switch ($this->type) {
-      case "each";
+      case 'each':
         $out .= 'Hamle\\Scope::done(); ';
         $out .= '}';
-        if (!$this->var)
+        if (!$this->var) {
           $out .= "Hamle\\Scope::get()->rewind();\n";
+        }
         break;
-      case "if":
-      case "else":
-        $out .= "}";
+      case 'if':
+      case 'else':
+        $out .= '}';
         break;
-      case "with";
+      case 'with':
         if (!preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
           $out .= 'Hamle\\Scope::done(); ';
           $out .= '}';
         }
         break;
-      case "include":
-        return "";
+      case 'include':
+        return '';
         break;
     }
-    if ($this->else) $out .= "else{";
+    if ($this->else) {
+      $out .= 'else{';
+    }
     return $out . "\n?>";
   }
 
-  function render($indent = 0, $minify = false) {
+  function render($indent = 0, $minify = false)
+  {
     $ind = $minify ? '' : str_pad('', $indent);
-    $oneliner = (!(count($this->content) > 1 || $this->tags));
+    $oneliner = !(count($this->content) > 1 || $this->tags);
     $out = $this->renderStTag();
-    if ($this->content) $out .= $this->renderContent($ind, $oneliner || $minify);
-    foreach ($this->tags as $tag)
+    if ($this->content) {
+      $out .= $this->renderContent($ind, $oneliner || $minify);
+    }
+    foreach ($this->tags as $tag) {
       $out .= $tag->render($indent, $minify);
+    }
     $out .= $this->renderEnTag();
     return $out;
   }
