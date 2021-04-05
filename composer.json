@@ -1,6 +1,6 @@
 {
   "name": "cseufert/hamle",
-  "description": "A PHP Library to Pass HAMLE Files. HAMLE was inspired by HAML/Jade, however involves less typing, and does not allow code in a template, but does contain logic.",
+  "description": "A PHP template engine. HAMLE was inspired by HAML/Jade, however involves less typing, and does not allow php code in a template, but does have logic and function calls.",
   "type": "library",
   "keywords": [
     "template",
