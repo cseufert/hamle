@@ -145,12 +145,43 @@ filter = func:Identifier "(" args:arglist* ")" {
 arglist = arg: argument " "* "," " "* { /** <?php return $arg; ?> **/ return arg;}
         / argument
 
-argument = SignedFloat / SignedInteger / SimpleVar / ComplexExpr / StringLiteral
+argument = SignedFloat / SignedInteger / SimpleVar / ComplexExpr / StringLiteralExpr
 
 SignedFloat = s:"-"? n:[0-9]+ "." d:[0-9]+ {
                        /** <?php return \Seufert\Hamle\TextNode\FloatLit((float)"$s$n.$d"); ?> **/
                                  return parseFloat((s||'')+n.join("")+"."+d.join(""))
              }
+
+StringLiteralExpr = parts:('"' DoubleStringExpr? '"' / "'" SingleStringExpr? "'") {
+    /** <?php return $parts[1]; ?> **/
+    return parts[1];
+    }
+
+DoubleStringExpr = s:DoubleStringExprChar* e:ComplexExpr post:DoubleStringExpr  {
+    /** <?php
+        $o = [];
+        if($s) $o[] = new \Seufert\Hamle\TextNode\StringLit(join('',$s));
+        if($e) $o[] = $e;
+        if($post) foreach($post as $p) $o[] = $p;
+        if(!$o) return new \Seufert\Hamle\TextNode\StringLit('');
+        return \Seufert\Hamle\TextNode\StringConcat::fromList($o);
+    ?> **/
+    return [s, e].concat(post);
+} / s:DoubleStringExprChar*  { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$s)); ?> **/ return s.join; }
+
+SingleStringExpr = s:SingleStringExprChar* e:ComplexExpr post:SingleStringExpr  {
+                       /** <?php
+                           $o = [];
+                           if($s) $o[] = new \Seufert\Hamle\TextNode\StringLit(join('',$s));
+                           if($e) $o[] = $e;
+                           if($post) foreach($post as $p) $o[] = $p;
+                           if(!$o) return new \Seufert\Hamle\TextNode\StringLit('');
+                           return \Seufert\Hamle\TextNode\StringConcat::fromList($o);
+                       ?> **/
+                       return [s, e].concat(post);
+                   }
+/ s:SingleStringExprChar* { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$s)); ?> **/ return s.join; }
+
 
 StringLiteral "string"
   = parts:('"' DoubleStringCharacters? '"' / "'" SingleStringCharacters? "'") {
@@ -171,14 +202,18 @@ SingleStringCharacters
   }
 
 DoubleStringCharacter
-  = !('"' / "\\") char_:SourceCharacter {
-  	/** <?php return $char_; ?> **/
-  	return char_;
-  }
-  / "\\" sequence:CharacterEscapeSequence {
-	/** <?php return $sequence; ?> **/
-  	return sequence;
-  }
+  = !('"' / "\\") c:SourceCharacter {	/** <?php return $c; ?> **/ return c; }
+  / "\\" s:CharacterEscapeSequence {	/** <?php return $s; ?> **/	return s; }
+
+DoubleStringExprChar
+  = !('"' / "\\" / "{") c:SourceCharacter {	/** <?php return $c; ?> **/ return c; }
+  / c:"{" !"$" { /** <?php return $c; ?> **/ return $c; }
+  / "\\" s:CharacterEscapeSequence {	/** <?php return $s; ?> **/	return s; }
+
+SingleStringExprChar
+  = !("'" / "\\" / "{") c:SourceCharacter {	/** <?php return $c; ?> **/ return c; }
+  / c:"{" !"$" { /** <?php return $c; ?> **/ return $c; }
+  / "\\" s:CharacterEscapeSequence {	/** <?php return $s; ?> **/	return s; }
 
 SingleStringCharacter
   = !("'" / "\\") char:SourceCharacter { /** <?php return $char; ?> **/ return char;     }
@@ -207,9 +242,13 @@ TagIdentifier = name:[0-9a-zA-Z_-]+ { /** <?php return join('',$name); ?> **/ re
 
 // Character in Html Mode
 HtmlChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
-     / c:"{" !"$" { /** <?php return $c; ?> **/ return c;}
+     / c:"{" !"$" { /** <?php return $c; ?> **/ return $c;}
      / [^{$]
      / c: "$" ![a-z] { /** <?php return $c; ?> **/ return c;}
+
+DoubleStringChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
+                      / c:"{" !"$" { /** <?php return $c; ?> **/ return c;}
+                      / c: [^{] { /** <?php return $c; ?> **/ return c;}
 
 // Character in Code Mode
 CodeChar = "\\" c: "$" { /** <?php return $c; ?> **/ return c;}
