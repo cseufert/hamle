@@ -1130,7 +1130,7 @@ class Parser {
     private function peg_parseQueryRelationStage() {
 
       $s0 = $this->peg_currPos;
-      $s1 = $this->peg_parseIdentifierDash();
+      $s1 = $this->peg_parseAlphaNum();
       if ($s1 !== $this->peg_FAILED) {
         $s2 = array();
         $s3 = $this->peg_parseChildQueryFilterModifier();
@@ -1249,7 +1249,7 @@ class Parser {
         }
       }
       if ($s1 !== $this->peg_FAILED) {
-        $s2 = $this->peg_parseIdentifierDash();
+        $s2 = $this->peg_parseAlphaNum();
         if ($s2 !== $this->peg_FAILED) {
           $this->peg_reportedPos = $s0;
           $s1 = $this->peg_f20($s2);

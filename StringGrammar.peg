@@ -93,7 +93,7 @@ QueryRelation = " "+ rel:[><] " "+ sub:QueryRelationStage {
                     return {query, sub, rel:rel === '>'?'child':'parent'}
               }
 
-QueryRelationStage = id: IdentifierDash query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> $id]], $query); ?> **/
+QueryRelationStage = id: AlphaNum query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> $id]], $query); ?> **/
                                                                     return [{q:'type', id}, ...query];}
                    / "*" query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
                                                        return [{q:'type', id:'*'}, ...query];}
@@ -104,7 +104,7 @@ QueryFilterModifier = "#" id:AlphaNum { /** <?php return ['q'=>'id', 'id'=> $id]
                                                                     return {q:'id', id};}
                     / ChildQueryFilterModifier
 
-ChildQueryFilterModifier =  "," id:IdentifierDash { /** <?php return ['q'=>'type', 'id'=> $id]; ?> **/
+ChildQueryFilterModifier =  "," id:AlphaNum { /** <?php return ['q'=>'type', 'id'=> $id]; ?> **/
                                                    return {q:'type', id};}
                          / "." id:TagIdentifier { /** <?php return ['q'=>'tag', 'id'=> $id]; ?> **/
                                                   return {q:'tag', id};}

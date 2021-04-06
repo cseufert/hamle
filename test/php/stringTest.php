@@ -1,8 +1,8 @@
 <?php
 use Seufert\Hamle\Text;
 
-//chdir(__DIR__ . '/../..');
-//`node js/CompilePHPGrammar.js`;
+chdir(__DIR__ . '/../..');
+`node js/CompilePHPGrammar.js`;
 
 require_once 'base.php';
 
@@ -220,6 +220,16 @@ class stringTest extends base
     $php = $hs->toPHP();
     $code =
       "Hamle\Run::modelTypeId(array('_checkout2'=>array(0=>'cart')),array(),0,0)->hamleGet('cond_empty___0')";
+    $this->assertEquals("<?=$code?>", $html);
+    $this->assertEquals($code, $php);
+  }
+  public function testDollarString13()
+  {
+    $hs = new Text("$(#32303 > 2011,1010,2012)", Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $code =
+      'Hamle\Run::modelId(32303,array(),0,0)->hamleRel(1,array(2011=>array(),1010=>array(),2012=>array()),array(),0,0,0)';
     $this->assertEquals("<?=$code?>", $html);
     $this->assertEquals($code, $php);
   }
