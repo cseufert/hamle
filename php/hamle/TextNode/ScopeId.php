@@ -24,7 +24,7 @@ class ScopeId implements Evaluated
     $this->immediate = $immediate;
   }
 
-  public function withImmediate(RelQuery $query)
+  public function withImmediate(RelQuery $query): self
   {
     $new = clone $this;
     $new->immediate = $query;

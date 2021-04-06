@@ -30,7 +30,7 @@ class StringConcat implements Evaluated
   }
 
   /**
-   * @param list<Evaluated|Literal> $nodes
+   * @param list<Evaluated|Literal|null> $nodes
    */
   static function fromList(array $nodes): self
   {

@@ -16,7 +16,7 @@ class Doc
     $this->body = $body;
   }
 
-  public function toPHP()
+  public function toPHP(): string
   {
     $out = [];
     foreach ($this->body as $n) {

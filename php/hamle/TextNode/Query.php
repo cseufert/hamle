@@ -15,9 +15,9 @@ class Query implements Evaluated
 
   private ?Chainable $immediate;
 
-  public function __construct(array $filters = [], ?RelQuery $related = null)
+  public function __construct(?array $filters = [], ?RelQuery $related = null)
   {
-    $this->filters = $filters;
+    $this->filters = $filters ?? [];
     $this->immediate = $related;
   }
 
@@ -26,7 +26,7 @@ class Query implements Evaluated
     $o = '';
     $id = null;
     $type = [];
-    foreach ($this->filters ?? [] as $q) {
+    foreach ($this->filters as $q) {
       if ($q['q'] === 'id') {
         $id = $q['id'] ?? null;
       }
@@ -51,7 +51,7 @@ class Query implements Evaluated
     return $o;
   }
 
-  static function queryParams(array $query, bool $addGroup = false)
+  static function queryParams(array $query, bool $addGroup = false): string
   {
     $lastType = '*';
     $typeTags = [];
@@ -98,7 +98,7 @@ class Query implements Evaluated
     return join(',', $opt);
   }
 
-  static function queryId(array $query)
+  static function queryId(array $query): string
   {
     $type = '';
     $id = '';

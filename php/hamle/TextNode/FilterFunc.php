@@ -42,7 +42,7 @@ class FilterFunc implements Chainable
   public function apply(string $out): string
   {
     $args = array_map(
-      fn($v) => $v instanceof Literal
+      fn($v): string => $v instanceof Literal
         ? Text::varToCode($v->string())
         : $v->toPHP(),
       $this->args,

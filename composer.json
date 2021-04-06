@@ -33,7 +33,8 @@
     "ext-mbstring": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": ">= 8.5"
+    "phpunit/phpunit": ">= 8.5",
+    "vimeo/psalm": "^4.7"
   },
   "autoload": {
     "psr-4": {

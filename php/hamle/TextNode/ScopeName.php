@@ -24,7 +24,7 @@ class ScopeName implements Evaluated
     $this->immediate = $immediate;
   }
 
-  public function withImmediate(RelQuery $query)
+  public function withImmediate(RelQuery $query): self
   {
     $new = clone $this;
     $new->immediate = $query;
@@ -41,9 +41,5 @@ class ScopeName implements Evaluated
       $o = $this->chain->apply($o);
     }
     return $o;
-  }
-
-  public function toHTML($escape = false)
-  {
   }
 }

@@ -4,6 +4,10 @@ namespace Seufert\Hamle\TextNode;
 
 trait ImmediateTrait
 {
+  /**
+   * @param Chainable|null $immediate
+   * @return static
+   */
   public function withImmediate(?Chainable $immediate = null)
   {
     $new = clone $this;
@@ -13,6 +17,7 @@ trait ImmediateTrait
 
   /**
    * @param Chainable[] $stack
+   * @return static
    */
   public function withImmStack(array $stack = [])
   {
