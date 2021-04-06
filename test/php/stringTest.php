@@ -213,6 +213,17 @@ class stringTest extends base
       $php,
     );
   }
+  public function testDollarString12()
+  {
+    $hs = new Text("{\$(_checkout2#cart)->cond_empty___0}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $code =
+      "Hamle\Run::modelTypeId(array('_checkout2'=>array(0=>'cart')),array(),0,0)->hamleGet('cond_empty___0')";
+    $this->assertEquals("<?=$code?>", $html);
+    $this->assertEquals($code, $php);
+  }
+
   public function testDollarStringSymbol1()
   {
     $hs = new Text("Hello \$test_str");

@@ -235,7 +235,10 @@ SignedInteger = sign:"-"? n:[0-9]+ {
 NonEscapeCharacter
   = (!EscapeCharacter / LineTerminator) char:SourceCharacter { /** <?php return $char; ?> **/ return char; }
 
-Identifier = name:[a-zA-Z_]+ { /** <?php return join('',$name); ?> **/ return name.join('')}
+Identifier = p:[a-zA-Z_] ex:[a-zA-Z0-9_]* {
+    /** <?php return $p.join('',$ex); ?> **/
+    return p + ex.join('')}
+
 IdentifierDash = p:[a-zA-Z_-] s:[0-9a-zA-Z_-]+ { /** <?php return $p.join('', $s); ?> **/ return [p].concat(s).join('')}
 AlphaNum = s:[0-9a-zA-Z_-]+ { /** <?php return join('', $s); ?> **/ return s.join('')}
 TagIdentifier = name:[0-9a-zA-Z_-]+ { /** <?php return join('',$name); ?> **/ return name.join('');}
