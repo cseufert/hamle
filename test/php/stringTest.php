@@ -1,8 +1,8 @@
 <?php
 use Seufert\Hamle\Text;
 
-chdir(__DIR__ . '/../..');
-`node js/CompilePHPGrammar.js`;
+//chdir(__DIR__ . '/../..');
+//`node js/CompilePHPGrammar.js`;
 
 require_once 'base.php';
 
