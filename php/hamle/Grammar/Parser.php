@@ -1035,14 +1035,31 @@ class Parser {
     private function peg_parseQueryRelation() {
 
       $s0 = $this->peg_currPos;
+      $s1 = array();
       if ($this->input_substr($this->peg_currPos, 1) === $this->peg_c18) {
-        $s1 = $this->peg_c18;
+        $s2 = $this->peg_c18;
         $this->peg_currPos++;
       } else {
-        $s1 = $this->peg_FAILED;
+        $s2 = $this->peg_FAILED;
         if ($this->peg_silentFails === 0) {
             $this->peg_fail($this->peg_c19);
         }
+      }
+      if ($s2 !== $this->peg_FAILED) {
+        while ($s2 !== $this->peg_FAILED) {
+          $s1[] = $s2;
+          if ($this->input_substr($this->peg_currPos, 1) === $this->peg_c18) {
+            $s2 = $this->peg_c18;
+            $this->peg_currPos++;
+          } else {
+            $s2 = $this->peg_FAILED;
+            if ($this->peg_silentFails === 0) {
+                $this->peg_fail($this->peg_c19);
+            }
+          }
+        }
+      } else {
+        $s1 = $this->peg_FAILED;
       }
       if ($s1 !== $this->peg_FAILED) {
         if (peg_regex_test($this->peg_c20, $this->input_substr($this->peg_currPos, 1))) {
@@ -1055,14 +1072,31 @@ class Parser {
           }
         }
         if ($s2 !== $this->peg_FAILED) {
+          $s3 = array();
           if ($this->input_substr($this->peg_currPos, 1) === $this->peg_c18) {
-            $s3 = $this->peg_c18;
+            $s4 = $this->peg_c18;
             $this->peg_currPos++;
           } else {
-            $s3 = $this->peg_FAILED;
+            $s4 = $this->peg_FAILED;
             if ($this->peg_silentFails === 0) {
                 $this->peg_fail($this->peg_c19);
             }
+          }
+          if ($s4 !== $this->peg_FAILED) {
+            while ($s4 !== $this->peg_FAILED) {
+              $s3[] = $s4;
+              if ($this->input_substr($this->peg_currPos, 1) === $this->peg_c18) {
+                $s4 = $this->peg_c18;
+                $this->peg_currPos++;
+              } else {
+                $s4 = $this->peg_FAILED;
+                if ($this->peg_silentFails === 0) {
+                    $this->peg_fail($this->peg_c19);
+                }
+              }
+            }
+          } else {
+            $s3 = $this->peg_FAILED;
           }
           if ($s3 !== $this->peg_FAILED) {
             $s4 = $this->peg_parseQueryRelationStage();

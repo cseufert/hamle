@@ -342,7 +342,6 @@ class stringTest extends base
   public function testDollarUrlQuery()
   {
     $hs = new Text("{\$url|strtoupper('hash={\$[-2]->hash}')}");
-    var_dump($hs);
     $php = $hs->toPHP();
     $this->assertEquals(
       "strtoupper(Hamle\Scope::get()->hamleGet('url'),'hash='.Hamle\Scope::get(-2)->hamleGet('hash'))",
@@ -552,7 +551,7 @@ class stringTest extends base
 
   public function testDollarFuncChild4()
   {
-    $this->expectException(\Seufert\Hamle\Grammar\SyntaxError::class);
+    $this->expectException(\Seufert\Hamle\Exception\ParseError::class);
     $hs = new Text("\$(#my_page > #me)", Text::TOKEN_CONTROL);
     var_dump($hs->toPHP());
   }
@@ -574,6 +573,17 @@ class stringTest extends base
     $php = $hs->toPHP();
     $this->assertEquals(
       'Hamle\\Scope::get()->' . "hamleRel(1,array('*'=>array()),array(),0,0,2)",
+      $php,
+    );
+  }
+  public function testDollarFuncChild7()
+  {
+    $hs = new Text("\$(  >  image@2)", Text::TOKEN_CONTROL);
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $this->assertEquals(
+      'Hamle\\Scope::get()->' .
+        "hamleRel(1,array('image'=>array()),array(),0,0,2)",
       $php,
     );
   }
