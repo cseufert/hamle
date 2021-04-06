@@ -158,29 +158,18 @@ StringLiteralExpr = parts:('"' DoubleStringExpr? '"' / "'" SingleStringExpr? "'"
     }
 
 DoubleStringExpr = s:DoubleStringExprChar* e:ComplexExpr post:DoubleStringExpr  {
-    /** <?php
-        $o = [];
-        if($s) $o[] = new \Seufert\Hamle\TextNode\StringLit(join('',$s));
-        if($e) $o[] = $e;
-        if($post) foreach($post as $p) $o[] = $p;
-        if(!$o) return new \Seufert\Hamle\TextNode\StringLit('');
-        return \Seufert\Hamle\TextNode\StringConcat::fromList($o);
-    ?> **/
-    return [s, e].concat(post);
+        /** <?php
+            return \Seufert\Hamle\TextNode\StringConcat::fromParser($s, $e, $post);
+        ?> **/
+        return [s, e].concat(post);
 } / s:DoubleStringExprChar*  { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$s)); ?> **/ return s.join; }
 
 SingleStringExpr = s:SingleStringExprChar* e:ComplexExpr post:SingleStringExpr  {
-                       /** <?php
-                           $o = [];
-                           if($s) $o[] = new \Seufert\Hamle\TextNode\StringLit(join('',$s));
-                           if($e) $o[] = $e;
-                           if($post) foreach($post as $p) $o[] = $p;
-                           if(!$o) return new \Seufert\Hamle\TextNode\StringLit('');
-                           return \Seufert\Hamle\TextNode\StringConcat::fromList($o);
-                       ?> **/
-                       return [s, e].concat(post);
-                   }
-/ s:SingleStringExprChar* { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$s)); ?> **/ return s.join; }
+        /** <?php
+            return \Seufert\Hamle\TextNode\StringConcat::fromParser($s, $e, $post);
+        ?> **/
+        return [s, e].concat(post);
+} / s:SingleStringExprChar* { /** <?php return new \Seufert\Hamle\TextNode\StringLit(join('',$s)); ?> **/ return s.join; }
 
 
 StringLiteral "string"

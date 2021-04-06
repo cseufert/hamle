@@ -15,4 +15,15 @@ class StringLit implements Literal
   {
     return $this->body;
   }
+
+  public function empty(): bool
+  {
+    return $this->body === '';
+  }
+
+  /** @param string[] $chars */
+  public static function fromArray(array $chars): self
+  {
+    return new self(join('', $chars));
+  }
 }

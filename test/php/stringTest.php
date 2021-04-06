@@ -233,6 +233,16 @@ class stringTest extends base
     $this->assertEquals("<?=$code?>", $html);
     $this->assertEquals($code, $php);
   }
+  public function testDollarString14()
+  {
+    $hs = new Text("{\$a|strtoupper(\"a={\$a}&b={\$b}&c={\$c}\")}");
+    $html = $hs->toHTML();
+    $php = $hs->toPHP();
+    $code =
+      "strtoupper(Hamle\Scope::get()->hamleGet('a'),'a='.Hamle\Scope::get()->hamleGet('a').'&b='.Hamle\Scope::get()->hamleGet('b').'&c='.Hamle\Scope::get()->hamleGet('c'))";
+    $this->assertEquals("<?=$code?>", $html);
+    $this->assertEquals($code, $php);
+  }
 
   public function testDollarStringSymbol1()
   {
