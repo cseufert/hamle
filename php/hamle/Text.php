@@ -28,6 +28,7 @@ namespace Seufert\Hamle;
 
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Grammar\Parser;
+use Seufert\Hamle\Grammar\SyntaxError;
 use Seufert\Hamle\Text\Filter;
 use Seufert\Hamle\TextNode\Doc;
 use Seufert\Hamle\TextNode\Literal;
@@ -65,9 +66,18 @@ class Text
   {
     //    var_dump($s);
     $this->mode = $mode;
-    $this->tree = (new Parser())->parse($s, [
-      'startRule' => self::START_RULE_MAP[$mode],
-    ]);
+    try {
+      $this->tree = (new Parser())->parse($s, [
+        'startRule' => self::START_RULE_MAP[$mode],
+      ]);
+    } catch (SyntaxError $e) {
+      throw new ParseError(
+        'Unable to parse:' . $s . "\n\n" . $e->getMessage(),
+        0,
+        $e,
+      );
+    }
+
     //    var_dump($this->tree);
     if (!$this->tree instanceof Doc) {
       $this->tree = new Doc(
