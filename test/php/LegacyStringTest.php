@@ -43,9 +43,25 @@ class LegacyStringTest extends base
         "strtoupper(Hamle\Run::modelTypeTags(array('page'=>array()),array(),0,0)->hamleGet('code'))",
         '$(page)->code|strtoupper',
       ],
+      ["Hamle\Scope::get()->hamleGet('a')", '$a'],
     ];
   }
 
+  /**
+   * @dataProvider invalidComplexProvider
+   * @param string $input
+   * @throws \Seufert\Hamle\Exception\ParseError
+   */
+  public function testInvalidCompex(string $input): void
+  {
+    $this->expectException(\Seufert\Hamle\Exception\ParseError::class);
+    $ct = new Complex($input);
+  }
+
+  public function invalidComplexProvider()
+  {
+    return [['$(abc'], ['$blah|non(', ['{$a}']]];
+  }
   /**
    * @dataProvider compareProvider
    * @param string $expect
