@@ -43,9 +43,6 @@ class Javascript extends Filter
 
   static function filterText($s)
   {
-    return "/*<![CDATA[*/\n" .
-      /*preg_replace(HamlParser::MATCH_INTERPOLATION, '<?php echo \1; ?>', $text)*/
-      $s .
-      '/*]]>*/';
+    return "/*<![CDATA[*/\n" . $s . '/*]]>*/';
   }
 }
