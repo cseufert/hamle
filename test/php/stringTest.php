@@ -1,4 +1,5 @@
 <?php
+
 use Seufert\Hamle\Text;
 
 //chdir(__DIR__ . '/../..');
@@ -379,6 +380,48 @@ class stringTest extends base
       $php,
     );
   }
+
+  public function testSimpleQuery()
+  {
+    $hs = new Text('$(page:1)->title|iterSplit(\'-\')', Text::TOKEN_CONTROL);
+    $this->assertEquals(
+      "Seufert\Hamle\Text\Filter::iterSplit(Hamle\Run::modelTypeTags(array('page'=>array()),array(),1,0)->hamleGet('title'),'-')",
+      $hs->toPHP(),
+    );
+  }
+
+  public function invalidStringsProvider(): array
+  {
+    return [
+      ['{$a|iterSplit("a)'],
+      ["{\$a|iterSplit('a)"],
+      ['{$a->->b}'],
+      ['{$a'],
+      ['{$a|iterSplit("_{$b.a}")'],
+      ['{$[3.]->a}'],
+      ['{$(image.text$)->a}'],
+      ['{$( > !test)}'],
+      ['{$a|strtoupper|newlinebr|trim(a)}'],
+      ['{$a->b("c")'],
+      ['{$a|strtoupper(}'],
+    ];
+  }
+
+  /**
+   * @dataProvider invalidStringsProvider
+   * @param string $in
+   * @param int $mode
+   * @throws \Seufert\Hamle\Exception\ParseError
+   */
+  public function testParseErrors(
+    string $in,
+    int $mode = Text::TOKEN_HTML
+  ): void {
+    $this->expectException(\Seufert\Hamle\Exception\ParseError::class);
+    $hs = new Text($in, $mode);
+    var_dump($hs);
+  }
+
   public function testDollarUrlQuery()
   {
     $hs = new Text("{\$url|strtoupper('hash={\$[-2]->hash}')}");
