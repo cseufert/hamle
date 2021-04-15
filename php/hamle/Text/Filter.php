@@ -116,10 +116,6 @@ class Filter extends Text
   function toPHP()
   {
     return $this->toPHPpre() . $this->what->toPHPVar() . $this->toPHPpost();
-    // $o = [$this->what->toPHPVar()] ;
-    // foreach($this->vars as $v)
-    //   $o[] = $this->varToCode($v);
-    // return "{$this->filter}(" . implode(',',$o) . ")";
   }
 
   static function itersplit($v, $sep = ',')

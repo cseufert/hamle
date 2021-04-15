@@ -136,7 +136,6 @@ class Setup
    */
   public function debugLog($s)
   {
-    //var_dump($s);
   }
 
   /**

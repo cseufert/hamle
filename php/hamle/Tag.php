@@ -69,7 +69,6 @@ class Tag
    */
   function find($path)
   {
-    //var_dump($this->type, json_encode($path), $this->compare($path[0]));
     $list = [];
     if ($this->compare($path[0])) {
       if (count($path) == 1) {

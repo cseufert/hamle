@@ -44,7 +44,6 @@ class Complex extends Text
       $s = substr($s, 0, $pos);
     }
     $s = preg_split('/-[>!]/', $s);
-    // if(count($s) == 1) $s = explode("-!",$s[0]);
     if (!$s[0]) {
       throw new ParseError('Unable to parse Complex Expression');
     }

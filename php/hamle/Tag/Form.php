@@ -132,7 +132,5 @@ class Form extends Tag
   function renderEnTag()
   {
     return "<?php echo \$form->preEndTag(); unset(\$form); ?></form>";
-    //    array_pop(self::$sForm);
-    //    self::$sCount = count(self::$sForm);
   }
 }

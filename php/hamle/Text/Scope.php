@@ -37,7 +37,6 @@ class Scope extends SimpleVar
   function __construct($s)
   {
     $m = [];
-    //var_dump($s);
     if (!preg_match('/\$\[(-?[0-9]+|[a-zA-Z][a-zA-Z0-9]+)\]/', $s, $m)) {
       throw new ParseError("Unable to match scope ($s)");
     }

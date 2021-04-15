@@ -44,11 +44,6 @@ class Comparison extends Text
     }
   }
 
-  //  function __construct(String $p1, String $p2, $operator) {
-  //    $this->param1 = $p1;
-  //    $this->param2 = $p2;
-  //    $this->operator = $operator;
-  //  }
   function toPHP()
   {
     if (!$this->param2) {
@@ -81,9 +76,6 @@ class Comparison extends Text
         throw new Exception\Unimplemented(
           'OR/AND/XOR Unimplmented at this time',
         );
-      //        return "($p1) OR ($p2)";
-      //        return "($p1) AND ($p2)";
-      //        return "($p1) XOR ($p2)";
     }
     return '';
   }
