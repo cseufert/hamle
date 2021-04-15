@@ -1,25 +1,40 @@
 {
   "name": "cseufert/hamle",
-  "description": "A PHP Library to Pass HAMLE Files. HAMLE was inspired by HAML/Jade, however involves less typing, and does not allow code in a template, but does contain logic.",
+  "description": "A PHP template engine. HAMLE was inspired by HAML/Jade, however involves less typing, and does not allow php code in a template, but does have logic and function calls.",
   "type": "library",
-  "keywords":["template","templating","model","compiled","markup","forms","html","hamle","jade","haml"],
-  "homepage":"https://github.com/cseufert/hamle",
-  "license":"MIT",
-  "authors": [{
-    "name": "Chris Seufert",
-    "email": "chris@seufert.id.au",
-    "role": "Developer"
-  }],
+  "keywords": [
+    "template",
+    "templating",
+    "model",
+    "compiled",
+    "markup",
+    "forms",
+    "html",
+    "hamle",
+    "jade",
+    "haml"
+  ],
+  "homepage": "https://github.com/cseufert/hamle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Chris Seufert",
+      "email": "chris@seufert.id.au",
+      "role": "Developer"
+    }
+  ],
   "support": {
     "issues": "https://github.com/cseufert/hamle/issues",
     "source": "https://github.com/cseufert/hamle"
   },
   "require": {
-    "php": ">=7.0.0",
-    "psr/log": "~1.0"
+    "php": ">=7.4.0",
+    "psr/log": "~1.0",
+    "ext-mbstring": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "6.*"
+    "phpunit/phpunit": ">= 8.5",
+    "vimeo/psalm": "^4.7"
   },
   "autoload": {
     "psr-4": {

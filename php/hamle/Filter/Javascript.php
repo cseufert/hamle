@@ -29,18 +29,20 @@ use Seufert\Hamle\Filter;
 /**
  * HAMLE Javascript Fiter
  */
-class Javascript extends Filter {
-  static function stTag() {
+class Javascript extends Filter
+{
+  static function stTag()
+  {
     return "<script type=\"text/javascript\">";
   }
 
-  static function ndTag() {
-    return "</script>";
+  static function ndTag()
+  {
+    return '</script>';
   }
 
-  static function filterText($s) {
-    return "/*<![CDATA[*/\n" .
-    /*preg_replace(HamlParser::MATCH_INTERPOLATION, '<?php echo \1; ?>', $text)*/
-    $s . "/*]]>*/";
+  static function filterText($s)
+  {
+    return "/*<![CDATA[*/\n" . $s . '/*]]>*/';
   }
 }

@@ -30,40 +30,43 @@ use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
-class Scope extends SimpleVar {
+class Scope extends SimpleVar
+{
   protected $scope = 0;
 
-  function __construct($s) {
+  function __construct($s)
+  {
     $m = [];
-    //var_dump($s);
-    if(!preg_match('/\$\[(-?[0-9]+|[a-zA-Z][a-zA-Z0-9]+)\]/', $s, $m)) {
+    if (!preg_match('/\$\[(-?[0-9]+|[a-zA-Z][a-zA-Z0-9]+)\]/', $s, $m)) {
       throw new ParseError("Unable to match scope ($s)");
     }
     $this->scope = $m[1];
   }
 
-  function toPHP() {
-    if(is_numeric($this->scope)) {
-      return "Hamle\\Scope::get(" . Text::varToCode($this->scope) . ")";
+  function toPHP()
+  {
+    if (is_numeric($this->scope)) {
+      return 'Hamle\\Scope::get(' . Text::varToCode($this->scope) . ')';
     } else {
-      return "Hamle\\Scope::getName(" . Text::varToCode($this->scope) . ")";
+      return 'Hamle\\Scope::getName(' . Text::varToCode($this->scope) . ')';
     }
   }
 
-  function toHTML($escape = false) {
-    throw new ParseError("Unable to use Scope operator in HTML Code");
+  function toHTML($escape = false)
+  {
+    throw new ParseError('Unable to use Scope operator in HTML Code');
   }
 
-  function setValue($value) {
+  function setValue($value)
+  {
     throw new \Exception('Unsupported');
   }
 
-
-  function getOrCreateModel(Model $parent = null) {
-    if(is_numeric($this->scope)) {
+  function getOrCreateModel(Model $parent = null)
+  {
+    if (is_numeric($this->scope)) {
       return \Seufert\Hamle\Scope::get($this->scope);
     }
     return \Seufert\Hamle\Scope::getName($this->scope);
   }
-
 }

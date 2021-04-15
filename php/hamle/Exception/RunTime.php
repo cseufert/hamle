@@ -30,4 +30,6 @@ use Seufert\Hamle\Exception;
 /**
  * Class hamleEx_RunTime - Runtime Exceptions
  */
-class RunTime extends Exception { }
+class RunTime extends Exception
+{
+}

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit colors="true" verbose="true">
-    <testsuite name="HAMLE">
-        <directory>test/php</directory>
-        <exclude>node_modules</exclude>
-        <exclude>vendor</exclude>
-    </testsuite>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">php</directory>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="coverage.xml" />
-    </logging>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" verbose="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">php</directory>
+    </include>
+    <report>
+      <clover outputFile="coverage.xml"/>
+    </report>
+  </coverage>
+  <testsuite name="HAMLE">
+    <directory>test/php</directory>
+    <exclude>node_modules</exclude>
+    <exclude>vendor</exclude>
+  </testsuite>
+  <logging/>
 </phpunit>

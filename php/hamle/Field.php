@@ -48,7 +48,8 @@ use Seufert\Hamle\Text\FormField;
  * @method $this disabled(boolean $disabled) Set field disabled
  * @property bool $readonly
  */
-class Field {
+class Field
+{
   protected $opt;
 
   protected $name;
@@ -57,24 +58,38 @@ class Field {
 
   protected $valid = true;
 
-  function __construct($name, $options = array()) {
+  function __construct($name, $options = [])
+  {
     $this->name = $name;
-    $this->hint = "";
-    $this->opt = $options + array("label" => "$name", "regex" => "", "required" => false,
-            "default" => "", "error" => "$name is Required", "help" => "", "test" => null,
-            "form" => "noForm", "readonly" => false, 'hinttext' => '', "disabled" => false);
+    $this->hint = '';
+    $this->opt = $options + [
+      'label' => "$name",
+      'regex' => '',
+      'required' => false,
+      'default' => '',
+      'error' => "$name is Required",
+      'help' => '',
+      'test' => null,
+      'form' => 'noForm',
+      'readonly' => false,
+      'hinttext' => '',
+      'disabled' => false,
+    ];
   }
 
-  function __call($name, $valarray) {
-    if (count($valarray) < 1) return $this->__get($name);
+  function __call($name, $valarray)
+  {
+    if (count($valarray) < 1) {
+      return $this->__get($name);
+    }
     $val = count($valarray) == 1 ? current($valarray) : $valarray;
     switch ($name) {
-      case "name":
+      case 'name':
         throw new Exception("Unable to change $name after object is created");
-      case "valid":
+      case 'valid':
         return $this->valid;
-      case "val":
-      case "value":
+      case 'val':
+      case 'value':
         $this->setValue = $val;
         break;
       default:
@@ -83,101 +98,130 @@ class Field {
     return $this;
   }
 
-  function __get($name) {
+  function __get($name)
+  {
     switch ($name) {
-      case "name":
+      case 'name':
         return $this->name;
-      case "valid":
+      case 'valid':
         return $this->valid;
-      case "val":
-      case "value":
+      case 'val':
+      case 'value':
         return $this->getValue();
       default:
         return isset($this->opt[$name]) ? $this->opt[$name] : null;
     }
   }
 
-  function __set($name, $val) {
+  function __set($name, $val)
+  {
     switch ($name) {
-      case "name":
-      case "valid":
+      case 'name':
+      case 'valid':
         throw new Exception("Unable to change $name after object is created");
-      case "val":
-      case "value":
+      case 'val':
+      case 'value':
         return $this->setValue = $val;
       default:
         return isset($this->opt[$name]) ? $this->opt[$name] : null;
     }
   }
 
-  function getValue() {
-    if (!is_null($this->setValue)) return $this->setValue;
-    if (isset($_REQUEST[$this->form . "_" . $this->name])) {
-      return $_REQUEST[$this->form . "_" . $this->name];
+  function getValue()
+  {
+    if (!is_null($this->setValue)) {
+      return $this->setValue;
+    }
+    if (isset($_REQUEST[$this->form . '_' . $this->name])) {
+      return $_REQUEST[$this->form . '_' . $this->name];
     }
     return $this->opt['default'];
   }
 
-  function getInputAttStatic(&$atts, &$type, &$content) {
-    $atts['id'] = $atts['name'] = $this->form . "_" . $this->name;
-    $atts['type'] = "text";
-    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
+  function getInputAttStatic(&$atts, &$type, &$content)
+  {
+    $atts['id'] = $atts['name'] = $this->form . '_' . $this->name;
+    $atts['type'] = 'text';
+    $atts['class'][] = str_replace(
+      ['Seufert\\', '\\'],
+      ['', '_'],
+      get_class($this),
+    );
   }
 
-  function getInputAttDynamic(&$atts, &$type, &$content) {
-    $type = "input";
+  function getInputAttDynamic(&$atts, &$type, &$content)
+  {
+    $type = 'input';
     $atts['value'] = new FormField($this->name);
     if (!$this->valid) {
-      $atts['class'][] = "hamleFormError";
+      $atts['class'][] = 'hamleFormError';
     }
-    if ($this->opt["disabled"])
-      $atts['disabled'] = "disabled";
-    if ($this->opt['required'])
-      $atts['required'] = "required";
-    if ($this->opt['help'])
+    if ($this->opt['disabled']) {
+      $atts['disabled'] = 'disabled';
+    }
+    if ($this->opt['required']) {
+      $atts['required'] = 'required';
+    }
+    if ($this->opt['help']) {
       $atts['title'] = $this->opt['help'];
-  }
-
-  function getLabelAttStatic(&$atts, &$type, &$content) {
-    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
-    $atts["for"] = $this->form . "_" . $this->name;
-    $content = array($this->opt['label']);
-  }
-
-  function getLabelAttDynamic(&$atts, &$type, &$content) {
-  }
-
-  function getHintAttStatic(&$atts, &$type, &$content) {
-    $atts['class'][] = str_replace(['Seufert\\','\\'],['','_'],get_class($this));
-    $atts['class'][] = "hamleFormHint";
-  }
-
-  function getHintAttDynamic(&$atts, &$type, &$content) {
-    $type = "div";
-    if (!$this->valid) {
-      $content = array($this->opt['error']);
-      $atts['class'][] = "hamleFormError";
     }
   }
 
-  function getDynamicAtt($base, &$atts, &$type, &$content) {
-    if ($base == "input") {
+  function getLabelAttStatic(&$atts, &$type, &$content)
+  {
+    $atts['class'][] = str_replace(
+      ['Seufert\\', '\\'],
+      ['', '_'],
+      get_class($this),
+    );
+    $atts['for'] = $this->form . '_' . $this->name;
+    $content = [$this->opt['label']];
+  }
+
+  function getLabelAttDynamic(&$atts, &$type, &$content)
+  {
+  }
+
+  function getHintAttStatic(&$atts, &$type, &$content)
+  {
+    $atts['class'][] = str_replace(
+      ['Seufert\\', '\\'],
+      ['', '_'],
+      get_class($this),
+    );
+    $atts['class'][] = 'hamleFormHint';
+  }
+
+  function getHintAttDynamic(&$atts, &$type, &$content)
+  {
+    $type = 'div';
+    if (!$this->valid) {
+      $content = [$this->opt['error']];
+      $atts['class'][] = 'hamleFormError';
+    }
+  }
+
+  function getDynamicAtt($base, &$atts, &$type, &$content)
+  {
+    if ($base == 'input') {
       $this->getInputAttDynamic($atts, $type, $content);
-    } elseif ($base == "hint") {
+    } elseif ($base == 'hint') {
       $this->getHintAttDynamic($atts, $type, $content);
-    } elseif ($base == "label") {
+    } elseif ($base == 'label') {
       $this->getLabelAttDynamic($atts, $type, $contnet);
     }
   }
 
-  function doProcess($submit) {
+  function doProcess($submit)
+  {
     if ($submit) {
       $value = $this->getValue();
-      if ($this->opt['required'])
+      if ($this->opt['required']) {
         $this->valid = $this->valid && strlen($value);
-      if ($this->opt['regex'])
+      }
+      if ($this->opt['regex']) {
         $this->valid = $this->valid && preg_match($this->opt['regex'], $value);
+      }
     }
   }
-
 }

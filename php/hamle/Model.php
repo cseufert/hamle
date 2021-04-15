@@ -33,7 +33,8 @@ namespace Seufert\Hamle {
    *
    * @author Chris
    */
-  interface Model extends Iterator {
+  interface Model extends Iterator
+  {
     /**
      * hamleGet Must be implemented to get a variable using key
      *
@@ -53,7 +54,13 @@ namespace Seufert\Hamle {
      * @param int $grouptype Type of group
      * @return Model Return object must implmement hamleModel interface
      */
-    function hamleRel($rel, $typeTags, $sort = [],
-                      $limit = 0, $offset = 0, $grouptype = 1);
+    function hamleRel(
+      $rel,
+      $typeTags,
+      $sort = [],
+      $limit = 0,
+      $offset = 0,
+      $grouptype = 1
+    );
   }
 }

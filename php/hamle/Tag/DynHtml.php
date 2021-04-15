@@ -28,12 +28,14 @@ namespace Seufert\Hamle\Tag;
 use Seufert\Hamle as H;
 use Seufert\Hamle\Exception\ParseError;
 
-class DynHtml extends Html {
+class DynHtml extends Html
+{
   static $var = 0;
   protected $varname;
   protected $baseType;
 
-  function __construct($tag, $class, $param, $id, $ref) {
+  function __construct($tag, $class, $param, $id, $ref)
+  {
     parent::__construct($tag, $class, $param, $id);
     $this->source[] = $ref;
     $this->baseType = $tag;
@@ -41,37 +43,65 @@ class DynHtml extends Html {
     $this->varname = "\$dynhtml" . self::$var;
   }
 
-  function render($indent = 0, $minify = false) {
-    $data = H\Text::varToCode(array("base" => $this->baseType, "type" => $this->type, "opt" => $this->opt, "source" => $this->source, "content" => $this->content));
-    $out = "<?php " . $this->varname . "=$data; echo Hamle\\Tag\\DynHtml::toStTag(" . $this->varname . ",\$form).";
+  function render($indent = 0, $minify = false)
+  {
+    $data = H\Text::varToCode([
+      'base' => $this->baseType,
+      'type' => $this->type,
+      'opt' => $this->opt,
+      'source' => $this->source,
+      'content' => $this->content,
+    ]);
+    $out =
+      '<?php ' .
+      $this->varname .
+      "=$data; echo Hamle\\Tag\\DynHtml::toStTag(" .
+      $this->varname .
+      ",\$form).";
     $out .= "implode(\"\\n\"," . $this->varname . "['content']).";
-    $out .= "Hamle\\Tag\\DynHtml::toEnTag(" . $this->varname . ",\$form)?>".($minify ? '' : "\n");
+    $out .=
+      'Hamle\\Tag\\DynHtml::toEnTag(' .
+      $this->varname .
+      ",\$form)?>" .
+      ($minify ? '' : "\n");
     return $out;
   }
 
-  function addChild(H\Tag $tag, $mode = 'append') {
+  function addChild(H\Tag $tag, $mode = 'append')
+  {
     throw new ParseError('Unable to display content within a Dynamic Tag');
   }
 
-  static function toStTag(&$d, H\Form $form) {
+  static function toStTag(&$d, H\Form $form)
+  {
     foreach ($d['source'] as $source) {
-      $form->getField($source)->getDynamicAtt($d['base'], $d['opt'], $d['type'], $d['content']);
+      $form
+        ->getField($source)
+        ->getDynamicAtt($d['base'], $d['opt'], $d['type'], $d['content']);
     }
-    $out = "<" . $d['type'] . " ";
+    $out = '<' . $d['type'] . ' ';
     foreach ($d['opt'] as $k => $v) {
       if (is_array($v)) {
-        foreach ($v as $k2 => $v2)
-          if ($v[$k2] instanceof Text) $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
-        $v = implode(" ", $v);
+        foreach ($v as $k2 => $v2) {
+          if ($v[$k2] instanceof Text) {
+            $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
+          }
+        }
+        $v = implode(' ', $v);
       }
-      if ($v instanceOf H\Text) $v = eval('return ' . $v->toPHP() . ';');
+      if ($v instanceof H\Text) {
+        $v = eval('return ' . $v->toPHP() . ';');
+      }
       $out .= $k . "=\"" . htmlspecialchars($v) . "\" ";
     }
-    $out .= in_array($d['type'], self::$selfCloseTags) ? "/>" : ">";
+    $out .= in_array($d['type'], self::$selfCloseTags) ? '/>' : '>';
     return $out;
   }
 
-  static function toEnTag($d, $form) {
-    return in_array($d['type'], self::$selfCloseTags) ? '' : "</" . $d['type'] . ">";
+  static function toEnTag($d, $form)
+  {
+    return in_array($d['type'], self::$selfCloseTags)
+      ? ''
+      : '</' . $d['type'] . '>';
   }
 }

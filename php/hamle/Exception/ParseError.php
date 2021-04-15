@@ -27,13 +27,17 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle;
+use Throwable;
 
-class ParseError extends Hamle\Exception {
-
-  function __construct($message = "", $code = 0, $previous = NULL) {
+class ParseError extends Hamle\Exception
+{
+  function __construct(
+    string $message = '',
+    int $code = 0,
+    Throwable $previous = null
+  ) {
     ///@todo  Include Line number & file name within parse error exceptions
-    $message .= ", on line " . Hamle\Hamle::getLineNo() . " in file ?.hamle";
+    $message .= ', on line ' . Hamle\Hamle::getLineNo() . ' in file ?.hamle';
     parent::__construct($message, $code, $previous);
   }
-
 }

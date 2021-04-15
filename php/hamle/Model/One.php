@@ -28,18 +28,25 @@ namespace Seufert\Hamle\Model;
 use Seufert\Hamle\Exception\NoKey;
 use Seufert\Hamle\Model;
 
-class One implements Model {
-
+class One implements Model
+{
   use OneTrait;
 
   /** @inheritdoc */
-  function hamleGet($key) {
+  function hamleGet($key)
+  {
     throw new NoKey("Cant find Key ($key)");
   }
 
   /** @inheritdoc */
-  function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
-                    $offset = 0, $grouptype = 1) {
+  function hamleRel(
+    $rel,
+    $typeTags,
+    $sort = [],
+    $limit = 0,
+    $offset = 0,
+    $grouptype = 1
+  ) {
     return new Zero();
   }
 }

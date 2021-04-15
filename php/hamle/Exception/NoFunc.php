@@ -27,4 +27,6 @@ namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle\Exception;
 
-class NoFunc extends Exception { }
+class NoFunc extends Exception
+{
+}

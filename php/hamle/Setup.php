@@ -26,25 +26,29 @@ THE SOFTWARE.
 namespace Seufert\Hamle;
 /**
  * Basic HAMLE Setup Class
- * This class should be extended to override the Model Methods, 
+ * This class should be extended to override the Model Methods,
  * to use your model
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Setup {
+class Setup
+{
   public $minify = true;
 
   /**
    * Returns the full file path to the cache file
-   * 
+   *
    * @param string $f Filename of cache file
    * @return string Directory to store cache in
    */
-  public function cachePath($f) {
+  public function cachePath($f)
+  {
     $s = DIRECTORY_SEPARATOR;
-    $dir = implode($s,[__DIR__,"..","..","cache",""]);
-    if(!is_dir($dir)) mkdir($dir);
-    return $dir.$f;
+    $dir = implode($s, [__DIR__, '..', '..', 'cache', '']);
+    if (!is_dir($dir)) {
+      mkdir($dir);
+    }
+    return $dir . $f;
   }
 
   /**
@@ -56,7 +60,10 @@ class Setup {
    * @param int $offset Results Offset
    * @return Model Instance of model class that implements hamleModel
    */
-  public function getModelDefault($id, $sort = [], $limit = 0, $offset = 0) { return new Model\Zero(); }
+  public function getModelDefault($id, $sort = [], $limit = 0, $offset = 0)
+  {
+    return new Model\Zero();
+  }
 
   /**
    * Open a specific model type with id
@@ -68,9 +75,11 @@ class Setup {
    * @return Model
    * @throws Exception\RunTime
    */
-  public function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0) {
-    if(count($typeId) > 1)
-      throw new Exception\RunTime("Unable to open more than one ID at a time");
+  public function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0)
+  {
+    if (count($typeId) > 1) {
+      throw new Exception\RunTime('Unable to open more than one ID at a time');
+    }
     return new Model\Zero();
   }
 
@@ -83,42 +92,50 @@ class Setup {
    * @param int $offset Results Limit
    * @return Model Instance of Iterable model class
    */
-  public function getModelTypeTags($typeTags, $sort = [], $limit = 0, $offset = 0) {
+  public function getModelTypeTags(
+    $typeTags,
+    $sort = [],
+    $limit = 0,
+    $offset = 0
+  ) {
     return new Model\Zero();
   }
   /**
    * Give you the ability to adjust paths to template files, this includes files
    * loaded using '|include'.
-   * 
+   *
    * @param string $f File Name and Path requested
    * @return string File Path to actual template file
    */
-  public function templatePath($f) {
+  public function templatePath($f)
+  {
     return $f;
   }
   /**
    * Returns an array of snippets paths for application to the current template
    * These snippets will be applied to templates |included as well as the
    * initial template.
-   * 
+   *
    * @return array Array of file names
    */
-  public function snippetFiles() {
-    return array();
+  public function snippetFiles()
+  {
+    return [];
   }
 
   /**
    * @return Parse\Filter[] List of HAMLE Parse Filters
    */
-  public function getFilters() {
-    return array();
+  public function getFilters()
+  {
+    return [];
   }
   /**
    * Function to write debug logs out
    * @param $s string Debug Message String
    */
-  public function debugLog($s) {
-    //var_dump($s);
+  public function debugLog($s)
+  {
   }
 
   /**
@@ -127,16 +144,17 @@ class Setup {
    * @param string $fragment Name of Fragment
    * @throws Exception
    */
-  public function getFragment(Hamle $hamle, $fragment):string {
-    throw new Exception("Unable to Include Fragment $fragment");
+  public function getFragment(Hamle $hamle, $fragment): string
+  {
+    throw new Exception("Unable to Include Fragment ($fragment)");
   }
 
   /**
    * Return if output minifcation should be enabled
    * @return bool
    */
-  public function getMinify() {
+  public function getMinify()
+  {
     return $this->minify;
   }
-
 }

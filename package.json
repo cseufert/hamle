@@ -1,0 +1,21 @@
+{
+  "name": "hamle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/cseufert/hamle",
+  "author": "Chris Seufert <chris@modd.com.au>",
+  "license": "MIT",
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.16.2",
+    "pegjs": "^0.10.0",
+    "phpegjs": "^1.0.0-beta7",
+    "prettier": "^2.2.1"
+  },
+  "prettier": {
+    "bracketSpacing": false,
+    "phpVersion": "7.4",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  }
+}

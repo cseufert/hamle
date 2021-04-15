@@ -30,27 +30,38 @@ use SassParser;
 use SassRenderer;
 use stdConf;
 
-class Sass extends Css {
-  static function filterText($s) {
+class Sass extends Css
+{
+  static function filterText($s)
+  {
     $as = explode("\n", $s);
     $indent = -1;
-    foreach ($as as $line)
+    foreach ($as as $line) {
       if (preg_match('/^(\s+).*$/', $line, $m)) {
         $lnInd = strlen($m[1]);
-        if ($indent < 0) $indent = $lnInd;
+        if ($indent < 0) {
+          $indent = $lnInd;
+        }
         $indent = min($indent, $lnInd);
       }
-    foreach ($as as $k => $v)
+    }
+    foreach ($as as $k => $v) {
       $as[$k] = substr($v, $indent);
+    }
     $s = implode("\n", $as);
 
-    require_once ME_DIR . "/lib/phpsass/SassParser.php";
-    $sp = new SassParser(array("cache" => FALSE,
-        "style" => stdConf::get("me.developer") ? SassRenderer::STYLE_EXPANDED : SassRenderer::STYLE_COMPRESSED,
-        "syntax" => SassFile::SASS, 'debug' => TRUE));
+    require_once ME_DIR . '/lib/phpsass/SassParser.php';
+    $sp = new SassParser([
+      'cache' => false,
+      'style' => stdConf::get('me.developer')
+        ? SassRenderer::STYLE_EXPANDED
+        : SassRenderer::STYLE_COMPRESSED,
+      'syntax' => SassFile::SASS,
+      'debug' => true,
+    ]);
     $tree = $sp->toTree($s);
     $out = $tree->render();
-    $pad = str_pad("", $indent, " ");
+    $pad = str_pad('', $indent, ' ');
     return $pad . str_replace("\n", "\n$pad", trim($out));
   }
 }
