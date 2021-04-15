@@ -86,7 +86,7 @@ class Snippet extends Hamle\Tag
 
   function apply(Hamle\Tag $rootTag)
   {
-    if ($this->type == 'append' or $this->type == 'prepend') {
+    if ($this->type == 'append' || $this->type == 'prepend') {
       $matchTags = $rootTag->find($this->path);
       foreach ($matchTags as $tag) {
         foreach ($this->tags as $t) {
