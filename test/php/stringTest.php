@@ -370,6 +370,15 @@ class stringTest extends base
       $php,
     );
   }
+  public function testDollarNewParam()
+  {
+    $hs = new Text('{$desc|iterSplit("\n","\'")}', Text::TOKEN_CONTROL);
+    $php = $hs->toPHP();
+    $this->assertEquals(
+      "Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('desc'),\"\\n\",'\\\'')",
+      $php,
+    );
+  }
   public function testDollarUrlQuery()
   {
     $hs = new Text("{\$url|strtoupper('hash={\$[-2]->hash}')}");
@@ -716,5 +725,24 @@ class stringTest extends base
       $php,
     );
     Text\Filter::$filterResolver = $oldFR;
+  }
+
+  /**
+   * @dataProvider varDataProvider
+   */
+  public function testVarToCode(string $var): void
+  {
+    $this->assertEquals($var, eval('return ' . Text::varToCode($var) . ';'));
+  }
+
+  public function varDataProvider()
+  {
+    return [
+      'newline' => ["\n"],
+      'multiline' => ["Hi\nChris"],
+      'plain text' => ['My Data'],
+      'string with tab' => ["\tText"],
+      'string with blackslash' => ['\\'],
+    ];
   }
 }

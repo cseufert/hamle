@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../php/autoload.php";
+require_once __DIR__ . '/../../php/autoload.php';
 
 use Seufert\Hamle\Field\Button;
 use Seufert\Hamle\Field\Memo;
@@ -15,32 +15,32 @@ class base extends \PHPUnit\Framework\TestCase
    */
   protected $hamle;
 
-  public function __construct()
+  public function setUp(): void
   {
-    parent::__construct();
     $this->hamle = new Hamle(
       new WrapArray([
         [
-          "url" => "https://www.secure.com",
-          "title" => "This is My TITLE",
-          "class" => "colored",
-          "empty" => "",
-          "nottrue" => false,
-          "csv" => "a,b,c",
-          "scsv" => "a;b;c;",
-          "unescaped" => "Hi & >",
-          "istrue" => true,
+          'url' => 'https://www.secure.com',
+          'title' => 'This is My TITLE',
+          'class' => 'colored',
+          'empty' => '',
+          'nottrue' => false,
+          'csv' => 'a,b,c',
+          'scsv' => 'a;b;c;',
+          'unescaped' => 'Hi & >',
+          'istrue' => true,
         ],
       ]),
-      new baseTestSetup()
+      new baseTestSetup(),
     );
+    parent::setUp();
   }
 
   public function compareXmlStrings($expected, $actual)
   {
     $this->assertXmlStringEqualsXmlString(
-      "<root>" . $expected . "</root>",
-      "<root>" . $actual . "</root>"
+      '<root>' . $expected . '</root>',
+      '<root>' . $actual . '</root>',
     );
     return;
     $docExpected = new DOMDocument();
@@ -48,12 +48,12 @@ class base extends \PHPUnit\Framework\TestCase
     try {
       if (!$docExpected->loadXML($expected)) {
         $this->fail(
-          "Couldn't load expected xml into DOMDocument. The xml was: $actual"
+          "Couldn't load expected xml into DOMDocument. The xml was: $actual",
         );
       }
     } catch (Exception $ex) {
       $this->fail(
-        "Couldn't load expected xml into DOMDocument. The xml was: $actual"
+        "Couldn't load expected xml into DOMDocument. The xml was: $actual",
       );
     }
 
@@ -62,12 +62,12 @@ class base extends \PHPUnit\Framework\TestCase
     try {
       if (!$docActual->loadXML($actual)) {
         $this->fail(
-          "Couldn't load actual xml into DOMDocument. The xml was: $actual"
+          "Couldn't load actual xml into DOMDocument. The xml was: $actual",
         );
       }
     } catch (Exception $ex) {
       $this->fail(
-        "Couldn't load actual xml into DOMDocument. The xml was: $actual"
+        "Couldn't load actual xml into DOMDocument. The xml was: $actual",
       );
     }
 
@@ -81,8 +81,8 @@ class base extends \PHPUnit\Framework\TestCase
   public static function tearDownAfterClass(): void
   {
     parent::tearDownAfterClass();
-    $cacheDir = __DIR__ . "/../../cache/";
-    foreach (glob($cacheDir . "*") as $cacheFile) {
+    $cacheDir = __DIR__ . '/../../cache/';
+    foreach (glob($cacheDir . '*') as $cacheFile) {
       unlink($cacheFile);
     }
   }
@@ -93,34 +93,34 @@ class baseTestSetup extends H\Setup
   function getModelTypeTags(
     $typeTags,
     $sortDir = 0,
-    $sortField = "",
+    $sortField = '',
     $limit = 0,
     $offset = 0
   ) {
-    if (in_array("basetest", array_keys($typeTags))) {
+    if (in_array('basetest', array_keys($typeTags))) {
       return new WrapArray([
-        ["url" => "http://www.test.com", "title" => "Test.com"],
-        ["url" => "http://www.test2.com", "title" => "Test2.com"],
-        ["url" => "http://www.test3.com", "title" => "Test3.com"],
+        ['url' => 'http://www.test.com', 'title' => 'Test.com'],
+        ['url' => 'http://www.test2.com', 'title' => 'Test2.com'],
+        ['url' => 'http://www.test3.com', 'title' => 'Test3.com'],
       ]);
     }
-    if (in_array("formtest", array_keys($typeTags))) {
+    if (in_array('formtest', array_keys($typeTags))) {
       return new WrapArray([
-        ["title" => "The Title", "testform" => new formTestForm()],
+        ['title' => 'The Title', 'testform' => new formTestForm()],
       ]);
     }
     return parent::getModelTypeTags(
       $typeTags,
       $sortDir = 0,
-      $sortField = "",
+      $sortField = '',
       $limit = 0,
-      $offset = 0
+      $offset = 0,
     );
   }
 
   function templatePath($f)
   {
-    return __DIR__ . "/" . $f;
+    return __DIR__ . '/' . $f;
   }
 
   public function getFragment(Hamle $hamle, $fragment): string
@@ -134,11 +134,11 @@ class formTestForm extends H\Form
   function setup()
   {
     $this->_fields = [
-      (new Field("title"))->required(true),
-      (new Field("message"))->default("Message goes here"),
-      (new Field("string"))->default("Tricky String '\""),
-      (new Memo("memo"))->default("Some <Funky> Text\"'"),
-      new Button("save"),
+      (new Field('title'))->required(true),
+      (new Field('message'))->default('Message goes here'),
+      (new Field('string'))->default("Tricky String '\""),
+      (new Memo('memo'))->default("Some <Funky> Text\"'"),
+      new Button('save'),
     ];
   }
 }

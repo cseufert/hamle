@@ -1,26 +1,27 @@
 <?php
 
-require_once "base.php";
+require_once 'base.php';
 
 class fitlerTest extends base
 {
-  protected function setUp(): void
+  public function setUp(): void
   {
+    parent::setUp();
     $this->hamle->setup->minify = false;
   }
 
   public function testStyle()
   {
     $hamle =
-      "html" .
+      'html' .
       PHP_EOL .
-      "  head" .
+      '  head' .
       PHP_EOL .
-      "    :css" .
+      '    :css' .
       PHP_EOL .
-      "      div#id.class { color: red; }" .
+      '      div#id.class { color: red; }' .
       PHP_EOL .
-      "      div#id2.class { padding: 5px; }" .
+      '      div#id2.class { padding: 5px; }' .
       PHP_EOL;
     $html = '<html>
   <head>
@@ -40,13 +41,13 @@ class fitlerTest extends base
   {
     $this->hamle->setup->minify = false;
     $hamle =
-      "html" .
+      'html' .
       PHP_EOL .
-      "  head" .
+      '  head' .
       PHP_EOL .
       "    title \$title" .
       PHP_EOL .
-      "    :javascript" .
+      '    :javascript' .
       PHP_EOL .
       '      $(document).ready(function() {' .
       PHP_EOL .
@@ -56,9 +57,9 @@ class fitlerTest extends base
       PHP_EOL .
       '        console.log("{$title}");' .
       PHP_EOL .
-      "      });" .
+      '      });' .
       PHP_EOL .
-      "  body";
+      '  body';
     $html =
       "<html>\n" .
       "  <head>\n" .
@@ -75,7 +76,7 @@ class fitlerTest extends base
       "/*]]>*/    </script>\n" .
       "  </head>\n" .
       "  <body></body>\n" .
-      "</html>";
+      '</html>';
 
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
@@ -86,9 +87,9 @@ class fitlerTest extends base
   public function testJavascriptVars()
   {
     $hamle =
-      "head" .
+      'head' .
       PHP_EOL .
-      "  :javascript" .
+      '  :javascript' .
       PHP_EOL .
       '    $(document).ready(function() {' .
       PHP_EOL .
@@ -96,19 +97,19 @@ class fitlerTest extends base
       PHP_EOL .
       "      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');" .
       PHP_EOL .
-      "    });" .
+      '    });' .
       PHP_EOL;
     $html = <<<HTML
-<head>
-  <script type="text/javascript">
-/*<![CDATA[*/
-    $(document).ready(function() {
-      console.log("This is My TITLE");
-      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');
-    });
-/*]]>*/  </script>
-</head>
-HTML;
+    <head>
+      <script type="text/javascript">
+    /*<![CDATA[*/
+        $(document).ready(function() {
+          console.log("This is My TITLE");
+          var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');
+        });
+    /*]]>*/  </script>
+    </head>
+    HTML;
     $this->hamle->string($hamle);
     $out = $this->hamle->output();
     $this->compareXmlStrings($html, $out);

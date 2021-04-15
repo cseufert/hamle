@@ -401,7 +401,18 @@ class Text
     if ($var instanceof Text) {
       return $var->toPHP();
     }
-    return "'" . str_replace(['$', "'"], ['$', "\\'"], $var) . "'";
+    if (strpos($var, "\n") !== false) {
+      return '"' .
+        str_replace(
+          ['$', '"', '\\', "\n"],
+          ['\$', '\\"', '\\\\', '\\n'],
+          $var,
+        ) .
+        '"';
+    }
+    return "'" .
+      str_replace(['$', "'", '\\'], ['$', "\\'", '\\\\'], $var) .
+      "'";
   }
 
   /**

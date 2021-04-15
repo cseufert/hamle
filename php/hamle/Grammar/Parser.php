@@ -355,7 +355,7 @@ class Parser {
     private function peg_f45($p, $s) { return $p.join('', $s); }
     private function peg_f46($s) { return join('', $s); }
     private function peg_f47($name) { return join('',$name); }
-    private function peg_f48($char_) { return str_replace(['n', 'r', 't'], ['\\n','\\r','\\t'], $char_); }
+    private function peg_f48($char_) { return str_replace(['f', 'n', 'r', 't'], ["\f","\n","\r","\t"], $char_); }
 
     private function peg_parseHtmlInput() {
 
@@ -3381,8 +3381,8 @@ class Parser {
     $this->peg_c63 = array( "type" => "class", "value" => "[{]", "description" => "[{]" );
     $this->peg_c64 = "/^[\\n\\r\\x{2028}\\x{2029}]/";
     $this->peg_c65 = array( "type" => "class", "value" => "[\n\r\x{2028}\x{2029}]", "description" => "[\n\r\x{2028}\x{2029}]" );
-    $this->peg_c66 = "/^['\"\\\\bfnrtv]/";
-    $this->peg_c67 = array( "type" => "class", "value" => "['\"\\bfnrtv]", "description" => "['\"\\bfnrtv]" );
+    $this->peg_c66 = "/^['\"\\\\fnrt]/";
+    $this->peg_c67 = array( "type" => "class", "value" => "['\"\\fnrt]", "description" => "['\"\\fnrt]" );
 
     $peg_startRuleFunctions = array( 'HtmlInput' => array($this, "peg_parseHtmlInput"), 'CodeInput' => array($this, "peg_parseCodeInput"), 'ControlInput' => array($this, "peg_parseControlInput") );
     $peg_startRuleFunction  = array($this, "peg_parseHtmlInput");

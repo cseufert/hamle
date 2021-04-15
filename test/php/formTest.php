@@ -1,48 +1,49 @@
 <?php
 
-require_once "base.php";
+require_once 'base.php';
 
 class formTest extends base
 {
-  protected function setUp(): void
+  public function setUp(): void
   {
+    parent::setUp();
     $this->hamle->setup->minify = false;
   }
 
   public function testFormBasic1()
   {
     $hamle =
-      "html" .
+      'html' .
       PHP_EOL .
-      "  body" .
+      '  body' .
       PHP_EOL .
       "    |with $(formtest)" .
       PHP_EOL .
       '      |form formTestForm $testform' .
       PHP_EOL .
-      "        div.ftitle" .
+      '        div.ftitle' .
       PHP_EOL .
-      "          label!title" .
+      '          label!title' .
       PHP_EOL .
-      "          input!title[tabindex=1]" .
+      '          input!title[tabindex=1]' .
       PHP_EOL .
-      "        div.fmessage" .
+      '        div.fmessage' .
       PHP_EOL .
-      "          label!message" .
+      '          label!message' .
       PHP_EOL .
-      "          input!message[tabindex=2]" .
+      '          input!message[tabindex=2]' .
       PHP_EOL .
-      "        div.fstring" .
+      '        div.fstring' .
       PHP_EOL .
-      "          label!string" .
+      '          label!string' .
       PHP_EOL .
-      "          input!string[tabindex=3]" .
+      '          input!string[tabindex=3]' .
       PHP_EOL .
-      "        div.fsave" .
+      '        div.fsave' .
       PHP_EOL .
-      "          label!save[style=display:none;]" .
+      '          label!save[style=display:none;]' .
       PHP_EOL .
-      "          input!save[tabindex=4]" .
+      '          input!save[tabindex=4]' .
       PHP_EOL;
     $html = '
 <html>
@@ -80,19 +81,19 @@ class formTest extends base
   public function testFormBasic2()
   {
     $hamle =
-      "html" .
+      'html' .
       PHP_EOL .
-      "  body" .
+      '  body' .
       PHP_EOL .
       '    |with $(formtest)' .
       PHP_EOL .
       '      |form formTestForm $testform' .
       PHP_EOL .
-      "        div.fmessage" .
+      '        div.fmessage' .
       PHP_EOL .
-      "          label!message" .
+      '          label!message' .
       PHP_EOL .
-      "          input!message[tabindex=2]" .
+      '          input!message[tabindex=2]' .
       PHP_EOL;
     $html = '
 <html>
@@ -122,9 +123,9 @@ class formTest extends base
   public function testJavascriptVars()
   {
     $hamle =
-      "head" .
+      'head' .
       PHP_EOL .
-      "  :javascript" .
+      '  :javascript' .
       PHP_EOL .
       '    $(document).ready(function() {' .
       PHP_EOL .
@@ -132,7 +133,7 @@ class formTest extends base
       PHP_EOL .
       "      var regExp	= eval('/^aprod_'+grpid+'_\d+$/i\');" .
       PHP_EOL .
-      "    });" .
+      '    });' .
       PHP_EOL;
     $html = '<head>
   <script type="text/javascript">

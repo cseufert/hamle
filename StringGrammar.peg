@@ -251,7 +251,7 @@ LineTerminator
   = [\n\r\u2028\u2029]
 
 SingleEscapeCharacter
-  = char_:['"\\bfnrtv] {
-  	/** <?php return str_replace(['n', 'r', 't'], ['\\n','\\r','\\t'], $char_); ?> **/
+  = char_:['"\\fnrt] {
+  	/** <?php return str_replace(['f', 'n', 'r', 't'], ["\f","\n","\r","\t"], $char_); ?> **/
   	return char_.replace(/n/,'\\n',).replace(/r/,'\\r').replace(/t/,'\\t');
   }

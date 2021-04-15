@@ -46,7 +46,6 @@ class Filter extends Text
 
   function __construct($s, Text $what)
   {
-    var_dump($s, $what);
     if (
       preg_match(
         "/^([a-z_]+)(?:\\((?P<vars>.*)\\))?(?:\\|(?P<chained>.+?))?$/",
