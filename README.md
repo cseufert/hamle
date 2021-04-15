@@ -5,7 +5,7 @@ HAMLE
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cseufert/hamle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cseufert/hamle/?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4446d6497fc258372f01/maintainability)](https://codeclimate.com/github/cseufert/hamle/maintainability)
 
-Requires PHP >= 7.1
+Requires PHP >= 7.4
 
 ### Installation via Composer
 
@@ -23,22 +23,22 @@ Requires PHP >= 7.1
 
 This haml port uses slightly different syntax to the haml standard format. The main idea
 here is to reduce the number of symbols that are typed. The second issue this port is attempting
-to address, is to remove native code from the template. The idea here being that your template 
+to address, is to remove native code from the template. The idea here being that your template
 could be served as html from the server, however where supported, it could be rendered by
 javascript, with a small json request to retreive the data to fill the template with. The main
 focus for hamle is not on markup, but on page/document structure, so inline tags are not a
 consideration at this stage. The focus is on clean, readable markup
 
-* CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`, 
+* CSS Like Class and ID, with or without element (eg `.myclass`, `P.quote`,
   `A#home`, `#content.cols.two` )
   * DIVs are assumed if no html tag is specified
-  * There is no specific order to the id and class, however the name, if 
+  * There is no specific order to the id and class, however the name, if
     specified must be first
   * Multiple IDs (#one#two) will not be recognized, only one will be used
   * Usage #1 `.one Text` becomes `<div class="one">Text</div>`
   * Usage #2 `span.two Foo` becomes `<span class="two">Foo</span>`
   * Usage #3 `#my.mine.ours` becomes `<div id="my" class="mine ours"></div>`
-* Indented Structure (Python like), increased indents means inside parent 
+* Indented Structure (Python like), increased indents means inside parent
   element, decreased implies closing tag
 ```
 html
@@ -71,20 +71,20 @@ becomes
       * Usage #2 `{$[1]->title}` - read value `$title` from initial scope
     * `$[-1]` = Last Scope ; Array array of scopes `$[1]` first scope, `$[-2]` second last scope
   * Named Scopes **(new)**
-    * Select item and assign name rather than numeric scope 
+    * Select item and assign name rather than numeric scope
       `|with $(page.footer) as footer`
     * Now to use this or its variables, use `$[footer]`
     * Loop through footers with `|each $[footer]`
     * Access HTML attribute on footer `{$[footer]->html}`
-  * jQuery like magic `$` function 
+  * jQuery like magic `$` function
     * `$({<type>}{@<group>}{#<id>}{.<tags>}{^<sort>}{:{<offset>-}<limit>})`
       * `<type>` is a type that hamleSetup->modelType($type) can find
       * `<group>` is an arbitary id that determines a group type, eg. for differentiating gallery image from header image
       * `<id>` is a unique id, either combined with a type, or globally unique
       * `<tags>` are user defined tags that can be used to help find find data
-      * `<sort>` field to sort on, by default ascending, prefix with - for 
-      descending, nothing after for random. If you are wanting to sort by 
-      multiple fields, eg sort DESC, and title ASC, then you would do 
+      * `<sort>` field to sort on, by default ascending, prefix with - for
+      descending, nothing after for random. If you are wanting to sort by
+      multiple fields, eg sort DESC, and title ASC, then you would do
       ```^-sort^title```.
       * `<limit>` Limit results to n
       * `<offset>` Number of results to skip before return
@@ -127,7 +127,7 @@ becomes
   * `|else` - else for `|with`, and `|if`
   * Future Ideas
     * `|page <key>,<size> <modelIterator>` - eg `|page results,16 $(#gallery > photo)`
-      * Special Link Targets: `a!firstpage`; `a!prevpage`; `a!nextpage`; `a!lastpage`; 
+      * Special Link Targets: `a!firstpage`; `a!prevpage`; `a!nextpage`; `a!lastpage`;
       * Special Page Features: Page `div!thispage` of `div!pagecount`; `div!pagelinks`;
     * `|recurse $( > menu,page) #3` Recurse up to 3 levels deep using expression provided
     * `if $price less 10 OR $price greater 20`
@@ -168,9 +168,11 @@ becomes
     * eg `__ <!doctype html>`  to print html5 doctype
     * This will also not attempt to parse any variables (eg {$title})
   * use `___` when you want unescape html (include variables) This allows rendering variables that contain html to display as html
- 
+* Functions
+  * `{$title|strtoupper}` runs strtoupper on models title value
+  * `{$amount|format_currency("$", $(#prefs)->places)}` Pass arguments to functions
 
-## Example 
+## Example
 ```hamle
 html
   body
@@ -199,7 +201,7 @@ html
         |if $text
           $text
 	    |else
-          p Nothing to see here. Page ID=$id is emtpy           
+          p Nothing to see here. Page ID=$id is emtpy
       .foot
         ul.socialicons
           |each $(#socialmedia > link)

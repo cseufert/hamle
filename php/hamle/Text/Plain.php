@@ -9,22 +9,27 @@ namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle\Text;
 
-class Plain extends Text {
+class Plain extends Text
+{
   protected $s;
   protected $type;
 
-  function __construct($s, $type = self::TOKEN_HTML) {
+  function __construct($s, $type = self::TOKEN_HTML)
+  {
     $this->s = str_replace('\\$', "$", $s);
     $this->type = $type;
   }
 
-  function toPHP() {
+  function toPHP()
+  {
     return Text::varToCode($this->s);
   }
 
-  function toHTML($escape = false) {
-    if ($this->type == self::TOKEN_CODE)
+  function toHTML($escape = false)
+  {
+    if ($this->type == self::TOKEN_CODE) {
       return $this->s;
+    }
     return htmlspecialchars($this->s);
   }
 }

@@ -24,27 +24,36 @@ THE SOFTWARE.
 
  */
 namespace Seufert\Hamle\Model {
-
-  class WrapArrayObj extends WrapArray {
+  class WrapArrayObj extends WrapArray
+  {
     /**
      * Create a new array object helper
      * @param \Seufert\Hamle\Model[] $array Array of hamle objects
      */
-    function __construct($array = array()) {
+    function __construct($array = [])
+    {
       $this->data = $array;
       $this->pos = 0;
     }
 
-    function hamleGet($key) {
+    function hamleGet($key)
+    {
       return $this->data[$this->pos]->hamleGet($key);
     }
 
-    function hamleRel($rel, $typeTags, $sort = [], $limit = 0,
-                      $offset = 0, $grouptype = 1) {
+    function hamleRel(
+      $rel,
+      $typeTags,
+      $sort = [],
+      $limit = 0,
+      $offset = 0,
+      $grouptype = 1
+    ) {
       return $this->data[$this->pos]->hamleRel($rel, $typeTags);
     }
 
-    function current() {
+    function current()
+    {
       return $this->data[$this->pos];
     }
   }

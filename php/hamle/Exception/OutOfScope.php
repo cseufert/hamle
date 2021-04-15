@@ -27,5 +27,6 @@ namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle\Exception;
 
-class OutOfScope extends Exception {
+class OutOfScope extends Exception
+{
 }

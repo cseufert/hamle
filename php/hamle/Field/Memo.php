@@ -27,21 +27,25 @@ namespace Seufert\Hamle\Field;
 
 use Seufert\Hamle\Field;
 
-class Memo extends Field {
-  function getInputAttStatic(&$atts, &$type, &$content) {
+class Memo extends Field
+{
+  function getInputAttStatic(&$atts, &$type, &$content)
+  {
     parent::getInputAttStatic($atts, $type, $content);
     unset($atts['type']);
   }
 
-  function getInputAttDynamic(&$atts, &$type, &$content) {
+  function getInputAttDynamic(&$atts, &$type, &$content)
+  {
     parent::getInputAttDynamic($atts, $type, $content);
     unset($atts['value']);
-    $type = "textarea";
+    $type = 'textarea';
     unset($atts['type']);
-    $content = array(htmlspecialchars($this->getValue()));
+    $content = [htmlspecialchars($this->getValue())];
   }
 
-  function isClicked() {
-    return isset($_REQUEST[$this->form . "_" . $this->name]);
+  function isClicked()
+  {
+    return isset($_REQUEST[$this->form . '_' . $this->name]);
   }
 }

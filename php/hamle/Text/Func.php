@@ -30,8 +30,8 @@ use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
-class Func extends SimpleVar {
-
+class Func extends SimpleVar
+{
   const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}[\]]';
 
   protected $sub = null;
@@ -43,17 +43,19 @@ class Func extends SimpleVar {
 
   protected $sortlimit;
 
-
   /**
    * Func constructor.
    * @param string $s
    */
-  public function __construct($s) {
-    $m = array();
-    if (!preg_match('/^\$\((' . self::REGEX_FUNCSEL . '*)(.*)\)$/', $s, $m))
+  public function __construct($s)
+  {
+    $m = [];
+    if (!preg_match('/^\$\((' . self::REGEX_FUNCSEL . '*)(.*)\)$/', $s, $m)) {
       throw new ParseError("Unable to read \$ func in '$s'");
-    if (trim($m[2]))
+    }
+    if (trim($m[2])) {
       $this->sub = new FuncSub($m[2]);
+    }
     if (!trim($m[1])) {
       $this->scope = true;
       return;
@@ -66,46 +68,64 @@ class Func extends SimpleVar {
     $this->filt = $this->attIdTag($m[1]);
   }
 
-  public function attIdTag(&$s) {
-    $m = array();
-    $att = array('id' => array(), 'tag' => array());
-    foreach (explode(",", $s) as $str) {
-      if (preg_match('/^[a-zA-Z0-9_]+/', $str, $m)) $type = $m[0];
-      else $type = "*";
-      if (preg_match('/#([a-zA-Z0-9_${}]+)/', $str, $m)) $att['id'][$type][] = $m[1];
-      elseif (preg_match_all('/\\.([a-zA-Z0-9_\-${}]+)/', $str, $m))
-        foreach ($m[1] as $tag)
+  public function attIdTag(&$s)
+  {
+    $m = [];
+    $att = ['id' => [], 'tag' => []];
+    foreach (explode(',', $s) as $str) {
+      if (preg_match('/^[a-zA-Z0-9_]+/', $str, $m)) {
+        $type = $m[0];
+      } else {
+        $type = '*';
+      }
+      if (preg_match('/#([a-zA-Z0-9_${}]+)/', $str, $m)) {
+        $att['id'][$type][] = $m[1];
+      } elseif (preg_match_all('/\\.([a-zA-Z0-9_\-${}]+)/', $str, $m)) {
+        foreach ($m[1] as $tag) {
           $att['tag'][$type][] = new Text($tag, Text::TOKEN_CODE);
-      else $att['tag'][$type] = array();
+        }
+      } else {
+        $att['tag'][$type] = [];
+      }
     }
-    if (!(count($att['id']) xor count($att['tag'])))
-      throw new ParseError("Only tag, type or id can be combined");
+    if (!(count($att['id']) xor count($att['tag']))) {
+      throw new ParseError('Only tag, type or id can be combined');
+    }
     return $att;
   }
 
-  public function attSortLimit(&$s) {
-    $att = array('limit' => 0, 'offset' => 0, 'sort'=> []);
-    $m = array();
+  public function attSortLimit(&$s)
+  {
+    $att = ['limit' => 0, 'offset' => 0, 'sort' => []];
+    $m = [];
     if (preg_match('/:(?:([0-9]+)-)?([0-9]+)/', $s, $m)) {
       $att['limit'] = $m[2];
       $att['offset'] = $m[1] ? $m[1] : 0;
     }
     $rand = false;
     if (preg_match_all('/\\^(-?)([a-zA-Z0-9_]*)/', $s, $m)) {
-      foreach($m[0] as $k=>$mv)
+      foreach ($m[0] as $k => $mv) {
         if ($m[2][$k]) {
-          $dir = $m[1][$k] == "-"?Hamle\Hamle::SORT_DESCENDING:Hamle\Hamle::SORT_ASCENDING;
+          $dir =
+            $m[1][$k] == '-'
+              ? Hamle\Hamle::SORT_DESCENDING
+              : Hamle\Hamle::SORT_ASCENDING;
           $att['sort'][$m[2][$k]] = $dir;
-        } else $rand = true;
+        } else {
+          $rand = true;
+        }
+      }
     }
-    if($rand)
-      $att['sort'] = [""=>$att['dir'] = Hamle\Hamle::SORT_RANDOM];
+    if ($rand) {
+      $att['sort'] = ['' => ($att['dir'] = Hamle\Hamle::SORT_RANDOM)];
+    }
     return $att;
   }
 
-  public function attGroupType(&$s) {
-    $att = array('grouptype' => 0);
-    $m = array();
+  public function attGroupType(&$s)
+  {
+    $att = ['grouptype' => 0];
+    $m = [];
     if (preg_match('/@([0-9]+)/', $s, $m)) {
       $att['grouptype'] = $m[1];
     }
@@ -115,68 +135,89 @@ class Func extends SimpleVar {
   /**
    * @return string PHP Code
    */
-  public function toPHP() {
-    $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
-    if($this->scope instanceof Scope) {
+  public function toPHP()
+  {
+    $sub = $this->sub ? '->' . $this->sub->toPHP() : '';
+    if ($this->scope instanceof Scope) {
       return $this->scope->toPHP() . $sub;
-    } elseif($this->scope === true) {
+    } elseif ($this->scope === true) {
       return "Hamle\\Scope::get(0)$sub";
     }
-    $limit = Text::varToCode($this->sortlimit['sort']) . "," .
-        $this->sortlimit['limit'] . "," . $this->sortlimit['offset'];
-    if (count($this->filt['tag']))
-      return "Hamle\\Run::modelTypeTags(" .
-      Text::varToCode($this->filt['tag']) . ",$limit)$sub";
-    if (count($this->filt['id']))
-      if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) == 1)
-        return "Hamle\\Run::modelId(" .
-        Text::varToCode(current($this->filt['id']['*'])) .
+    $limit =
+      Text::varToCode($this->sortlimit['sort']) .
+      ',' .
+      $this->sortlimit['limit'] .
+      ',' .
+      $this->sortlimit['offset'];
+    if (count($this->filt['tag'])) {
+      return 'Hamle\\Run::modelTypeTags(' .
+        Text::varToCode($this->filt['tag']) .
         ",$limit)$sub";
-      else
-        return "Hamle\\Run::modelTypeId(" .
-        Text::varToCode($this->filt['id']) . ",$limit)$sub";
-    return "";
+    }
+    if (count($this->filt['id'])) {
+      if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) == 1) {
+        return 'Hamle\\Run::modelId(' .
+          Text::varToCode(current($this->filt['id']['*'])) .
+          ",$limit)$sub";
+      } else {
+        return 'Hamle\\Run::modelTypeId(' .
+          Text::varToCode($this->filt['id']) .
+          ",$limit)$sub";
+      }
+    }
+    return '';
   }
 
   /**
    * @param Model|null $parent
    * @return Model
    */
-  public function getOrCreateModel(Model $parent = null) {
-    if($this->scope instanceof Scope) {
+  public function getOrCreateModel(Model $parent = null)
+  {
+    if ($this->scope instanceof Scope) {
       $parent = $this->scope->getOrCreateModel();
-    } elseif ($this->scope === true)
+    } elseif ($this->scope === true) {
       $parent = \Seufert\Hamle\Scope::get(0);
-    if ($this->filt && count($this->filt['tag']))
+    }
+    if ($this->filt && count($this->filt['tag'])) {
       $parent = \Seufert\Hamle\Run::modelTypeTags(
         $this->filt['tag'],
         $this->sortlimit['sort'],
         $this->sortlimit['limit'],
-        $this->sortlimit['offset']
+        $this->sortlimit['offset'],
       );
-    if ($this->filt && count($this->filt['id']))
-      if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) === 1)
+    }
+    if ($this->filt && count($this->filt['id'])) {
+      if (
+        isset($this->filt['id']['*']) &&
+        count($this->filt['id']['*']) === 1
+      ) {
         $parent = \Seufert\Hamle\Run::modelId(
           current($this->filt['id']['*']),
-            $this->sortlimit['sort'],
-            $this->sortlimit['limit'],
-            $this->sortlimit['offset']
-            );
-      else
+          $this->sortlimit['sort'],
+          $this->sortlimit['limit'],
+          $this->sortlimit['offset'],
+        );
+      } else {
         $parent = \Seufert\Hamle\Run::modelTypeId(
           $this->filt['id'],
           $this->sortlimit['sort'],
           $this->sortlimit['limit'],
-          $this->sortlimit['offset']
+          $this->sortlimit['offset'],
         );
-    if($this->sub)
+      }
+    }
+    if ($this->sub) {
       return $this->sub->getOrCreateModel($parent)->current();
-    if(!$parent)
+    }
+    if (!$parent) {
       throw new \RuntimeException('Unable to create model with no relation');
+    }
     return $parent->current();
   }
 
-  public function toHTML($escape = false) {
-    throw new ParseError("Unable to use Scope operator in HTML Code");
+  public function toHTML($escape = false)
+  {
+    throw new ParseError('Unable to use Scope operator in HTML Code');
   }
 }

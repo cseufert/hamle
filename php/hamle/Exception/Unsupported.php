@@ -27,4 +27,6 @@ namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle\Exception;
 
-class Unsupported extends Exception { }
+class Unsupported extends Exception
+{
+}

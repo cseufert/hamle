@@ -25,18 +25,18 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle;
 
-
 /**
  * HAMLE Tag object
  *
  * @author Chris Seufert <chris@seufert.id.au>
  * @package hamle
  */
-class Tag {
+class Tag
+{
   /**
    * @var Tag[] Array of children tag elements
    */
-  public $tags = array();
+  public $tags = [];
   /**
    * @var string Tag Type for Printable Tags
    */
@@ -57,18 +57,19 @@ class Tag {
   /**
    * Initialize instance vars
    */
-  function __construct() {
-    $this->tags = array();
-    $this->content = array();
+  function __construct()
+  {
+    $this->tags = [];
+    $this->content = [];
   }
 
   /**
    * @param array $path array of arrays[type/class/id]
    * @return Tag[] The tags you are looking for
    */
-  function find($path) {
-    //var_dump($this->type, json_encode($path), $this->compare($path[0]));
-    $list = array();
+  function find($path)
+  {
+    $list = [];
     if ($this->compare($path[0])) {
       if (count($path) == 1) {
         $list[] = $this;
@@ -76,9 +77,11 @@ class Tag {
       }
       array_shift($path);
     }
-    foreach ($this->tags as $tag)
-      if ($found = $tag->find($path))
+    foreach ($this->tags as $tag) {
+      if ($found = $tag->find($path)) {
         $list = array_merge($list, $found);
+      }
+    }
     return $list;
   }
 
@@ -88,9 +91,12 @@ class Tag {
    * @param $newTag Tag New tag to replace old tag with
    * @return Tag
    */
-  function replace($path, Tag $newTag) {
+  function replace($path, Tag $newTag)
+  {
     if ($this->compare($path[0])) {
-      if (count($path) == 1) return $newTag;
+      if (count($path) == 1) {
+        return $newTag;
+      }
       array_shift($path);
     }
     foreach ($this->tags as $k => $tag) {
@@ -102,20 +108,27 @@ class Tag {
     return null;
   }
 
-  function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
-    foreach ($this->tags as $k => $tag)
+  function addSnipContent($contentTag, &$tagArray = [], $key = 0)
+  {
+    foreach ($this->tags as $k => $tag) {
       $tag->addSnipContent($contentTag, $this->tags, $k);
+    }
   }
 
-  function compare($tic) {
-    if (isset($tic['type']) && $this->type != $tic['type'])
+  function compare($tic)
+  {
+    if (isset($tic['type']) && $this->type != $tic['type']) {
       return false;
-    if (isset($tic['id']) &&
-        !(isset($this->opt['id']) && $tic['id'] == $this->opt['id'])
-    )
+    }
+    if (
+      isset($tic['id']) &&
+      !(isset($this->opt['id']) && $tic['id'] == $this->opt['id'])
+    ) {
       return false;
-    if (array_diff($tic['class'] ?? [], $this->opt['class'] ?? []))
+    }
+    if (array_diff($tic['class'] ?? [], $this->opt['class'] ?? [])) {
       return false;
+    }
     return true;
   }
 
@@ -124,11 +137,13 @@ class Tag {
    * @param Tag $tag Tag to add as child
    * @param string $mode Mode to add child [append|prepend]
    */
-  function addChild(Tag $tag, $mode = "append") {
-    if ($mode == "prepend")
+  function addChild(Tag $tag, $mode = 'append')
+  {
+    if ($mode == 'prepend') {
       array_unshift($this->tags, $tag);
-    else
+    } else {
       $this->tags[] = $tag;
+    }
   }
 
   /**
@@ -138,14 +153,21 @@ class Tag {
    * @param bool $minify Output HTML in minified format
    * @return string HTML/PHP Output
    */
-  function render($indent = 0, $minify = false) {
+  function render($indent = 0, $minify = false)
+  {
     $ind = $minify ? '' : str_pad('', $indent);
-    $oneliner = (!(count($this->content) > 1 || $this->tags));
+    $oneliner = !(count($this->content) > 1 || $this->tags);
     $out = $ind . $this->renderStTag() . ($oneliner || $minify ? '' : "\n");
-    if ($this->content) $out .= $this->renderContent($ind, $oneliner || $minify);
-    foreach ($this->tags as $tag)
+    if ($this->content) {
+      $out .= $this->renderContent($ind, $oneliner || $minify);
+    }
+    foreach ($this->tags as $tag) {
       $out .= $tag->render($indent + self::INDENT_SIZE, $minify);
-    $out .= ($minify || $oneliner ? '' : $ind) . $this->renderEnTag() . ($minify ? '' : "\n");
+    }
+    $out .=
+      ($minify || $oneliner ? '' : $ind) .
+      $this->renderEnTag() .
+      ($minify ? '' : "\n");
     return $out;
   }
 
@@ -156,23 +178,27 @@ class Tag {
    * @param bool $oneliner Render to fit single line
    * @return string Indented Content
    */
-  function renderContent($pad = "", $oneliner = false) {
-    $out = "";
-    foreach ($this->content as $c)
+  function renderContent($pad = '', $oneliner = false)
+  {
+    $out = '';
+    foreach ($this->content as $c) {
       $out .= ($oneliner ? '' : $pad) . $c . ($oneliner ? '' : "\n");
+    }
     return $out;
   }
 
   /**
    * Output the Start Tag for this element
    */
-  function renderStTag() {
+  function renderStTag()
+  {
   }
 
   /**
    * Output the End Tag for this element
    */
-  function renderEnTag() {
+  function renderEnTag()
+  {
   }
 
   /**
@@ -181,18 +207,11 @@ class Tag {
    * @param string $s One line of content
    * @param int $strtype Type of string to parse, hamleString::TOKEN_*
    */
-  function addContent($s, $strtype = Text::TOKEN_HTML) {
+  function addContent($s, $strtype = Text::TOKEN_HTML)
+  {
     if (trim($s)) {
       $parse = new Text($s, $strtype);
       $this->content[] = $parse->toHTML();
     }
   }
-
 }
-
-
-
-
-
-
-

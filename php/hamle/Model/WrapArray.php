@@ -25,39 +25,47 @@ THE SOFTWARE.
  */
 namespace Seufert\Hamle\Model;
 
-class WrapArray extends Zero {
+class WrapArray extends Zero
+{
   protected $data;
   protected $pos;
 
-  function __construct($array = array()) {
+  function __construct($array = [])
+  {
     $this->data = $array;
     $this->pos = 0;
   }
 
-  function hamleGet($key) {
-    if (!isset($this->data[$this->pos][$key]))
+  function hamleGet($key)
+  {
+    if (!isset($this->data[$this->pos][$key])) {
       return "Missing Key [$key]";
+    }
     return $this->data[$this->pos][$key];
   }
 
-  function valid() {
+  function valid()
+  {
     return isset($this->data[$this->pos]);
   }
 
-  function key() {
+  function key()
+  {
     return $this->pos;
   }
 
-  function current() {
+  function current()
+  {
     return $this;
   }
 
-  function rewind() {
+  function rewind()
+  {
     $this->pos = 0;
   }
 
-  function next() {
+  function next()
+  {
     ++$this->pos;
   }
-
 }

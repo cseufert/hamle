@@ -35,7 +35,8 @@ use Seufert\Hamle\Text;
  * @author Chris Seufert <chris@seufert.id.au>
  * @package hamle
  */
-class Parse {
+class Parse
+{
   /**
    * @param array $indents Array of indent levels
    */
@@ -53,8 +54,8 @@ class Parse {
    */
 
   const REGEX_PARSE_LINE = <<<'ENDREGEX'
-/^(\s*)(?:(?:([a-zA-Z0-9-]*)((?:[\.#!][\w\-\_]+)*)(\[(?:(?:\{\$[^\}]+\})?[^\\\]{]*?(?:\\.)*?(?:{[^\$])*?)+\])?)|([_\/]{1,3})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
-ENDREGEX;
+  /^(\s*)(?:(?:([a-zA-Z0-9-]*)((?:[\.#!][\w\-\_]+)*)(\[(?:(?:\{\$[^\}]+\})?[^\\\]{]*?(?:\\.)*?(?:{[^\$])*?)+\])?)|([_\/]{1,3})|([\|:\$]\w+)|({?\$[^}]+}?)|)(?: (.*))?$/
+  ENDREGEX;
 
   /**
    * @var int Current Line Number
@@ -65,7 +66,8 @@ ENDREGEX;
    */
   protected $lineCount;
 
-  function __construct() {
+  function __construct()
+  {
     $this->init();
   }
 
@@ -73,45 +75,50 @@ ENDREGEX;
    * Clear Lines, and Line Number, so if output is
    * called, no output will be produced
    */
-  protected function init() {
-    $this->lines = array();
+  protected function init()
+  {
+    $this->lines = [];
     $this->lineNo = 0;
     $this->lineCount = 0;
-    $this->root = array();
+    $this->root = [];
   }
 
-  protected function loadLines($s) {
-    $this->lines = explode("\n", str_replace("\r", "", $s));
+  protected function loadLines($s)
+  {
+    $this->lines = explode("\n", str_replace("\r", '', $s));
     $this->lineCount = count($this->lines);
     $this->lineNo = 0;
   }
 
-  function parseFilter(ParseFilter $filter) {
+  function parseFilter(ParseFilter $filter)
+  {
     foreach ($this->root as $k => $tag) {
       $this->root[$k] = $filter->filterTag($tag);
     }
   }
 
-  function parseSnip($s) {
+  function parseSnip($s)
+  {
     //save root tags
     /** @var Tag[] $roots */
     $roots = $this->root;
-    $this->root = array();
+    $this->root = [];
     $this->loadLines($s);
     $this->procLines();
     $this->root = array_merge($roots, $this->root);
   }
 
-  function applySnip() {
+  function applySnip()
+  {
     /** @var Tag\Snippet[] $fwdSnip */
-    $fwdSnip = array();
+    $fwdSnip = [];
     /** @var Tag\Snippet[] $revSnip */
-    $revSnip = array();
+    $revSnip = [];
     /** @var Tag[] $roots */
-    $roots = array();
-    foreach ($this->root as $snip)
-      if ($snip instanceOf Tag\Snippet) {
-        if ($snip->getType() == "append") {
+    $roots = [];
+    foreach ($this->root as $snip) {
+      if ($snip instanceof Tag\Snippet) {
+        if ($snip->getType() == 'append') {
           array_unshift($revSnip, $snip);
         } else {
           $fwdSnip[] = $snip;
@@ -119,12 +126,17 @@ ENDREGEX;
       } else {
         $roots[] = $snip;
       }
-    foreach ($fwdSnip as $snip)
-      foreach ($roots as $root)
+    }
+    foreach ($fwdSnip as $snip) {
+      foreach ($roots as $root) {
         $snip->apply($root);
-    foreach ($revSnip as $snip)
-      foreach ($roots as $root)
+      }
+    }
+    foreach ($revSnip as $snip) {
+      foreach ($roots as $root) {
         $snip->apply($root);
+      }
+    }
     $this->root = $roots;
   }
 
@@ -132,136 +144,176 @@ ENDREGEX;
    * Parse HAMLE template, from a string
    * @param string $s String to parse
    */
-  function str($s) {
+  function str($s)
+  {
     $this->init();
     $this->loadLines($s);
     $this->procLines();
   }
 
-  function procLines() {
+  function procLines()
+  {
     /* @var $heir Tag[] Tag Heirachy Array */
-    $heir = array();
+    $heir = [];
     while ($this->lineNo < $this->lineCount) {
       $line = $this->lines[$this->lineNo];
-      if (trim($line)) if (preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
-        if (FALSE !== strpos($m[1], "\t"))
-          throw new ParseError("Tabs are not supported in templates at this time");
-        $indent = strlen($m[1]);
-        $tag = isset($m[2]) ? $tag = $m[2] : "";
-        $classid = isset($m[3]) ? $m[3] : "";
-        $params = str_replace(array('\[', '\]', '\\&'), array('[', ']', '%26'), isset($m[4]) ? $m[4] : "");
-        $textcode = isset($m[5]) ? $m[5] : "";
-        $text = isset($m[8]) ? $m[8] : "";
-        $code = isset($m[6]) ? $m[6] : "";
-        $i = self::indentLevel($indent);
-        unset($m[0]);
-        switch (strlen($code) ? $code[0] : ($textcode ? $textcode : "")) {
-          case "|": //Control Tag
-            if ($code == "|snippet")
-              $hTag = new Tag\Snippet($text);
-            elseif ($code == "|form")
-              $hTag = new Tag\Form($text);
-            elseif ($code == "|formhint")
-              $hTag = new Tag\FormHint();
-            elseif ($code == "|else") {
-              $hTag = new Tag\Control(substr($code, 1), $heir[$i - 1]);
-              $hTag->setVar($text);
-            } else {
-              $hTag = new Tag\Control(substr($code, 1));
-              $hTag->setVar($text);
-            }
-            break;
-          case ":": //Filter Tag
-            $hTag = new Tag\Filter(substr($code, 1));
-            $hTag->addContent($text, Text::TOKEN_CODE);
-            foreach ($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l, Text::TOKEN_CODE);
-            break;
-          case "_": //String Tag
-          case "__": //Unescape String Tag
-          case "___": //Unescape String Tag (with unescaped vars)
-            $hTag = new Tag\Text($textcode);
-            $hTag->addContent($text);
-            break;
-          case "___": //Unescape String Tag
-            $hTag = new Tag\Text($textcode);
-            $hTag->addContent($text);
-            break;
-          case "/": // HTML Comment
-          case "//": // Non Printed Comment
-            $hTag = new Tag\Comment($textcode);
-            $hTag->addContent($text);
-            foreach ($this->consumeBlock($indent) as $l)
-              $hTag->addContent($l, Text::TOKEN_CODE);
-            break;
-          default:
-            $attr = array();
-            if(isset($params[0]) && $params[0] == "[") {
-              $param = substr($params, 1, -1);
-              $param = str_replace(['+', '\\&'], ['%2B', '%26'], $param);
-//              parse_str($param, $attr);
-              $attr = $this->parseQueryString($param);
-            }
-            $class = array(); $id = ""; $ref = "";
-            preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $cid);
-            if (isset($cid[0])) foreach ($cid[0] as $s) {
-              if ($s[0] == "#") $id = substr($s, 1);
-              if ($s[0] == ".") $class[] = substr($s, 1);
-              if ($s[0] == "!") $ref = substr($s, 1);
-            }
-            if($ref)
-              $hTag = new Tag\DynHtml($tag, $class, $attr, $id, $ref);
-            else
-              $hTag = new Tag\Html($tag, $class, $attr, $id);
-            $hTag->addContent($text);
-            break;
+      if (trim($line)) {
+        if (preg_match(self::REGEX_PARSE_LINE, $line, $m)) {
+          if (false !== strpos($m[1], "\t")) {
+            throw new ParseError(
+              'Tabs are not supported in templates at this time',
+            );
+          }
+          $indent = strlen($m[1]);
+          $tag = isset($m[2]) ? ($tag = $m[2]) : '';
+          $classid = isset($m[3]) ? $m[3] : '';
+          $params = str_replace(
+            ['\[', '\]', '\\&'],
+            ['[', ']', '%26'],
+            isset($m[4]) ? $m[4] : '',
+          );
+          $textcode = isset($m[5]) ? $m[5] : '';
+          $text = isset($m[8]) ? $m[8] : '';
+          $code = isset($m[6]) ? $m[6] : '';
+          $i = self::indentLevel($indent);
+          unset($m[0]);
+          switch (strlen($code) ? $code[0] : ($textcode ? $textcode : '')) {
+            case '|': //Control Tag
+              if ($code == '|snippet') {
+                $hTag = new Tag\Snippet($text);
+              } elseif ($code == '|form') {
+                $hTag = new Tag\Form($text);
+              } elseif ($code == '|formhint') {
+                $hTag = new Tag\FormHint();
+              } elseif ($code == '|else') {
+                $hTag = new Tag\Control(substr($code, 1), $heir[$i - 1]);
+                $hTag->setVar($text);
+              } else {
+                $hTag = new Tag\Control(substr($code, 1));
+                $hTag->setVar($text);
+              }
+              break;
+            case ':': //Filter Tag
+              $hTag = new Tag\Filter(substr($code, 1));
+              $hTag->addContent($text, Text::TOKEN_CODE);
+              foreach ($this->consumeBlock($indent) as $l) {
+                $hTag->addContent($l, Text::TOKEN_CODE);
+              }
+              break;
+            case '_': //String Tag
+            case '__': //Unescape String Tag
+            case '___': //Unescape String Tag (with unescaped vars)
+              $hTag = new Tag\Text($textcode);
+              $hTag->addContent($text);
+              break;
+            case '___': //Unescape String Tag
+              $hTag = new Tag\Text($textcode);
+              $hTag->addContent($text);
+              break;
+            case '/': // HTML Comment
+            case '//': // Non Printed Comment
+              $hTag = new Tag\Comment($textcode);
+              $hTag->addContent($text);
+              foreach ($this->consumeBlock($indent) as $l) {
+                $hTag->addContent($l, Text::TOKEN_CODE);
+              }
+              break;
+            default:
+              $attr = [];
+              if (isset($params[0]) && $params[0] == '[') {
+                $param = substr($params, 1, -1);
+                $param = str_replace(['+', '\\&'], ['%2B', '%26'], $param);
+                $attr = $this->parseQueryString($param);
+              }
+              $class = [];
+              $id = '';
+              $ref = '';
+              preg_match_all('/[#\.!][a-zA-Z0-9\-\_]+/m', $classid, $cid);
+              if (isset($cid[0])) {
+                foreach ($cid[0] as $s) {
+                  if ($s[0] == '#') {
+                    $id = substr($s, 1);
+                  }
+                  if ($s[0] == '.') {
+                    $class[] = substr($s, 1);
+                  }
+                  if ($s[0] == '!') {
+                    $ref = substr($s, 1);
+                  }
+                }
+              }
+              if ($ref) {
+                $hTag = new Tag\DynHtml($tag, $class, $attr, $id, $ref);
+              } else {
+                $hTag = new Tag\Html($tag, $class, $attr, $id);
+              }
+              $hTag->addContent($text);
+              break;
+          }
+          $heir[$i] = $hTag;
+          if ($i > 0) {
+            $heir[$i - 1]->addChild($hTag);
+          } else {
+            $this->root[] = $hTag;
+          }
+        } else {
+          throw new ParseError(
+            "Unable to parse line {$this->lineNo}\n\"$line\"/" .
+              preg_last_error(),
+          );
         }
-        $heir[$i] = $hTag;
-        if ($i > 0)
-          $heir[$i - 1]->addChild($hTag);
-        else
-          $this->root[] = $hTag;
-      } else
-        throw new ParseError("Unable to parse line {$this->lineNo}\n\"$line\"/" . preg_last_error());
+      }
       $this->lineNo++;
     }
   }
 
-  function parseQueryString($qs) {
+  function parseQueryString($qs)
+  {
     $out = [];
-    foreach(explode('&',$qs) as $s) {
-      $kv = explode('=',$s,2);
-      $out[urldecode($kv[0])] = isset($kv[1])?urldecode($kv[1]):null;
+    foreach (explode('&', $qs) as $s) {
+      $kv = explode('=', $s, 2);
+      $out[urldecode($kv[0])] = isset($kv[1]) ? urldecode($kv[1]) : null;
     }
     return $out;
   }
 
-  function output($minify = false) {
+  function output($minify = false)
+  {
     $out = "<?php\nuse Seufert\\Hamle;\n?>";
-    foreach ($this->root as $tag)
+    foreach ($this->root as $tag) {
       $out .= $tag->render(0, $minify);
+    }
     return $out;
-
   }
 
-  function consumeBlock($indent) {
-    $out = array();
-    $m = array();
-    while ($this->lineNo + 1 < $this->lineCount &&
-        (!trim($this->lines[$this->lineNo + 1]) ||
-            preg_match('/^(\s){' . $indent . '}((\s)+[^\s].*)$/',
-                $this->lines[$this->lineNo + 1], $m))) {
-      if (trim($this->lines[$this->lineNo + 1]))
+  function consumeBlock($indent)
+  {
+    $out = [];
+    $m = [];
+    while (
+      $this->lineNo + 1 < $this->lineCount &&
+      (!trim($this->lines[$this->lineNo + 1]) ||
+        preg_match(
+          '/^(\s){' . $indent . '}((\s)+[^\s].*)$/',
+          $this->lines[$this->lineNo + 1],
+          $m,
+        ))
+    ) {
+      if (trim($this->lines[$this->lineNo + 1])) {
         $out[] = $m[2];
+      }
       $this->lineNo++;
     }
     return $out;
   }
 
-  function indentLevel($indent) {
-    if (!isset($this->indents)) $this->indents = array();
+  function indentLevel($indent)
+  {
+    if (!isset($this->indents)) {
+      $this->indents = [];
+    }
     if (!count($this->indents)) {
-      $this->indents = array(0 => $indent);
+      $this->indents = [0 => $indent];
       // Key = indent level, Value = Depth in spaces
       return 0;
     }
@@ -275,7 +327,8 @@ ENDREGEX;
     return max(array_keys($this->indents));
   }
 
-  function getLineNo() {
+  function getLineNo()
+  {
     return $this->lineNo;
   }
 }

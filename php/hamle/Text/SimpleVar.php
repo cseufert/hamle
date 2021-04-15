@@ -29,35 +29,42 @@ use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\WriteModel;
 
-class SimpleVar extends Text {
+class SimpleVar extends Text
+{
   protected $var;
 
   protected $filter;
 
-  function __construct($s) {
-    if(FALSE !== $pos = strpos($s,'|')) {
-      $this->var = substr($s,1,$pos-1);
-      $this->filter = new Filter(substr($s, $pos+1), $this);
+  function __construct($s)
+  {
+    if (false !== ($pos = strpos($s, '|'))) {
+      $this->var = substr($s, 1, $pos - 1);
+      $this->filter = new Filter(substr($s, $pos + 1), $this);
     } else {
       $this->var = substr($s, 1);
     }
   }
 
-  function toHTML($escape = false) {
-    if($escape)
-      return "<?=htmlspecialchars(" .$this->toPHP() . ")?>";
-    return "<?=" . $this->toPHP() . "?>";
+  function toHTML($escape = false)
+  {
+    if ($escape) {
+      return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
+    }
+    return '<?=' . $this->toPHP() . '?>';
   }
 
-  function toPHP() {
-    return $this->filter?$this->filter->toPHP():$this->toPHPVar();
+  function toPHP()
+  {
+    return $this->filter ? $this->filter->toPHP() : $this->toPHPVar();
   }
 
-  function toPHPVar() {
-    return "Hamle\\Scope::get()->hamleGet(" . Text::varToCode($this->var) . ")";
+  function toPHPVar()
+  {
+    return 'Hamle\\Scope::get()->hamleGet(' . Text::varToCode($this->var) . ')';
   }
 
-  function getOrCreateModel(Model $parent = null) {
+  function getOrCreateModel(Model $parent = null)
+  {
     return \Seufert\Hamle\Scope::get()->current();
   }
 
@@ -65,12 +72,15 @@ class SimpleVar extends Text {
    * @param $value
    * @return WriteModel
    */
-  function setValue($value) {
+  function setValue($value)
+  {
     $model = $this->getOrCreateModel();
-    if(!$model instanceof WriteModel)
-      throw new \RuntimeException('Can only write to model that implements WriteModel');
+    if (!$model instanceof WriteModel) {
+      throw new \RuntimeException(
+        'Can only write to model that implements WriteModel',
+      );
+    }
     $model->hamleSet($this->var, $value);
     return $model;
   }
-
 }

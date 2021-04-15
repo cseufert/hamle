@@ -27,56 +27,78 @@ namespace Seufert\Hamle\Tag;
 
 use Seufert\Hamle;
 
-class Snippet extends Hamle\Tag {
+class Snippet extends Hamle\Tag
+{
   protected $path;
 
-  function __construct($params) {
+  function __construct($params)
+  {
     parent::__construct();
-    if (!preg_match('/^(append|content|prepend|replace)(?: (.*))?$/', $params, $m))
+    if (
+      !preg_match('/^(append|content|prepend|replace)(?: (.*))?$/', $params, $m)
+    ) {
       throw new Hamle\Exception\ParseError("Unable to parse Snippet($params)");
+    }
     $this->type = $m[1];
-    if (isset($m[2]))
-      $this->path = explode(" ", $m[2]);
-    else
-      $this->path = array();
-    foreach ($this->path as $k => $v)
+    if (isset($m[2])) {
+      $this->path = explode(' ', $m[2]);
+    } else {
+      $this->path = [];
+    }
+    foreach ($this->path as $k => $v) {
       $this->path[$k] = self::decodeClassId($v);
+    }
   }
 
-  static function decodeClassId($s) {
-    $out = $m = array();
-    if(preg_match('/^[a-zA-Z0-9\_]+/', $s, $m))
+  static function decodeClassId($s)
+  {
+    $out = $m = [];
+    if (preg_match('/^[a-zA-Z0-9\_]+/', $s, $m)) {
       $out['type'] = $m[0];
+    }
     preg_match_all('/[#\.][a-zA-Z0-9\-\_]+/m', $s, $m);
-    if (isset($m[0])) foreach ($m[0] as $ss) {
-      if ($ss[0] === "#") $out['id'] = substr($ss, 1);
-      if ($ss[0] === ".") $out['class'][] = substr($ss, 1);
+    if (isset($m[0])) {
+      foreach ($m[0] as $ss) {
+        if ($ss[0] === '#') {
+          $out['id'] = substr($ss, 1);
+        }
+        if ($ss[0] === '.') {
+          $out['class'][] = substr($ss, 1);
+        }
+      }
     }
     return $out;
   }
 
-  function getType() {
+  function getType()
+  {
     return $this->type;
   }
 
-  function addSnipContent($contentTag, &$tagArray = array(), $key = 0) {
-    if ($this->type == "content") {
+  function addSnipContent($contentTag, &$tagArray = [], $key = 0)
+  {
+    if ($this->type == 'content') {
       $tagArray[$key] = $contentTag;
-    } else
+    } else {
       parent::addSnipContent($contentTag, $tagArray, $key);
+    }
   }
 
-  function apply(Hamle\Tag $rootTag) {
-    if ($this->type == "append" or $this->type == "prepend") {
+  function apply(Hamle\Tag $rootTag)
+  {
+    if ($this->type == 'append' || $this->type == 'prepend') {
       $matchTags = $rootTag->find($this->path);
-      foreach ($matchTags as $tag)
+      foreach ($matchTags as $tag) {
         foreach ($this->tags as $t) {
           $tag->addChild($t, $this->type);
         }
-    } elseif ($this->type == "replace") {
+      }
+    } elseif ($this->type == 'replace') {
       $rootTag->replace($this->path, $this);
-    } else
-      throw new Hamle\Exception\ParseError("Cant Apply snippet to document '{$this->type}'");
+    } else {
+      throw new Hamle\Exception\ParseError(
+        "Cant Apply snippet to document '{$this->type}'",
+      );
+    }
   }
-
 }

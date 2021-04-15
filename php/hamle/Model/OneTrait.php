@@ -8,29 +8,32 @@
 
 namespace Seufert\Hamle\Model;
 
-
-trait OneTrait {
-
+trait OneTrait
+{
   protected $hamleIndex = 0;
 
-  function valid() {
+  function valid()
+  {
     return $this->hamleIndex == 0;
   }
 
-  function key() {
+  function key()
+  {
     return $this->hamleIndex;
   }
 
-  function current() {
+  function current()
+  {
     return $this;
   }
 
-  function rewind() {
+  function rewind()
+  {
     $this->hamleIndex = 0;
   }
 
-  function next() {
+  function next()
+  {
     $this->hamleIndex++;
   }
-
 }

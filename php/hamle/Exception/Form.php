@@ -27,4 +27,6 @@ namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle\Exception;
 
-class Form extends Exception { }
+class Form extends Exception
+{
+}

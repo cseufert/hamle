@@ -29,16 +29,20 @@ use Seufert\Hamle\Filter;
 /**
  * HAMLE CSS Filter
  */
-class Css extends Filter {
-  static function stTag() {
+class Css extends Filter
+{
+  static function stTag()
+  {
     return "<style type=\"text/css\">";
   }
 
-  static function ndTag() {
-    return "</style>";
+  static function ndTag()
+  {
+    return '</style>';
   }
 
-  static function filterText($s) {
+  static function filterText($s)
+  {
     return $s;
   }
 }

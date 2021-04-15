@@ -27,16 +27,20 @@ namespace Seufert\Hamle\Filter;
 
 use Seufert\Hamle\Filter;
 
-class Html extends Filter {
-  static function stTag() {
-    return "<!-- HTML Fitler -->";
+class Html extends Filter
+{
+  static function stTag()
+  {
+    return '<!-- HTML Fitler -->';
   }
 
-  static function ndTag() {
-    return "<!-- HTML Fitler End -->";
+  static function ndTag()
+  {
+    return '<!-- HTML Fitler End -->';
   }
 
-  static function filterText($s) {
+  static function filterText($s)
+  {
     return "$s";
   }
 }

@@ -27,13 +27,16 @@ namespace Seufert\Hamle\Field;
 
 use Seufert\Hamle\Field;
 
-class Button extends Field {
-  function getInputAttStatic(&$atts, &$type, &$content) {
+class Button extends Field
+{
+  function getInputAttStatic(&$atts, &$type, &$content)
+  {
     parent::getInputAttStatic($atts, $type, $content);
-    $atts['type'] = "submit";
+    $atts['type'] = 'submit';
   }
 
-  function isClicked() {
-    return isset($_REQUEST[$this->form . "_" . $this->name]);
+  function isClicked()
+  {
+    return isset($_REQUEST[$this->form . '_' . $this->name]);
   }
 }

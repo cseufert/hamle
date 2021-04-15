@@ -11,28 +11,37 @@ use Seufert\Hamle\Model;
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Scope {
+class Scope
+{
   /** @var Model[] Array of Models by Scope Order */
-  static $scopes = array();
+  static $scopes = [];
   /** @var Model[] Assoc array of Models by Scope Name */
-  static $namedScopes = array();
+  static $namedScopes = [];
 
   /** @var null|Callable */
   static $scopeHook;
 
-  static function add($model, $name = null) {
-    if (!$model instanceOf Model)
-      throw new Unsupported("Unsupported Model (".get_class($model)."), Needs to implement hamleModel Interface");
-    if ($name)
+  static function add($model, $name = null)
+  {
+    if (!$model instanceof Model) {
+      throw new Unsupported(
+        'Unsupported Model (' .
+          get_class($model) .
+          '), Needs to implement hamleModel Interface',
+      );
+    }
+    if ($name) {
       self::$namedScopes[$name] = $model;
-    else
+    } else {
       self::$scopes[] = $model;
-    if(self::$scopeHook) {
-        (self::$scopeHook)($model);
+    }
+    if (self::$scopeHook) {
+      (self::$scopeHook)($model);
     }
   }
 
-  static function done() {
+  static function done()
+  {
     array_pop(self::$scopes);
   }
 
@@ -45,37 +54,46 @@ class Scope {
    * @return Model
    * @throws OutOfScope
    */
-  static function get($id = 0) {
+  static function get($id = 0)
+  {
     if (0 == $id) {
-      if ($scope = end(self::$scopes))
+      if ($scope = end(self::$scopes)) {
         return $scope;
+      }
       throw new OutOfScope("Unable to find Scope ($id)");
     }
     $key = $id - 1;
-    if ($id < 0) $key = count(self::$scopes) + $id - 1;
-    if ($id == 0) $key = count(self::$scopes) - 1;
-    if (!isset(self::$scopes[$key]))
+    if ($id < 0) {
+      $key = count(self::$scopes) + $id - 1;
+    }
+    if ($id == 0) {
+      $key = count(self::$scopes) - 1;
+    }
+    if (!isset(self::$scopes[$key])) {
       throw new OutOfScope("Unable to find Scope ($id) or $key");
+    }
     return self::$scopes[$key];
   }
 
-  static function getTopScope() {
+  static function getTopScope()
+  {
     return end(self::$scopes);
   }
-  static function getDepth() {
+  static function getDepth()
+  {
     return count(self::$scopes);
   }
 
   static $returnZeroOnNoScope = false;
 
-  static function getName($name) {
+  static function getName($name)
+  {
     if ($name && isset(self::$namedScopes[$name])) {
       self::$namedScopes[$name]->rewind();
       return self::$namedScopes[$name];
-    } else
-      if(self::$returnZeroOnNoScope)
-        return new Model\Zero();
-      throw new RunTime("Unable to find scope ($name)");
+    } elseif (self::$returnZeroOnNoScope) {
+      return new Model\Zero();
+    }
+    throw new RunTime("Unable to find scope ($name)");
   }
-
 }

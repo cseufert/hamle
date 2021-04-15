@@ -27,61 +27,62 @@ namespace Seufert\Hamle\Text;
 use Seufert\Hamle\Exception;
 use Seufert\Hamle\Text;
 
-class Comparison extends Text {
-
-
+class Comparison extends Text
+{
   protected $param1, $param2, $operator;
   const REGEX_COMP_OPER = '(equals|notequal|notequals|less|greater|has|starts|contains|ends)';
 
-  function __construct($s, $mode = self::TOKEN_CONTROL) {
-    $m = array();
-    if(preg_match('/^(.*) '.self::REGEX_COMP_OPER.' (.*)$/', $s, $m)) {
-      $this->param1 = new Text($m[1],Text::TOKEN_HTML);
-      $this->param2 = new Text($m[3],Text::TOKEN_HTML);
+  function __construct($s, $mode = self::TOKEN_CONTROL)
+  {
+    $m = [];
+    if (preg_match('/^(.*) ' . self::REGEX_COMP_OPER . ' (.*)$/', $s, $m)) {
+      $this->param1 = new Text($m[1], Text::TOKEN_HTML);
+      $this->param2 = new Text($m[3], Text::TOKEN_HTML);
       $this->operator = $m[2];
-    } else
-      $this->param1 = new Text($s,Text::TOKEN_HTML);
+    } else {
+      $this->param1 = new Text($s, Text::TOKEN_HTML);
+    }
   }
 
-//  function __construct(String $p1, String $p2, $operator) {
-//    $this->param1 = $p1;
-//    $this->param2 = $p2;
-//    $this->operator = $operator;
-//  }
-  function toPHP() {
-    if(!$this->param2) return $this->param1->toPHP();
+  function toPHP()
+  {
+    if (!$this->param2) {
+      return $this->param1->toPHP();
+    }
     $p1 = $this->param1->toPHP();
     $p2 = $this->param2->toPHP();
-    switch($this->operator) {
-      case "equals":
-      case "equal":
-        return $p1." == ".$p2;
-      case "notequals":
-      case "notequal":
-        return $p1." != ".$p2;
-      case "less":
-        return $p1." < ".$p2;
-      case "greater":
-        return $p1." > ".$p2;
-      case "has":
+    switch ($this->operator) {
+      case 'equals':
+      case 'equal':
+        return $p1 . ' == ' . $p2;
+      case 'notequals':
+      case 'notequal':
+        return $p1 . ' != ' . $p2;
+      case 'less':
+        return $p1 . ' < ' . $p2;
+      case 'greater':
+        return $p1 . ' > ' . $p2;
+      case 'has':
         return "in_array($p2, $p1)";
-      case "starts":
+      case 'starts':
         return "strpos($p1, $p2) === 0";
-      case "contains":
+      case 'contains':
         return "strpos($p1, $p2) !== FALSE";
-      case "ends":
+      case 'ends':
         return "substr($p1, -strlen($p2)) === $p2";
-      case "or":
-      case "and":
-      case "xor":
-        throw new Exception\Unimplemented("OR/AND/XOR Unimplmented at this time");
-//        return "($p1) OR ($p2)";
-//        return "($p1) AND ($p2)";
-//        return "($p1) XOR ($p2)";
+      case 'or':
+      case 'and':
+      case 'xor':
+        throw new Exception\Unimplemented(
+          'OR/AND/XOR Unimplmented at this time',
+        );
     }
-    return "";
+    return '';
   }
-  function toHTML($escape = false) {
-    throw new Exception\Unimplemented("Unable to output comparison results to HTML");
+  function toHTML($escape = false)
+  {
+    throw new Exception\Unimplemented(
+      'Unable to output comparison results to HTML',
+    );
   }
 }

@@ -32,31 +32,37 @@ use Seufert\Hamle\Tag;
  * HAMLE Filter Tag
  * Filter tags start with colon or (:) and use hamleFilter_<filtername>
  */
-class Filter extends Tag {
+class Filter extends Tag
+{
   /**
    * @var Hamle\Filter $filter Filter CLass
    */
   protected $filter;
 
-  function __construct($tag) {
+  function __construct($tag)
+  {
     parent::__construct();
     $this->type = ucfirst(strtolower($tag));
     $this->filter = "\\Seufert\\Hamle\\Filter\\{$this->type}";
-    if (!class_exists($this->filter))
-      Throw new ParseError("Unable to fild filter $tag");
+    if (!class_exists($this->filter)) {
+      throw new ParseError("Unable to fild filter $tag");
+    }
   }
 
-  function renderContent($pad = "", $oneliner = false) {
+  function renderContent($pad = '', $oneliner = false)
+  {
     $c = $this->filter;
     return $c::filterText(parent::renderContent($pad));
   }
 
-  function renderStTag() {
+  function renderStTag()
+  {
     $c = $this->filter;
     return $c::stTag();
   }
 
-  function renderEnTag() {
+  function renderEnTag()
+  {
     $c = $this->filter;
     return $c::ndTag();
   }

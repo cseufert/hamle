@@ -29,7 +29,8 @@ use Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Model;
 
-class FuncSub extends Hamle\Text\Func {
+class FuncSub extends Hamle\Text\Func
+{
   protected $dir;
   protected $grouptype = ['grouptype' => 0];
 
@@ -37,46 +38,84 @@ class FuncSub extends Hamle\Text\Func {
    * FuncSub constructor.
    * @param string $s
    */
-  public function __construct($s) {
-    $m = array();
-    if (!preg_match('/^ +([><]) +('.self::REGEX_FUNCSEL . '+)(.*)$/', $s, $m))
+  public function __construct($s)
+  {
+    $m = [];
+    if (
+      !preg_match('/^ +([><]) +(' . self::REGEX_FUNCSEL . '+)(.*)$/', $s, $m)
+    ) {
       throw new ParseError("Unable to read \$ sub func in '$s'");
-    if ($m[1] == "<") $this->dir = Hamle\Hamle::REL_PARENT;
-    elseif ($m[1] == ">") $this->dir = Hamle\Hamle::REL_CHILD;
-    else $this->dir = Hamle\Hamle::REL_ANY;
+    }
+    if ($m[1] == '<') {
+      $this->dir = Hamle\Hamle::REL_PARENT;
+    } elseif ($m[1] == '>') {
+      $this->dir = Hamle\Hamle::REL_CHILD;
+    } else {
+      $this->dir = Hamle\Hamle::REL_ANY;
+    }
     $this->sortlimit = $this->attSortLimit($m[2]);
     $this->filt = $this->attIdTag($m[2]);
     $this->grouptype = $this->attGroupType($m[2]);
-    if ($this->filt['id']) throw new ParseError("Unable to select by id");
-    if (trim($m[3]))
+    if ($this->filt['id']) {
+      throw new ParseError('Unable to select by id');
+    }
+    if (trim($m[3])) {
       $this->sub = new FuncSub($m[3]);
+    }
   }
 
   /**
    * Return as PHP Code
    * @return string
    */
-  public function toPHP() {
-    $limit = Hamle\Text::varToCode($this->sortlimit['sort']) . "," .
-        $this->sortlimit['limit'] . "," . $this->sortlimit['offset'] . "," .
-        $this->grouptype['grouptype'];
-    $sub = $this->sub ? "->" . $this->sub->toPHP() : "";
-    return "hamleRel(" . $this->dir . "," .
-    Hamle\Text::varToCode($this->filt['tag']) . ",$limit)$sub";
+  public function toPHP()
+  {
+    $limit =
+      Hamle\Text::varToCode($this->sortlimit['sort']) .
+      ',' .
+      $this->sortlimit['limit'] .
+      ',' .
+      $this->sortlimit['offset'] .
+      ',' .
+      $this->grouptype['grouptype'];
+    $sub = $this->sub ? '->' . $this->sub->toPHP() : '';
+    return 'hamleRel(' .
+      $this->dir .
+      ',' .
+      Hamle\Text::varToCode($this->filt['tag']) .
+      ",$limit)$sub";
   }
 
-  public function getOrCreateModel(Model $parent = null) {
-    $model = $parent->hamleRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
-      $this->sortlimit['limit'], $this->sortlimit['offset']);
-    if(!$model->valid()) {
-      if(!$parent instanceof Hamle\WriteModel)
-        throw new \Exception('Cant create model, ' . get_class($parent) . ' must implement Hamle\\WriteModel.');
-      $model = $parent->current()->hamleCreateRel($this->dir, $this->filt['tag'], $this->sortlimit['sort'],
-        $this->sortlimit['limit'], $this->sortlimit['offset']);
+  public function getOrCreateModel(Model $parent = null)
+  {
+    $model = $parent->hamleRel(
+      $this->dir,
+      $this->filt['tag'],
+      $this->sortlimit['sort'],
+      $this->sortlimit['limit'],
+      $this->sortlimit['offset'],
+    );
+    if (!$model->valid()) {
+      if (!$parent instanceof Hamle\WriteModel) {
+        throw new \Exception(
+          'Cant create model, ' .
+            get_class($parent) .
+            ' must implement Hamle\\WriteModel.',
+        );
+      }
+      $model = $parent
+        ->current()
+        ->hamleCreateRel(
+          $this->dir,
+          $this->filt['tag'],
+          $this->sortlimit['sort'],
+          $this->sortlimit['limit'],
+          $this->sortlimit['offset'],
+        );
     }
-    if($this->sub)
+    if ($this->sub) {
       return $this->sub->getOrCreateModel($model)->current();
+    }
     return $model->current();
   }
-
 }

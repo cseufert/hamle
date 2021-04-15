@@ -28,4 +28,6 @@ namespace Seufert\Hamle\Exception;
 
 use Seufert\Hamle\Exception;
 
-class Filter extends Exception { }
+class Filter extends Exception
+{
+}
