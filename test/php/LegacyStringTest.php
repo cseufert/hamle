@@ -1,5 +1,7 @@
 <?php
 
+use Seufert\Hamle\Text\Complex;
+
 require_once 'base.php';
 
 class LegacyStringTest extends base
@@ -11,7 +13,7 @@ class LegacyStringTest extends base
    */
   public function testComplex(string $expect, string $input): void
   {
-    $ct = new \Seufert\Hamle\Text\Complex($input);
+    $ct = new Complex($input);
     $this->assertEquals($expect, $ct->toPHP());
   }
 
@@ -27,6 +29,10 @@ class LegacyStringTest extends base
       [
         "Hamle\Run::modelTypeTags(array('page'=>array(0=>'test')),array(),1,0)",
         '$(page.test:1)',
+      ],
+      [
+        "Hamle\Scope::getName('user')->hamleRel(1,array('application'=>array(0=>'current')),array(),1,0,5)",
+        '$($[user] > application.current:1@5)',
       ],
     ];
   }
