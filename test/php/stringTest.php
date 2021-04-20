@@ -376,7 +376,7 @@ class stringTest extends base
     $hs = new Text('{$desc|iterSplit("\n","\'")}', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('desc'),\"\\n\",'\\\'')",
+      "Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('desc'),\"\\n\",'\\'')",
       $php,
     );
   }
@@ -670,6 +670,21 @@ class stringTest extends base
       $php,
     );
   }
+  public function testMultiple()
+  {
+    $in = <<<ENDIN
+    {
+      "hash": "{\$(_request#get)->hash}",
+      "fileId": {\$[file]->id}
+    }
+    ENDIN;
+    $out =
+      '"{\n  \"hash\": \"".Hamle\Run::modelTypeId(array(\'_request\'=>array(0=>\'get\')),array(),0,0)->hamleGet(\'hash\')."\",\n  \"fileId\": ".Hamle\Scope::getName(\'file\')->hamleGet(\'id\')."\n}"';
+
+    $hs = new Text($in);
+    $php = $hs->toPHP();
+    $this->assertEquals($out, $php);
+  }
   public function testDollarFuncSort1()
   {
     $hs = new Text("\$(testim.featured^-sorder^title)", Text::TOKEN_CONTROL);
@@ -786,6 +801,9 @@ class stringTest extends base
       'plain text' => ['My Data'],
       'string with tab' => ["\tText"],
       'string with blackslash' => ['\\'],
+      'double quotes' => ['{"id":"abc"}'],
+      'double quote newline' => ["{\n  \"id\":\"abc\"\n}"],
+      'single quotes' => ["{a:'abc'}"],
     ];
   }
 }
