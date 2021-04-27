@@ -41,6 +41,20 @@ class stringTest extends base
     $this->assertEquals('Hello $user', $html);
     $this->assertEquals("'Hello \$user'", $php);
   }
+
+  /**
+   * @dataProvider dollarStringProvider
+   *
+   */
+  public function testDollarString(
+    string $hamle,
+    string $php,
+    int $mode = Text::TOKEN_HTML
+  ) {
+    $hs = new Text($hamle, $mode);
+    $this->assertEquals($php, $hs->toPHP());
+  }
+
   public function testDollarString1()
   {
     $hs = new Text("Hello \$user");
@@ -804,6 +818,17 @@ class stringTest extends base
       'double quotes' => ['{"id":"abc"}'],
       'double quote newline' => ["{\n  \"id\":\"abc\"\n}"],
       'single quotes' => ["{a:'abc'}"],
+    ];
+  }
+
+  public function dollarStringProvider(): array
+  {
+    return [
+      [
+        '$($[0] > image@1:1)',
+        "Hamle\Scope::get()->hamleRel(1,array('image'=>array()),array(),1,0,1)",
+        Text::TOKEN_CONTROL,
+      ],
     ];
   }
 }
