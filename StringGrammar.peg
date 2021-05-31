@@ -57,7 +57,7 @@ VarExprSubName = name: Identifier {
                                    }
 
 VarExprPart = VarScopeId / VarScopeName
-        / "$" "(" query: QueryFilter ")" { /** <?php return $query; ?> **/
+        / "$" "(" " "* query: QueryFilter " "* ")" { /** <?php return $query; ?> **/
                                            return {type:"query", ...query};}
         / SimpleVar
 
@@ -88,7 +88,7 @@ QueryFilterStage = id: IdentifierDash query: QueryFilterModifier* { /** <?php re
                    / query:QueryFilterModifier+ { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
                                                   return [{q:'type', id:'*'}, ...query];}
 
-QueryRelation = " "+ rel:[><] " "+ sub:QueryRelationStage {
+QueryRelation = " "* rel:[><] " "+ sub:QueryRelationStage {
                     /** <?php return \Seufert\Hamle\TextNode\RelQuery::for($rel, $sub); ?> **/
                     return {query, sub, rel:rel === '>'?'child':'parent'}
               }

@@ -829,6 +829,11 @@ class stringTest extends base
         "Hamle\Scope::get()->hamleRel(1,array('image'=>array()),array(),1,0,1)",
         Text::TOKEN_CONTROL,
       ],
+      [
+        '$( _cursor#next > bldwork )',
+        "Hamle\Run::modelTypeId(array('_cursor'=>array(0=>'next')),array(),0,0)->hamleRel(1,array('bldwork'=>array()),array(),0,0,0)",
+        Text::TOKEN_CONTROL,
+      ],
     ];
   }
 }
