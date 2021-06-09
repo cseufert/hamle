@@ -88,10 +88,13 @@ QueryFilterStage = id: IdentifierDash query: QueryFilterModifier* { /** <?php re
                    / query:QueryFilterModifier+ { /** <?php return array_merge([['q'=>'type', 'id'=> '*']], $query); ?> **/
                                                   return [{q:'type', id:'*'}, ...query];}
 
-QueryRelation = " "* rel:[><] " "+ sub:QueryRelationStage {
+QueryRelation = " "* rel:QueryRelationType " "+ sub:QueryRelationStage {
                     /** <?php return \Seufert\Hamle\TextNode\RelQuery::for($rel, $sub); ?> **/
                     return {query, sub, rel:rel === '>'?'child':'parent'}
               }
+
+QueryRelationType = ">" / "<" / "&" "g" "t" ";" { /** <?php return '<'; ?> **/}
+                        / "&" "l" "t" ";" { /** <?php return '>'; ?> **/}
 
 QueryRelationStage = id: AlphaNum query: ChildQueryFilterModifier* { /** <?php return array_merge([['q'=>'type', 'id'=> $id]], $query); ?> **/
                                                                     return [{q:'type', id}, ...query];}
@@ -126,7 +129,7 @@ VarExprSub = name: Identifier ExprParamArrow param:VarExprSub {
                   return {type:"sub", name};
            }
 
-ExprParamArrow = "-" ">" / "-" "!"
+ExprParamArrow = "-" ">" / "-" "!" / "-" "&" "g" "t" ";"
 
 filterexpr = "|" f:filter chain:filterexpr {
                   /** <?php return $f->withChain($chain); ?> **/
