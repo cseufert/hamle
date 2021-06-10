@@ -844,6 +844,11 @@ class stringTest extends base
         "strtoupper(Hamle\Scope::get(-1)->hamleRel(1,array('page'=>array()),array(),0,0,0)->hamleGet('title'),Hamle\Run::modelId(12,array(),0,0)->hamleGet('size'))",
         Text::TOKEN_HTML,
       ],
+      [
+        '$(_inspect#organisation^title:1000)',
+        "Hamle\Run::modelTypeId(array('_inspect'=>array(0=>'organisation')),array('title'=>2),1000,0)",
+        Text::TOKEN_CONTROL,
+      ],
     ];
   }
 }

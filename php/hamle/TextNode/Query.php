@@ -117,6 +117,15 @@ class Query implements Evaluated
           $limit = $q['limit'];
           $offset = $q['offset'];
           break;
+        case 'sort':
+          $sd = $q['id'];
+          if (!$sd) {
+            $sort[''] = Hamle::SORT_RANDOM;
+          } elseif ($sd[0] === '-') {
+            $sort[substr($sd, 1)] = Hamle::SORT_DESCENDING;
+          } else {
+            $sort[$sd] = Hamle::SORT_ASCENDING;
+          }
       }
     }
     $opt = [
