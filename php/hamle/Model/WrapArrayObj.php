@@ -49,7 +49,14 @@ namespace Seufert\Hamle\Model {
       $offset = 0,
       $grouptype = 1
     ) {
-      return $this->data[$this->pos]->hamleRel($rel, $typeTags);
+      return $this->data[$this->pos]->hamleRel(
+        $rel,
+        $typeTags,
+        $sort,
+        $limit,
+        $offset,
+        $grouptype,
+      );
     }
 
     function current()
