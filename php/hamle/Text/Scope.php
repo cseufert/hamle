@@ -29,21 +29,25 @@ namespace Seufert\Hamle\Text;
 use Seufert\Hamle\Model;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\WriteModel;
 
 class Scope extends SimpleVar
 {
+  /**
+   * @var int|string
+   */
   protected $scope = 0;
 
-  function __construct($s)
+  function __construct(string $s)
   {
     $m = [];
     if (!preg_match('/\$\[(-?[0-9]+|[a-zA-Z][a-zA-Z0-9]+)\]/', $s, $m)) {
       throw new ParseError("Unable to match scope ($s)");
     }
-    $this->scope = $m[1];
+    $this->scope = is_numeric($m[1]) ? (int) $m[1] : $m[1];
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     if (is_numeric($this->scope)) {
       return 'Hamle\\Scope::get(' . Text::varToCode($this->scope) . ')';
@@ -52,19 +56,19 @@ class Scope extends SimpleVar
     }
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     throw new ParseError('Unable to use Scope operator in HTML Code');
   }
 
-  function setValue($value)
+  function setValue(mixed $value): WriteModel
   {
     throw new \Exception('Unsupported');
   }
 
-  function getOrCreateModel(Model $parent = null)
+  function getOrCreateModel(Model $parent = null): Model
   {
-    if (is_numeric($this->scope)) {
+    if (is_int($this->scope)) {
       return \Seufert\Hamle\Scope::get($this->scope);
     }
     return \Seufert\Hamle\Scope::getName($this->scope);

@@ -3,7 +3,6 @@
 namespace Seufert\Hamle\TextNode;
 
 use Seufert\Hamle\Hamle;
-use Seufert\Hamle\Text;
 
 class RelQuery implements Chainable
 {
@@ -28,16 +27,16 @@ class RelQuery implements Chainable
     );
   }
 
-  public function apply(string $s): string
+  public function apply(string $out): string
   {
-    $s =
-      $s .
+    $out =
+      $out .
       "->hamleRel({$this->rel}," .
       Query::queryParams($this->filters, true) .
       ')';
     if ($this->chain) {
-      $s = $this->chain->apply($s);
+      $out = $this->chain->apply($out);
     }
-    return $s;
+    return $out;
   }
 }

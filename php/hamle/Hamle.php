@@ -35,11 +35,11 @@ class Hamle
   /**
    * @var Setup instance of hamleSetup Object
    */
-  public $setup;
+  public Setup $setup;
   /**
-   * @var Hamle Instance of the 'current' hamle Engine
+   * @var Hamle|null Instance of the 'current' hamle Engine
    */
-  protected static $me;
+  protected static ?Hamle $me = null;
   /**
    * @var Parse Parser Instance
    */
@@ -47,7 +47,7 @@ class Hamle
   /**
    * @var string Filename for Cache file
    */
-  protected $cacheFile;
+  protected string $cacheFile = '';
   /**
    * @var bool Enable cacheing of templates
    */
@@ -56,13 +56,13 @@ class Hamle
    * @var array Array of Files required $files[0] is the template file
    *            The rest of the files are Snippets
    */
-  protected $snipFiles;
+  protected array $snipFiles = [];
   /**
    * @var int Timestamp of latest modification to snipppet file
    */
   protected $snipMod = 0;
 
-  public $baseModel;
+  public ?Model $baseModel = null;
 
   const REL_CHILD = 0x01; /* Child Relation */
   const REL_PARENT = 0x02; /* Parent Relation */
@@ -75,12 +75,10 @@ class Hamle
   /**
    * Create new HAMLE Parser
    *
-   * @param Model $baseModel
-   * @param Setup $setup
    * @throws Exception\Unsupported
    * @throws Exception\NotFound
    */
-  function __construct($baseModel, $setup = null)
+  function __construct(Model $baseModel, ?Setup $setup = null)
   {
     self::$me = $this;
     if (!$setup) {
@@ -104,7 +102,7 @@ class Hamle
     $this->initSnipFiles();
   }
 
-  function initSnipFiles()
+  function initSnipFiles(): void
   {
     if ($this->snipMod == 0) {
       $this->snipFiles = $this->setup->snippetFiles();
@@ -112,7 +110,7 @@ class Hamle
         if (!file_exists($f)) {
           throw new Exception\NotFound("Unable to find Snippet File ($f)");
         }
-        $this->snipFiles = max($this->snipFiles, filemtime($f));
+        $this->snipMod = max($this->snipMod, filemtime($f));
       }
     }
   }
@@ -154,7 +152,7 @@ class Hamle
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
-  function parse($hamleCode, \Closure $parseFunc = null)
+  function parse($hamleCode, \Closure $parseFunc = null): void
   {
     if (!$this->cacheFile) {
       $this->cacheFile = $this->setup->cachePath('string.hamle.php');
@@ -192,7 +190,7 @@ class Hamle
    * Parse a HAMLE String, and cache output
    * @param $hamleString string Hamle
    */
-  function string($hamleString)
+  function string(string $hamleString): void
   {
     $md5 = md5($hamleString);
     $stringId = substr($md5, 0, 12) . substr($md5, 24, 8);
@@ -202,7 +200,7 @@ class Hamle
     }
   }
 
-  function getCacheFileName()
+  function getCacheFileName(): string
   {
     return $this->cacheFile;
   }
@@ -223,6 +221,9 @@ class Hamle
       if (!$currentModel && $baseModel) {
         Scope::add($baseModel);
       }
+      /**
+       * @psalm-suppress UnresolvableInclude
+       */
       require $this->cacheFile;
       if (!$currentModel && $baseModel) {
         Scope::done();
@@ -242,9 +243,9 @@ class Hamle
    * Get the current line number
    * @return int The line number being passed by the parser
    */
-  static function getLineNo()
+  static function getLineNo(): int
   {
-    if (!isset(self::$me)) {
+    if (!self::$me) {
       return 0;
     }
     return self::$me->parse->getLineNo();
@@ -253,7 +254,7 @@ class Hamle
   /**
    * Disable the caching of hamle templates
    */
-  function disableCache()
+  function disableCache(): void
   {
     $this->cache = false;
   }

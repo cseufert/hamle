@@ -25,7 +25,6 @@ THE SOFTWARE.
  */
 
 namespace Seufert\Hamle {
-  use Seufert\Hamle\Exception\NoKey;
   use Iterator;
 
   /**
@@ -39,9 +38,8 @@ namespace Seufert\Hamle {
      * hamleGet Must be implemented to get a variable using key
      *
      * @param string $key String of key name to retreive
-     * @throws \Seufert\Hamle\Exception\NoKey
      */
-    function hamleGet($key);
+    function hamleGet(string $key): mixed;
 
     /**
      * Retreive an iterable result of relatives to the current object
@@ -55,12 +53,12 @@ namespace Seufert\Hamle {
      * @return Model Return object must implmement hamleModel interface
      */
     function hamleRel(
-      $rel,
-      $typeTags,
-      $sort = [],
-      $limit = 0,
-      $offset = 0,
-      $grouptype = 1
-    );
+      int $rel,
+      array $typeTags,
+      array $sort = [],
+      int $limit = 0,
+      int $offset = 0,
+      int $grouptype = 1
+    ): Model;
   }
 }

@@ -31,8 +31,8 @@ use Seufert\Hamle\Model;
 
 class FuncSub extends Hamle\Text\Func
 {
-  protected $dir;
-  protected $grouptype = ['grouptype' => 0];
+  protected int $dir;
+  protected array $grouptype = ['grouptype' => 0];
 
   /**
    * FuncSub constructor.
@@ -68,7 +68,7 @@ class FuncSub extends Hamle\Text\Func
    * Return as PHP Code
    * @return string
    */
-  public function toPHP()
+  public function toPHP(): string
   {
     $limit =
       Hamle\Text::varToCode($this->sortlimit['sort']) .
@@ -86,8 +86,11 @@ class FuncSub extends Hamle\Text\Func
       ",$limit)$sub";
   }
 
-  public function getOrCreateModel(Model $parent = null)
+  public function getOrCreateModel(Model $parent = null): Model
   {
+    if (!$parent) {
+      throw new \RuntimeException('Unable to create when no model is passed');
+    }
     $model = $parent->hamleRel(
       $this->dir,
       $this->filt['tag'],
@@ -97,7 +100,7 @@ class FuncSub extends Hamle\Text\Func
     );
     if (!$model->valid()) {
       if (!$parent instanceof Hamle\WriteModel) {
-        throw new \Exception(
+        throw new \RuntimeException(
           'Cant create model, ' .
             get_class($parent) .
             ' must implement Hamle\\WriteModel.',

@@ -35,33 +35,35 @@ use Seufert\Hamle\Tag;
 class Filter extends Tag
 {
   /**
-   * @var Hamle\Filter $filter Filter CLass
+   * @var class-string<Hamle\Filter> $filter Filter CLass
    */
   protected $filter;
 
-  function __construct($tag)
+  function __construct(string $tag)
   {
     parent::__construct();
     $this->type = ucfirst(strtolower($tag));
-    $this->filter = "\\Seufert\\Hamle\\Filter\\{$this->type}";
-    if (!class_exists($this->filter)) {
+    /** @var class-string<Hamle\Filter> $class */
+    $class = "\\Seufert\\Hamle\\Filter\\{$this->type}";
+    if (!class_exists($class)) {
       throw new ParseError("Unable to fild filter $tag");
     }
+    $this->filter = $class;
   }
 
-  function renderContent($pad = '', $oneliner = false)
+  function renderContent(string $pad = '', bool $oneliner = false): string
   {
     $c = $this->filter;
     return $c::filterText(parent::renderContent($pad));
   }
 
-  function renderStTag()
+  function renderStTag(): string
   {
     $c = $this->filter;
     return $c::stTag();
   }
 
-  function renderEnTag()
+  function renderEnTag(): string
   {
     $c = $this->filter;
     return $c::ndTag();

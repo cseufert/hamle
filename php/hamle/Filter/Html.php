@@ -29,17 +29,17 @@ use Seufert\Hamle\Filter;
 
 class Html extends Filter
 {
-  static function stTag()
+  static function stTag(): string
   {
     return '<!-- HTML Fitler -->';
   }
 
-  static function ndTag()
+  static function ndTag(): string
   {
     return '<!-- HTML Fitler End -->';
   }
 
-  static function filterText($s)
+  static function filterText(string $s): string
   {
     return "$s";
   }

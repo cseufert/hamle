@@ -3,11 +3,12 @@
 use Seufert\Hamle\Model\Zero;
 use Seufert\Hamle\Text;
 
-require_once "base.php";
+require_once 'base.php';
 
-class writeTest extends base {
-  
-  public function testWrite1() {
+class writeTest extends base
+{
+  public function testWrite1()
+  {
     $hs = new Text\Complex("$[write]->title");
     $m = new writeTestModel();
     $m->values['title'] = 'abc';
@@ -17,44 +18,60 @@ class writeTest extends base {
     $this->assertEquals('test', $m->values['title']);
   }
 
-  public function testWrite2() {
+  public function testWrite2()
+  {
     $hs = new Text\Complex("$($[write] > write)->new");
     $m = new writeTestModel();
     \Seufert\Hamle\Scope::add($m, 'write');
     $m = $hs->setValue('test');
     $this->assertEquals('test', $m->values['new']);
   }
-
 }
 
-class writeTestModel implements \Seufert\Hamle\WriteModel {
+class writeTestModel implements \Seufert\Hamle\WriteModel
+{
   use \Seufert\Hamle\Model\OneTrait;
 
   public $values = [];
 
-  function hamleGet($key) {
+  function hamleGet(string $key): mixed
+  {
     return $this->values[$key];
   }
 
-  function hamleRel($rel, $typeTags, $sort = [],
-                    $limit = 0, $offset = 0, $grouptype = 1) {
+  function hamleRel(
+    int $rel,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0,
+    int $grouptype = 1
+  ): \Seufert\Hamle\Model {
     return new Zero();
   }
 
   /**
    * Set a HAMLE model value
    *
-   * @param $key
-   * @param $value
+   * @param string $key
+   * @param mixed $value
    * @return \Seufert\Hamle\WriteModel
    */
-  public function hamleSet($key, $value) {
+  public function hamleSet(string $key, mixed $value): \Seufert\Hamle\WriteModel
+  {
     $this->values[$key] = $value;
+    return $this;
   }
 
-  function hamleCreateRel($rel, $typeTags, $sort = [],
-                          $limit = 0, $offset = 0, $grouptype = 1) {
-    if($rel = Seufert\Hamle\Hamle::REL_CHILD) {
+  function hamleCreateRel(
+    int $rel,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0,
+    int $grouptype = 1
+  ): \Seufert\Hamle\WriteModel {
+    if ($rel = Seufert\Hamle\Hamle::REL_CHILD) {
       $m = new self();
       $m->values['title'] = 'new';
       return $m;

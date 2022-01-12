@@ -31,17 +31,17 @@ use Seufert\Hamle\Filter;
  */
 class Javascript extends Filter
 {
-  static function stTag()
+  static function stTag(): string
   {
     return "<script type=\"text/javascript\">";
   }
 
-  static function ndTag()
+  static function ndTag(): string
   {
     return '</script>';
   }
 
-  static function filterText($s)
+  static function filterText(string $s): string
   {
     return "/*<![CDATA[*/\n" . $s . '/*]]>*/';
   }

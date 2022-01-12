@@ -40,15 +40,16 @@ class Tag
   /**
    * @var string Tag Type for Printable Tags
    */
-  public $type;
+  public string $type = '';
   /**
    * @var array Array of lines of Content
    */
-  public $content;
+  public array $content = [];
 
-  public $opt;
+  public array $opt = [];
 
-  public $source;
+  /** @var array */
+  public $source = [];
   /**
    * Number of spaces for each Indent when doing pretty format of output
    */
@@ -89,9 +90,9 @@ class Tag
    * Replace a tag at $path with a new tag ($newTag)
    * @param $path array Path Array
    * @param $newTag Tag New tag to replace old tag with
-   * @return Tag
+   * @return Tag|null
    */
-  function replace($path, Tag $newTag)
+  function replace(array $path, Tag $newTag): ?Tag
   {
     if ($this->compare($path[0])) {
       if (count($path) == 1) {
@@ -108,14 +109,17 @@ class Tag
     return null;
   }
 
-  function addSnipContent($contentTag, &$tagArray = [], $key = 0)
-  {
+  function addSnipContent(
+    Tag $contentTag,
+    array &$tagArray = [],
+    int $key = 0
+  ): void {
     foreach ($this->tags as $k => $tag) {
       $tag->addSnipContent($contentTag, $this->tags, $k);
     }
   }
 
-  function compare($tic)
+  function compare(array $tic): bool
   {
     if (isset($tic['type']) && $this->type != $tic['type']) {
       return false;
@@ -137,7 +141,7 @@ class Tag
    * @param Tag $tag Tag to add as child
    * @param string $mode Mode to add child [append|prepend]
    */
-  function addChild(Tag $tag, $mode = 'append')
+  function addChild(Tag $tag, $mode = 'append'): void
   {
     if ($mode == 'prepend') {
       array_unshift($this->tags, $tag);
@@ -153,7 +157,7 @@ class Tag
    * @param bool $minify Output HTML in minified format
    * @return string HTML/PHP Output
    */
-  function render($indent = 0, $minify = false)
+  function render(int $indent = 0, bool $minify = false): string
   {
     $ind = $minify ? '' : str_pad('', $indent);
     $oneliner = !(count($this->content) > 1 || $this->tags);
@@ -178,7 +182,7 @@ class Tag
    * @param bool $oneliner Render to fit single line
    * @return string Indented Content
    */
-  function renderContent($pad = '', $oneliner = false)
+  function renderContent(string $pad = '', bool $oneliner = false): string
   {
     $out = '';
     foreach ($this->content as $c) {
@@ -190,15 +194,17 @@ class Tag
   /**
    * Output the Start Tag for this element
    */
-  function renderStTag()
+  function renderStTag(): string
   {
+    return '';
   }
 
   /**
    * Output the End Tag for this element
    */
-  function renderEnTag()
+  function renderEnTag(): string
   {
+    return '';
   }
 
   /**
@@ -207,7 +213,7 @@ class Tag
    * @param string $s One line of content
    * @param int $strtype Type of string to parse, hamleString::TOKEN_*
    */
-  function addContent($s, $strtype = Text::TOKEN_HTML)
+  function addContent(string $s, int $strtype = Text::TOKEN_HTML): void
   {
     if (trim($s)) {
       $parse = new Text($s, $strtype);

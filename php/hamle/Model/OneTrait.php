@@ -10,29 +10,29 @@ namespace Seufert\Hamle\Model;
 
 trait OneTrait
 {
-  protected $hamleIndex = 0;
+  protected int $hamleIndex = 0;
 
-  function valid()
+  function valid(): bool
   {
     return $this->hamleIndex == 0;
   }
 
-  function key()
+  function key(): mixed
   {
     return $this->hamleIndex;
   }
 
-  function current()
+  function current(): mixed
   {
     return $this;
   }
 
-  function rewind()
+  function rewind(): void
   {
     $this->hamleIndex = 0;
   }
 
-  function next()
+  function next(): void
   {
     $this->hamleIndex++;
   }

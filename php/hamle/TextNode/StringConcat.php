@@ -32,7 +32,7 @@ class StringConcat implements Evaluated
   static function fromParser(
     array $chars,
     ?Evaluated $expr = null,
-    $rhs = null
+    string|StringLit|StringConcat $rhs = null
   ): self {
     $o = [];
     if ($chars) {

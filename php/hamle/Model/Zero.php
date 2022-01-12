@@ -36,46 +36,46 @@ use Seufert\Hamle\Model;
  */
 class Zero implements Model
 {
-  public function hamleGet($key)
+  public function hamleGet(string $key): mixed
   {
     return new Zero();
   }
 
   public function hamleRel(
-    $rel,
-    $typeTags,
-    $sort = [],
-    $limit = 0,
-    $offset = 0,
-    $grouptype = 1
-  ) {
+    int $rel,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0,
+    int $grouptype = 1
+  ): Model {
     return new Zero();
   }
 
-  public function valid()
+  public function valid(): bool
   {
     return false;
   }
 
-  public function key()
+  public function key(): mixed
   {
     return 0;
   }
 
-  public function current()
+  public function current(): mixed
   {
     return $this;
   }
 
-  public function rewind()
+  public function rewind(): void
   {
   }
 
-  public function next()
+  public function next(): void
   {
   }
 
-  public function __toString()
+  public function __toString(): string
   {
     return '';
   }

@@ -31,11 +31,11 @@ use Seufert\Hamle\WriteModel;
 
 class SimpleVar extends Text
 {
-  protected $var;
+  protected string $var = '';
 
-  protected $filter;
+  protected ?Filter $filter = null;
 
-  function __construct($s)
+  function __construct(string $s)
   {
     if (false !== ($pos = strpos($s, '|'))) {
       $this->var = substr($s, 1, $pos - 1);
@@ -45,7 +45,7 @@ class SimpleVar extends Text
     }
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     if ($escape) {
       return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
@@ -53,26 +53,26 @@ class SimpleVar extends Text
     return '<?=' . $this->toPHP() . '?>';
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     return $this->filter ? $this->filter->toPHP() : $this->toPHPVar();
   }
 
-  function toPHPVar()
+  function toPHPVar(): string
   {
     return 'Hamle\\Scope::get()->hamleGet(' . Text::varToCode($this->var) . ')';
   }
 
-  function getOrCreateModel(Model $parent = null)
+  function getOrCreateModel(Model $parent = null): Model
   {
     return \Seufert\Hamle\Scope::get()->current();
   }
 
   /**
-   * @param $value
+   * @param mixed $value
    * @return WriteModel
    */
-  function setValue($value)
+  function setValue(mixed $value): WriteModel
   {
     $model = $this->getOrCreateModel();
     if (!$model instanceof WriteModel) {

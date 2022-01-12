@@ -36,10 +36,10 @@ class Control extends H\Tag
   /**
    * @var string Variable passed to Control Tag
    */
-  protected $var;
-  public $o,
-    $else = false;
-  static $instCount = 1;
+  protected string $var;
+  public string $o;
+  public bool $else = false;
+  static int $instCount = 1;
 
   /**
    * Crate new Control Tag
@@ -47,32 +47,28 @@ class Control extends H\Tag
    * @param \Seufert\Hamle\Tag $parentTag
    * @throws ParseError
    */
-  function __construct($tag, $parentTag = null)
+  function __construct(string $tag, H\Tag $parentTag = null)
   {
     parent::__construct();
     $this->o = "\$o" . self::$instCount++;
     $this->type = strtolower($tag);
     $this->var = '';
     if ($parentTag && $this->type == 'else') {
-      if ($parentTag instanceof H\Tag) {
-        $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
-        if (
-          $elseTag instanceof H\Tag\Control &&
-          in_array($elseTag->type, ['with', 'if'])
-        ) {
-          $elseTag->else = true;
-        } else {
-          throw new ParseError(
-            "You can only use else with |with and |if, you tried |{$parentTag->type}",
-          );
-        }
+      $elseTag = $parentTag->tags[count($parentTag->tags) - 1];
+      if (
+        $elseTag instanceof H\Tag\Control &&
+        in_array($elseTag->type, ['with', 'if'])
+      ) {
+        $elseTag->else = true;
       } else {
-        throw new ParseError('Unable to use else here');
+        throw new ParseError(
+          "You can only use else with |with and |if, you tried |{$parentTag->type}",
+        );
       }
     }
   }
 
-  function renderStTag()
+  function renderStTag(): string
   {
     $out = '<' . '?php ';
     $scopeName = '';
@@ -84,6 +80,8 @@ class Control extends H\Tag
       $out .= '/* else */';
       return $out . "\n?>";
     }
+    /** @var H\Text|null $hsv */
+    $hsv = null;
     if ($this->var) {
       if (preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
         $scopeName = $m[1];
@@ -95,7 +93,7 @@ class Control extends H\Tag
     }
     switch ($this->type) {
       case 'each':
-        if ($this->var) {
+        if ($hsv) {
           $out .= 'foreach(' . $hsv->toPHP() . " as {$this->o}) { \n";
         } else {
           $out .= "foreach(Hamle\\Scope::get() as {$this->o}) { \n";
@@ -103,6 +101,11 @@ class Control extends H\Tag
         $out .= "Hamle\\Scope::add({$this->o}); ";
         break;
       case 'with':
+        if (!$hsv) {
+          throw new \RuntimeException(
+            'With requires a parameter for what to include',
+          );
+        }
         if ($scopeName) {
           $out .=
             'Hamle\\Scope::add(' . $hsv->toPHP() . ", \"$scopeName\");\n;";
@@ -116,6 +119,11 @@ class Control extends H\Tag
         }
         break;
       case 'include':
+        if (!$hsv) {
+          throw new \RuntimeException(
+            'Include requires a parameter for what to include',
+          );
+        }
         $file = $hsv->toHTML();
         $fn = $file[0] === '#' ? 'includeFragment' : 'includeFile';
         $out .= "echo Hamle\\Run::$fn({$hsv->toPHP()});";
@@ -126,12 +134,12 @@ class Control extends H\Tag
   /**
    * @param string $s Variable String for control tag
    */
-  function setVar($s)
+  function setVar(string $s): void
   {
     $this->var = trim($s);
   }
 
-  function renderEnTag()
+  function renderEnTag(): string
   {
     $out = '<' . '?php ';
     switch ($this->type) {
@@ -154,7 +162,6 @@ class Control extends H\Tag
         break;
       case 'include':
         return '';
-        break;
     }
     if ($this->else) {
       $out .= 'else{';
@@ -162,7 +169,7 @@ class Control extends H\Tag
     return $out . "\n?>";
   }
 
-  function render($indent = 0, $minify = false)
+  function render(int $indent = 0, bool $minify = false): string
   {
     $ind = $minify ? '' : str_pad('', $indent);
     $oneliner = !(count($this->content) > 1 || $this->tags);

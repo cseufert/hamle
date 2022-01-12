@@ -6,10 +6,10 @@
   "author": "Chris Seufert <chris@modd.com.au>",
   "license": "MIT",
   "devDependencies": {
-    "@prettier/plugin-php": "^0.16.2",
+    "@prettier/plugin-php": "^0.17.6",
     "pegjs": "^0.10.0",
     "phpegjs": "^1.0.0-beta7",
-    "prettier": "^2.2.1"
+    "prettier": "^2.5.1"
   },
   "prettier": {
     "bracketSpacing": false,

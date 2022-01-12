@@ -26,17 +26,18 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle\Exception\ParseError;
+use Seufert\Hamle\Model;
 use Seufert\Hamle\Model\WrapArray;
 use Seufert\Hamle\Text;
 
 class Filter extends Text
 {
-  protected $filter;
+  protected string $filter;
 
-  protected $vars;
+  protected array $vars;
 
-  /** @var SimpleVar */
-  protected $what;
+  /** @var SimpleVar|Complex */
+  protected Text $what;
 
   /** @var Filter|null Chained Filter*/
   protected $chained;
@@ -44,7 +45,12 @@ class Filter extends Text
   /** @var Callable|null Filter resolver, must return function name, or null */
   static $filterResolver = null;
 
-  function __construct($s, Text $what)
+  /**
+   * @param string $s
+   * @param SimpleVar|Complex $what
+   * @throws ParseError
+   */
+  function __construct(string $s, Text $what)
   {
     if (
       preg_match(
@@ -83,7 +89,7 @@ class Filter extends Text
     $this->what = $what;
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     if ($escape) {
       return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
@@ -91,7 +97,7 @@ class Filter extends Text
     return '<?=' . $this->toPHP() . '?>';
   }
 
-  function toPHPpre()
+  function toPHPpre(): string
   {
     $pre = '';
     if ($this->chained) {
@@ -100,7 +106,7 @@ class Filter extends Text
     return "$pre{$this->filter}(";
   }
 
-  function toPHPpost()
+  function toPHPpost(): string
   {
     $post = '';
     if ($this->chained) {
@@ -113,12 +119,12 @@ class Filter extends Text
     return "$o)$post";
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     return $this->toPHPpre() . $this->what->toPHPVar() . $this->toPHPpost();
   }
 
-  static function itersplit($v, $sep = ',')
+  static function itersplit(mixed $v, string $sep = ','): Model
   {
     $o = [];
     foreach (explode($sep, $v) as $k => $i) {
@@ -129,19 +135,19 @@ class Filter extends Text
     return new WrapArray($o);
   }
 
-  static function newlinebr($v)
+  static function newlinebr(mixed $v): string
   {
     return str_replace("\n", "<br />\n", $v);
   }
 
-  static function replace($v, $src, $dst)
+  static function replace(mixed $v, string $src, string $dst): mixed
   {
     return str_replace($src, $dst, $v);
   }
 
-  static function ascents($v)
+  static function ascents(mixed $v): int
   {
-    $v = str_replace(['$', ' ', ','], '', $v);
+    $v = (float) str_replace(['$', ' ', ','], '', $v);
     return (int) round($v * 100, 0);
   }
 }

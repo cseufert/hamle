@@ -56,7 +56,7 @@ class Form extends Tag
     }
   }
 
-  function renderStTag()
+  function renderStTag(): string
   {
     self::$sForm[] = $this;
     self::$sCount = count(self::$sForm);
@@ -129,7 +129,7 @@ class Form extends Tag
       "; \$form->process(); ?>";
   }
 
-  function renderEnTag()
+  function renderEnTag(): string
   {
     return "<?php echo \$form->preEndTag(); unset(\$form); ?></form>";
   }

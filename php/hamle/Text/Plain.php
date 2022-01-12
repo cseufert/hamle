@@ -11,21 +11,21 @@ use Seufert\Hamle\Text;
 
 class Plain extends Text
 {
-  protected $s;
-  protected $type;
+  protected string $s;
+  protected int $type;
 
-  function __construct($s, $type = self::TOKEN_HTML)
+  function __construct(string $s, int $type = self::TOKEN_HTML)
   {
     $this->s = str_replace('\\$', "$", $s);
     $this->type = $type;
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     return Text::varToCode($this->s);
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     if ($this->type == self::TOKEN_CODE) {
       return $this->s;

@@ -32,7 +32,13 @@ use stdConf;
 
 class Sass extends Css
 {
-  static function filterText($s)
+  /**
+   * @psalm-suppress UndefinedClass
+   * @psalm-suppress UndefinedConstant
+   * @param string $s
+   * @return string
+   */
+  static function filterText(string $s): string
   {
     $as = explode("\n", $s);
     $indent = -1;
@@ -50,6 +56,9 @@ class Sass extends Css
     }
     $s = implode("\n", $as);
 
+    /**
+     * @psalm-suppress UnresolvableInclude
+     */
     require_once ME_DIR . '/lib/phpsass/SassParser.php';
     $sp = new SassParser([
       'cache' => false,

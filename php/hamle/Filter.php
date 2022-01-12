@@ -11,17 +11,17 @@ namespace Seufert\Hamle;
 
 abstract class Filter
 {
-  static function stTag()
+  static function stTag(): string
   {
     return '';
   }
 
-  static function filterText($s)
+  static function filterText(string $s): string
   {
     return $s;
   }
 
-  static function ndTag()
+  static function ndTag(): string
   {
     return '';
   }

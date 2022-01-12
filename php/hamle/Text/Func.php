@@ -34,14 +34,14 @@ class Func extends SimpleVar
 {
   const REGEX_FUNCSEL = '[a-zA-Z0-9\*\.,#_:\\^\\-@\\${}[\]]';
 
-  protected $sub = null;
+  protected ?FuncSub $sub = null;
 
   /** @var bool|Scope */
   protected $scope = false;
 
-  protected $filt;
+  protected array $filt = [];
 
-  protected $sortlimit;
+  protected array $sortlimit = [];
 
   /**
    * Func constructor.
@@ -68,7 +68,7 @@ class Func extends SimpleVar
     $this->filt = $this->attIdTag($m[1]);
   }
 
-  public function attIdTag(&$s)
+  public function attIdTag(string &$s): array
   {
     $m = [];
     $att = ['id' => [], 'tag' => []];
@@ -94,7 +94,7 @@ class Func extends SimpleVar
     return $att;
   }
 
-  public function attSortLimit(&$s)
+  public function attSortLimit(string &$s): array
   {
     $att = ['limit' => 0, 'offset' => 0, 'sort' => []];
     $m = [];
@@ -122,7 +122,7 @@ class Func extends SimpleVar
     return $att;
   }
 
-  public function attGroupType(&$s)
+  public function attGroupType(string &$s): array
   {
     $att = ['grouptype' => 0];
     $m = [];
@@ -135,7 +135,7 @@ class Func extends SimpleVar
   /**
    * @return string PHP Code
    */
-  public function toPHP()
+  public function toPHP(): string
   {
     $sub = $this->sub ? '->' . $this->sub->toPHP() : '';
     if ($this->scope instanceof Scope) {
@@ -172,7 +172,7 @@ class Func extends SimpleVar
    * @param Model|null $parent
    * @return Model
    */
-  public function getOrCreateModel(Model $parent = null)
+  public function getOrCreateModel(Model $parent = null): Model
   {
     if ($this->scope instanceof Scope) {
       $parent = $this->scope->getOrCreateModel();
@@ -216,7 +216,7 @@ class Func extends SimpleVar
     return $parent->current();
   }
 
-  public function toHTML($escape = false)
+  public function toHTML(bool $escape = false): string
   {
     throw new ParseError('Unable to use Scope operator in HTML Code');
   }

@@ -26,7 +26,6 @@ THE SOFTWARE.
 namespace Seufert\Hamle;
 
 use Seufert\Hamle\Exception\RunTime;
-use Seufert\Hamle\Model;
 
 /**
  * HAMLE Runtime
@@ -38,14 +37,14 @@ class Run
   /**
    * @var Hamle Current HAMLE instance
    */
-  protected static $hamle;
-  protected static $hamleList = [];
+  protected static ?Hamle $hamle = null;
+  protected static array $hamleList = [];
 
   /**
    * Add a hamle instance to the stack
    * @param Hamle $hamle Hamle Instance
    */
-  static function addInstance(Hamle $hamle)
+  static function addInstance(Hamle $hamle): void
   {
     self::$hamleList[] = $hamle;
     self::$hamle = $hamle;
@@ -54,7 +53,7 @@ class Run
   /**
    * Remove hamle Instance from the stack
    */
-  static function popInstance()
+  static function popInstance(): void
   {
     array_pop(self::$hamleList);
     if (self::$hamleList) {
@@ -67,10 +66,10 @@ class Run
   /**
    * Execute a hamle String Filter
    * @param string $name Name of Filter
-   * @param string $data Data to pass to filter
-   * @return string Fitlered data
+   * @param mixed $data Data to pass to filter
+   * @return mixed Fitlered data
    */
-  static function filter($name, $data)
+  static function filter(string $name, mixed $data): mixed
   {
     return strrev($data);
   }
@@ -86,11 +85,11 @@ class Run
   }
 
   /**
-   * @param $fragment string Name of fragment
+   * @param string $fragment Name of fragment
    * @internal Only for use in template system
    * @return string String to output where |include #fragment was called
    */
-  static function includeFragment($fragment)
+  static function includeFragment(string $fragment): string
   {
     return self::$hamle->setup->getFragment(self::$hamle, substr($fragment, 1));
   }
@@ -135,16 +134,19 @@ class Run
   /**
    * Called from template by $() to find a specific model
    * @param array[] $typeId Array of types mapped to ids [type1=>[1],type2=>[2]]
-   * @param int $sortDir Sort Direction defined by hamle::SORT_*
-   * @param string $sortField Field name to sort by
+   * @param array<string,int> $sort Sort fields as key, and direction as value
    * @param int $limit Results Limit
    * @param int $offset Results Offset
    * @internal param string $type type to filter by
    * @internal param string $id id to search for
    * @return Model
    */
-  static function modelTypeId($typeId, $sort = [], $limit = 0, $offset = 0)
-  {
+  static function modelTypeId(
+    array $typeId,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0
+  ) {
     return self::$hamle->setup->getModelTypeId($typeId, $sort, $limit, $offset);
   }
 }

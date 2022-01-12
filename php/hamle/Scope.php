@@ -4,7 +4,6 @@ namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\OutOfScope;
 use Seufert\Hamle\Exception\Unsupported;
 use Seufert\Hamle\Exception\RunTime;
-use Seufert\Hamle\Model;
 
 /**
  * HAMLE Controller/Model Scope Handler
@@ -21,7 +20,7 @@ class Scope
   /** @var null|Callable */
   static $scopeHook;
 
-  static function add($model, $name = null)
+  static function add(Model $model, string $name = null): void
   {
     if (!$model instanceof Model) {
       throw new Unsupported(
@@ -40,7 +39,7 @@ class Scope
     }
   }
 
-  static function done()
+  static function done(): void
   {
     array_pop(self::$scopes);
   }
@@ -54,9 +53,9 @@ class Scope
    * @return Model
    * @throws OutOfScope
    */
-  static function get($id = 0)
+  static function get(int $id = 0): Model
   {
-    if (0 == $id) {
+    if (0 === $id) {
       if ($scope = end(self::$scopes)) {
         return $scope;
       }
@@ -66,27 +65,24 @@ class Scope
     if ($id < 0) {
       $key = count(self::$scopes) + $id - 1;
     }
-    if ($id == 0) {
-      $key = count(self::$scopes) - 1;
-    }
     if (!isset(self::$scopes[$key])) {
       throw new OutOfScope("Unable to find Scope ($id) or $key");
     }
     return self::$scopes[$key];
   }
 
-  static function getTopScope()
+  static function getTopScope(): ?Model
   {
-    return end(self::$scopes);
+    return end(self::$scopes) ?: null;
   }
-  static function getDepth()
+  static function getDepth(): int
   {
     return count(self::$scopes);
   }
 
-  static $returnZeroOnNoScope = false;
+  static bool $returnZeroOnNoScope = false;
 
-  static function getName($name)
+  static function getName(string $name): Model
   {
     if ($name && isset(self::$namedScopes[$name])) {
       self::$namedScopes[$name]->rewind();

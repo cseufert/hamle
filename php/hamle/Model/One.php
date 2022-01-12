@@ -33,20 +33,20 @@ class One implements Model
   use OneTrait;
 
   /** @inheritdoc */
-  function hamleGet($key)
+  function hamleGet(string $key): mixed
   {
     throw new NoKey("Cant find Key ($key)");
   }
 
   /** @inheritdoc */
   function hamleRel(
-    $rel,
-    $typeTags,
-    $sort = [],
-    $limit = 0,
-    $offset = 0,
-    $grouptype = 1
-  ) {
+    int $rel,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0,
+    int $grouptype = 1
+  ): Model {
     return new Zero();
   }
 }

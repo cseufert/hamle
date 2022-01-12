@@ -26,7 +26,6 @@ THE SOFTWARE.
 namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Parse\Filter as ParseFilter;
-use Seufert\Hamle\Text;
 
 /**
  * HAML Enhanced - Parser, parses hamle files,
@@ -40,15 +39,15 @@ class Parse
   /**
    * @param array $indents Array of indent levels
    */
-  protected $indents;
+  protected array $indents = [];
   /**
    * @var Tag[] Array of Root Document Tags
    */
-  public $root;
+  public array $root = [];
   /**
    * @var array $lines Each Line read in from template
    */
-  protected $lines;
+  protected array $lines = [];
   /**
    * Regex for parsing each HAMLE line
    */
@@ -60,11 +59,11 @@ class Parse
   /**
    * @var int Current Line Number
    */
-  protected $lineNo;
+  protected int $lineNo = 0;
   /**
    * @var int Total Lines in File
    */
-  protected $lineCount;
+  protected int $lineCount = 0;
 
   function __construct()
   {
@@ -75,7 +74,7 @@ class Parse
    * Clear Lines, and Line Number, so if output is
    * called, no output will be produced
    */
-  protected function init()
+  protected function init():void
   {
     $this->lines = [];
     $this->lineNo = 0;
@@ -83,21 +82,21 @@ class Parse
     $this->root = [];
   }
 
-  protected function loadLines($s)
+  protected function loadLines(string $s):void
   {
     $this->lines = explode("\n", str_replace("\r", '', $s));
     $this->lineCount = count($this->lines);
     $this->lineNo = 0;
   }
 
-  function parseFilter(ParseFilter $filter)
+  function parseFilter(ParseFilter $filter):void
   {
     foreach ($this->root as $k => $tag) {
       $this->root[$k] = $filter->filterTag($tag);
     }
   }
 
-  function parseSnip($s)
+  function parseSnip(string $s):void
   {
     //save root tags
     /** @var Tag[] $roots */
@@ -108,7 +107,7 @@ class Parse
     $this->root = array_merge($roots, $this->root);
   }
 
-  function applySnip()
+  function applySnip():void
   {
     /** @var Tag\Snippet[] $fwdSnip */
     $fwdSnip = [];
@@ -144,14 +143,14 @@ class Parse
    * Parse HAMLE template, from a string
    * @param string $s String to parse
    */
-  function str($s)
+  function str($s):void
   {
     $this->init();
     $this->loadLines($s);
     $this->procLines();
   }
 
-  function procLines()
+  function procLines():void
   {
     /* @var $heir Tag[] Tag Heirachy Array */
     $heir = [];
@@ -267,7 +266,7 @@ class Parse
     }
   }
 
-  function parseQueryString($qs)
+  function parseQueryString(string $qs):array
   {
     $out = [];
     foreach (explode('&', $qs) as $s) {
@@ -277,7 +276,7 @@ class Parse
     return $out;
   }
 
-  function output($minify = false)
+  function output(bool $minify = false):string
   {
     $out = "<?php\nuse Seufert\\Hamle;\n?>";
     foreach ($this->root as $tag) {
@@ -286,7 +285,7 @@ class Parse
     return $out;
   }
 
-  function consumeBlock($indent)
+  function consumeBlock(int $indent):array
   {
     $out = [];
     $m = [];
@@ -307,11 +306,8 @@ class Parse
     return $out;
   }
 
-  function indentLevel($indent)
+  function indentLevel(int $indent):int
   {
-    if (!isset($this->indents)) {
-      $this->indents = [];
-    }
     if (!count($this->indents)) {
       $this->indents = [0 => $indent];
       // Key = indent level, Value = Depth in spaces
@@ -319,7 +315,7 @@ class Parse
     }
     foreach ($this->indents as $k => $v) {
       if ($v == $indent) {
-        $this->indents = array_slice($this->indents, 0, $k + 1);
+        $this->indents = array_slice($this->indents, 0, 1 + (int) $k );
         return $k;
       }
     }
@@ -327,7 +323,7 @@ class Parse
     return max(array_keys($this->indents));
   }
 
-  function getLineNo()
+  function getLineNo():int
   {
     return $this->lineNo;
   }

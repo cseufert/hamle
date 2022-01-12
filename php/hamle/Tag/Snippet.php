@@ -29,9 +29,9 @@ use Seufert\Hamle;
 
 class Snippet extends Hamle\Tag
 {
-  protected $path;
+  protected array $path;
 
-  function __construct($params)
+  function __construct(string $params)
   {
     parent::__construct();
     if (
@@ -50,7 +50,7 @@ class Snippet extends Hamle\Tag
     }
   }
 
-  static function decodeClassId($s)
+  static function decodeClassId(string $s): array
   {
     $out = $m = [];
     if (preg_match('/^[a-zA-Z0-9\_]+/', $s, $m)) {
@@ -70,13 +70,16 @@ class Snippet extends Hamle\Tag
     return $out;
   }
 
-  function getType()
+  function getType(): string
   {
     return $this->type;
   }
 
-  function addSnipContent($contentTag, &$tagArray = [], $key = 0)
-  {
+  function addSnipContent(
+    Hamle\Tag $contentTag,
+    array &$tagArray = [],
+    int $key = 0
+  ): void {
     if ($this->type == 'content') {
       $tagArray[$key] = $contentTag;
     } else {
@@ -84,7 +87,7 @@ class Snippet extends Hamle\Tag
     }
   }
 
-  function apply(Hamle\Tag $rootTag)
+  function apply(Hamle\Tag $rootTag): void
   {
     if ($this->type == 'append' || $this->type == 'prepend') {
       $matchTags = $rootTag->find($this->path);

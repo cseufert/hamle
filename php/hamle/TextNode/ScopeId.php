@@ -2,8 +2,6 @@
 
 namespace Seufert\Hamle\TextNode;
 
-use Seufert\Hamle\Text;
-
 class ScopeId implements Evaluated
 {
   use ChainTrait, ImmediateTrait;

@@ -27,9 +27,9 @@ namespace Seufert\Hamle\Text;
 
 class Select extends Complex
 {
-  protected $key;
+  protected string $key;
 
-  function __construct($s)
+  function __construct(string $s)
   {
     $s = explode('->', $s, 2);
     $this->key = $s[0];

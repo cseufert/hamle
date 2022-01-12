@@ -29,21 +29,21 @@ use Seufert\Hamle\Tag;
 
 class Comment extends Tag
 {
-  protected $commentstyle;
+  protected string $commentstyle = '';
 
-  function __construct($type)
+  function __construct(string $type)
   {
     if ($type == '/') {
       $this->commentstyle = 'HTML';
     }
   }
 
-  function renderStTag()
+  function renderStTag(): string
   {
     return $this->commentstyle == 'HTML' ? '<!-- ' : '';
   }
 
-  function renderContent($pad = '', $oneliner = false)
+  function renderContent(string $pad = '', bool $oneliner = false): string
   {
     if ($this->commentstyle == 'HTML') {
       if (count($this->content) > 1) {
@@ -55,7 +55,7 @@ class Comment extends Tag
     return '';
   }
 
-  function renderEnTag()
+  function renderEnTag(): string
   {
     return $this->commentstyle == 'HTML' ? ' -->' : '';
   }

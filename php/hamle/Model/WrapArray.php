@@ -27,16 +27,15 @@ namespace Seufert\Hamle\Model;
 
 class WrapArray extends Zero
 {
-  protected $data;
-  protected $pos;
+  protected array $data;
+  protected int $pos = 0;
 
-  function __construct($array = [])
+  function __construct(array $array = [])
   {
     $this->data = $array;
-    $this->pos = 0;
   }
 
-  function hamleGet($key)
+  function hamleGet(string $key): mixed
   {
     if (!isset($this->data[$this->pos][$key])) {
       return "Missing Key [$key]";
@@ -44,27 +43,27 @@ class WrapArray extends Zero
     return $this->data[$this->pos][$key];
   }
 
-  function valid()
+  function valid(): bool
   {
     return isset($this->data[$this->pos]);
   }
 
-  function key()
+  function key(): mixed
   {
     return $this->pos;
   }
 
-  function current()
+  function current(): mixed
   {
     return $this;
   }
 
-  function rewind()
+  function rewind(): void
   {
     $this->pos = 0;
   }
 
-  function next()
+  function next(): void
   {
     ++$this->pos;
   }

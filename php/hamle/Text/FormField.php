@@ -29,19 +29,19 @@ use Seufert\Hamle\Text;
 
 class FormField extends Text
 {
-  protected $var;
+  protected string $var;
 
-  function __construct($var)
+  function __construct(string $var)
   {
     $this->var = $var;
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     return '$form->getField(' . Text::varToCode($this->var) . ')->getValue()';
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     return '<?=' . $this->toPHP() . '?>';
   }

@@ -56,8 +56,12 @@ class Html extends H\Tag
     'wbr',
   ];
 
-  function __construct($tag, $class = [], $attr = [], $id = '')
-  {
+  function __construct(
+    string $tag,
+    array $class = [],
+    array $attr = [],
+    string $id = ''
+  ) {
     parent::__construct();
     $this->opt = $attr;
     if (isset($attr['class']) && !is_array($attr['class'])) {
@@ -77,13 +81,13 @@ class Html extends H\Tag
     }
   }
 
-  function renderStTag()
+  function renderStTag(): string
   {
     $close = in_array($this->type, self::$selfCloseTags) ? ' />' : '>';
     return "<{$this->type}" . $this->optToTags() . $close;
   }
 
-  function renderEnTag()
+  function renderEnTag(): string
   {
     if (in_array($this->type, self::$selfCloseTags)) {
       return '';
@@ -96,7 +100,7 @@ class Html extends H\Tag
    *
    * @return string HTML Attributes
    */
-  function optToTags()
+  function optToTags(): string
   {
     $out = [];
     foreach ($this->opt as $k => $v) {
@@ -107,7 +111,7 @@ class Html extends H\Tag
         $v = implode(' ', $v);
       }
       if (!$v instanceof H\Text) {
-        $v = new H\Text($v);
+        $v = new H\Text($v ?? '');
       }
       $k = new H\Text($k);
       $out[] = ' ' . $k->toHTML() . "=\"" . $v->toHTMLAtt() . "\"";
@@ -115,7 +119,7 @@ class Html extends H\Tag
     return implode('', $out);
   }
 
-  function addContent($s, $strtype = Text::TOKEN_HTML)
+  function addContent(string $s, int $strtype = Text::TOKEN_HTML): void
   {
     if (trim($s)) {
       $parse = new Text($s, $strtype);

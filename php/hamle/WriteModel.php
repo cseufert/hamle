@@ -31,11 +31,11 @@ interface WriteModel extends Model
   /**
    * Set a HAMLE model value
    *
-   * @param $key
-   * @param $value
+   * @param string $key
+   * @param mixed $value
    * @return WriteModel
    */
-  public function hamleSet($key, $value);
+  public function hamleSet(string $key, mixed $value): WriteModel;
 
   /**
    * Creates an related model
@@ -49,11 +49,11 @@ interface WriteModel extends Model
    * @return WriteModel Return object must implmement WriteModel interface
    */
   function hamleCreateRel(
-    $rel,
-    $typeTags,
-    $sort = [],
-    $limit = 0,
-    $offset = 0,
-    $grouptype = 1
-  );
+    int $rel,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0,
+    int $grouptype = 1
+  ): WriteModel;
 }

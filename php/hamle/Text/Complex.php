@@ -33,11 +33,14 @@ use Seufert\Hamle\WriteModel;
 
 class Complex extends Text
 {
-  protected $func;
+  protected ?Text $func = null;
+  /**
+   * @var mixed
+   */
   protected $sel = null;
-  protected $filter;
+  protected ?Filter $filter = null;
 
-  function __construct($s)
+  function __construct(string $s)
   {
     if (false !== ($pos = strpos($s, '|'))) {
       $this->filter = new Filter(substr($s, $pos + 1), $this);
@@ -58,19 +61,20 @@ class Complex extends Text
     $this->sel = $s;
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     if ($escape) {
       return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
     }
     return '<?=' . $this->toPHP() . '?>';
   }
-  function toPHP()
+  function toPHP(): string
   {
     return $this->filter ? $this->filter->toPHP() : $this->toPHPVar();
   }
-  function toPHPVar()
+  function toPHPVar(): string
   {
+    assert($this->func !== null, 'Function must be defined to use this method');
     if ($this->sel) {
       $sel = [];
       foreach ($this->sel as $s) {
@@ -82,7 +86,7 @@ class Complex extends Text
     }
   }
 
-  function getOrCreateModel(Model $parent = null)
+  function getOrCreateModel(Model $parent = null): Model
   {
     if ($this->func instanceof Text\Scope) {
       return $this->func->getOrCreateModel($parent);
@@ -91,15 +95,16 @@ class Complex extends Text
       return $this->func->getOrCreateModel($parent);
     }
     throw new RuntimeException(
-      'Unsupported func type encountered:' . get_class($this->func),
+      'Unsupported func type encountered:' .
+        ($this->func ? get_class($this->func) : 'Unknown'),
     );
   }
 
   /**
-   * @param $value
+   * @param mixed $value
    * @return WriteModel
    */
-  function setValue($value)
+  function setValue(mixed $value): WriteModel
   {
     if (!$this->sel || count($this->sel) != 1) {
       throw new RuntimeException(

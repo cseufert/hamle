@@ -29,10 +29,12 @@ use Seufert\Hamle\Text;
 
 class Comparison extends Text
 {
-  protected $param1, $param2, $operator;
+  protected Text $param1;
+  protected ?Text $param2 = null;
+  protected string $operator = '';
   const REGEX_COMP_OPER = '(equals|notequal|notequals|less|greater|has|starts|contains|ends)';
 
-  function __construct($s, $mode = self::TOKEN_CONTROL)
+  function __construct(string $s, int $mode = self::TOKEN_CONTROL)
   {
     $m = [];
     if (preg_match('/^(.*) ' . self::REGEX_COMP_OPER . ' (.*)$/', $s, $m)) {
@@ -44,7 +46,7 @@ class Comparison extends Text
     }
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     if (!$this->param2) {
       return $this->param1->toPHP();
@@ -79,7 +81,7 @@ class Comparison extends Text
     }
     return '';
   }
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     throw new Exception\Unimplemented(
       'Unable to output comparison results to HTML',

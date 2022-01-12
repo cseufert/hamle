@@ -50,18 +50,19 @@ use Seufert\Hamle\Text\FormField;
  */
 class Field
 {
-  protected $opt;
+  protected array $opt;
 
-  protected $name;
+  protected string $name;
 
-  protected $setValue = null;
+  protected mixed $setValue = null;
 
-  protected $valid = true;
+  protected bool $valid = true;
+
+  protected string $hint = '';
 
   function __construct($name, $options = [])
   {
     $this->name = $name;
-    $this->hint = '';
     $this->opt = $options + [
       'label' => "$name",
       'regex' => '',

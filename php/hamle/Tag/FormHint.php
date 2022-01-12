@@ -29,7 +29,7 @@ use Seufert\Hamle\Tag;
 
 class FormHint extends Tag
 {
-  function renderStTag()
+  function renderStTag(): string
   {
     return '<?=$form->hint?"<div>{$form->hint}</div>":""?>';
   }

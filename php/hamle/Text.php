@@ -29,9 +29,7 @@ namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Grammar\Parser;
 use Seufert\Hamle\Grammar\SyntaxError;
-use Seufert\Hamle\Text\Filter;
 use Seufert\Hamle\TextNode\Doc;
-use Seufert\Hamle\TextNode\Literal;
 
 /**
  * HAMLE String Conversion Library
@@ -58,11 +56,11 @@ class Text
     self::TOKEN_CONTROL => 'ControlInput',
   ];
 
-  protected $mode;
+  protected int $mode = self::TOKEN_HTML;
 
-  protected $tree;
+  protected mixed $tree;
 
-  function __construct($s, $mode = self::TOKEN_HTML)
+  function __construct(string $s, int $mode = self::TOKEN_HTML)
   {
     //    var_dump($s);
     $this->mode = $mode;
@@ -86,7 +84,7 @@ class Text
     }
   }
 
-  static function queryParams(array $query, bool $addGroup = false)
+  static function queryParams(array $query, bool $addGroup = false): string
   {
     $lastType = '*';
     $typeTags = [];
@@ -120,7 +118,7 @@ class Text
     return join(',', $opt);
   }
 
-  static function queryId(array $query)
+  static function queryId(array $query): string
   {
     $type = '';
     $id = '';
@@ -146,7 +144,7 @@ class Text
     return 'Hamle\Run::modelTypeId(' . join(',', $opt) . ')';
   }
 
-  function toHTML($escape = false)
+  function toHTML(bool $escape = false): string
   {
     return $this->tree->toHTML($escape, $this->mode !== self::TOKEN_CODE);
     $out = '';
@@ -173,12 +171,12 @@ class Text
     return $out;
   }
 
-  function toHTMLAtt()
+  function toHTMLAtt(): string
   {
     return $this->toHTML(true);
   }
 
-  function toPHP()
+  function toPHP(): string
   {
     return $this->tree->toPHP();
     $out = [];
@@ -202,12 +200,12 @@ class Text
     return join('.', $out);
   }
 
-  function doEval()
+  function doEval(): mixed
   {
     return eval('use Seufert\Hamle; return ' . $this->toPHP() . ';');
   }
 
-  static function varToCode($var)
+  static function varToCode(mixed $var): mixed
   {
     if (is_array($var)) {
       $code = [];
@@ -240,10 +238,10 @@ class Text
   }
 
   /**
-   * @param $value
+   * @param mixed $value
    * @return WriteModel
    */
-  function setValue($value)
+  function setValue(mixed $value): WriteModel
   {
     throw new \RuntimeException('Unsupported');
   }

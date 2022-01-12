@@ -1,15 +1,21 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="3"
-    resolveFromConfigFile="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+  errorLevel="3"
+  resolveFromConfigFile="true"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://getpsalm.org/schema/config"
+  xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
-    <projectFiles>
-        <directory name="php/hamle" />
-        <ignoreFiles>
-            <directory name="vendor" />
-        </ignoreFiles>
-    </projectFiles>
+  <projectFiles>
+    <directory name="php/hamle"/>
+    <ignoreFiles>
+      <directory name="vendor"/>
+      <directory name="php/hamle/Field"/>
+      <file name="php/hamle/Grammar/Parser.php"/>
+      <file name="php/hamle/Field.php"/>
+      <file name="php/hamle/Form.php"/>
+      <file name="php/hamle/Tag/Form.php"/>
+      <file name="php/hamle/Tag/FormHint.php"/>
+    </ignoreFiles>
+  </projectFiles>
 </psalm>

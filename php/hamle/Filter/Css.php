@@ -31,17 +31,17 @@ use Seufert\Hamle\Filter;
  */
 class Css extends Filter
 {
-  static function stTag()
+  static function stTag(): string
   {
     return "<style type=\"text/css\">";
   }
 
-  static function ndTag()
+  static function ndTag(): string
   {
     return '</style>';
   }
 
-  static function filterText($s)
+  static function filterText(string $s): string
   {
     return $s;
   }

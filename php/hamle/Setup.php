@@ -33,7 +33,7 @@ namespace Seufert\Hamle;
  */
 class Setup
 {
-  public $minify = true;
+  public bool $minify = true;
 
   /**
    * Returns the full file path to the cache file
@@ -75,8 +75,12 @@ class Setup
    * @return Model
    * @throws Exception\RunTime
    */
-  public function getModelTypeID($typeId, $sort = [], $limit = 0, $offset = 0)
-  {
+  public function getModelTypeID(
+    array $typeId,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0
+  ) {
     if (count($typeId) > 1) {
       throw new Exception\RunTime('Unable to open more than one ID at a time');
     }
@@ -134,7 +138,7 @@ class Setup
    * Function to write debug logs out
    * @param $s string Debug Message String
    */
-  public function debugLog($s)
+  public function debugLog(string $s): void
   {
   }
 

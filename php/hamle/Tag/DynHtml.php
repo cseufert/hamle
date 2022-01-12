@@ -30,12 +30,17 @@ use Seufert\Hamle\Exception\ParseError;
 
 class DynHtml extends Html
 {
-  static $var = 0;
-  protected $varname;
-  protected $baseType;
+  static int $var = 0;
+  protected string $varname;
+  protected string $baseType;
 
-  function __construct($tag, $class, $param, $id, $ref)
-  {
+  function __construct(
+    string $tag,
+    array $class,
+    array $param,
+    string $id,
+    string $ref
+  ) {
     parent::__construct($tag, $class, $param, $id);
     $this->source[] = $ref;
     $this->baseType = $tag;
@@ -43,7 +48,7 @@ class DynHtml extends Html
     $this->varname = "\$dynhtml" . self::$var;
   }
 
-  function render($indent = 0, $minify = false)
+  function render(int $indent = 0, bool $minify = false): string
   {
     $data = H\Text::varToCode([
       'base' => $this->baseType,
@@ -67,12 +72,12 @@ class DynHtml extends Html
     return $out;
   }
 
-  function addChild(H\Tag $tag, $mode = 'append')
+  function addChild(H\Tag $tag, $mode = 'append'): void
   {
     throw new ParseError('Unable to display content within a Dynamic Tag');
   }
 
-  static function toStTag(&$d, H\Form $form)
+  static function toStTag(array &$d, H\Form $form): string
   {
     foreach ($d['source'] as $source) {
       $form
@@ -84,6 +89,9 @@ class DynHtml extends Html
       if (is_array($v)) {
         foreach ($v as $k2 => $v2) {
           if ($v[$k2] instanceof Text) {
+            /**
+             * @psalm-suppress UndefinedMethod
+             */
             $v[$k2] = eval('return ' . $v[$k2]->toPHP() . ';');
           }
         }
@@ -98,7 +106,7 @@ class DynHtml extends Html
     return $out;
   }
 
-  static function toEnTag($d, $form)
+  static function toEnTag(array $d, H\Form $form): string
   {
     return in_array($d['type'], self::$selfCloseTags)
       ? ''
