@@ -4,7 +4,7 @@ namespace Seufert\Hamle\TextNode;
 
 class FloatLit implements Literal
 {
-  private float $float;
+  public float $float;
 
   public function __construct(float $float)
   {
