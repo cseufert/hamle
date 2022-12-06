@@ -13,7 +13,7 @@ class Query implements Evaluated
 
   public ?Chainable $chain = null;
 
-  private ?Chainable $immediate;
+  public ?Chainable $immediate;
 
   public function __construct(?array $filters = [], ?RelQuery $related = null)
   {
