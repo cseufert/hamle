@@ -5,7 +5,7 @@ HAMLE
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cseufert/hamle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cseufert/hamle/?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4446d6497fc258372f01/maintainability)](https://codeclimate.com/github/cseufert/hamle/maintainability)
 
-Requires PHP >= 7.4
+Requires PHP >= 8.1
 
 ### Installation via Composer
 
@@ -214,3 +214,10 @@ html
         .powered
           $(site)->poweredby
 ```
+
+
+## Upgrading to Version 3.x
+* Hamle constructor no longer requires a model, it is now passed via output
+* Strings are now run in memory with no cache file
+* Runtime\Context replaced Hamle\Run and encompasses the old Hamle\Setup methods
+* Runtime\Scope is now a instance, no longer accessed via static methods

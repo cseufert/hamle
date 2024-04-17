@@ -111,8 +111,7 @@ class basicTest extends base
   {
     $hamle = 'h1 $unescaped';
     $html = '<h1>Hi &amp; &gt;</h1>';
-    $this->hamle->string($hamle);
-    $out = $this->hamle->output($this->scope, $this->ctx);
+    $out = $this->hamle->parseString($hamle)($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 

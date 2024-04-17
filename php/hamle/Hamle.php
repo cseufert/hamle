@@ -131,8 +131,11 @@ class Hamle
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
-  function parse($hamleCode, \Closure $parseFunc = null): void
-  {
+  function parse(
+    $hamleCode,
+    \Closure $parseFunc = null,
+    bool $cache = false
+  ): void {
     if (!$this->cacheFile) {
       $this->cacheFile = $this->setup->cachePath('string.hamle.php');
     }
@@ -156,13 +159,31 @@ class Hamle
       false ===
       file_put_contents(
         $this->cacheFile,
-        $this->parse->output($this->setup->getMinify()),
+        $this->parse->toPHPFile($this->setup->getMinify()),
       )
     ) {
       throw new Exception\ParseError(
         "Unable to write to cache file ({$this->cacheFile})",
       );
     }
+  }
+
+  /**
+   * @param string $hamleCode
+   * @return Closure(\Hamle\Runtime\Scope,\Hamle\Runtime\Context):void
+   */
+  function parseString(string $hamleCode): \Closure
+  {
+    $this->parse->str($hamleCode);
+    $this->setup->debugLog('Loading Snippet Files');
+    foreach ($this->snipFiles as $snip) {
+      $this->parse->parseSnip(file_get_contents($snip));
+    }
+    $this->parse->applySnip();
+    foreach ($this->setup->getFilters() as $filter) {
+      $this->parse->parseFilter($filter);
+    }
+    return $this->parse->toClosure($this->setup->getMinify());
   }
 
   /**
@@ -191,20 +212,8 @@ class Hamle
    */
   function output(\Seufert\Hamle\Runtime\Scope $scope, Context $ctx)
   {
-    try {
-      ob_start();
-      /**
-       * @psalm-suppress UnresolvableInclude
-       */
-      $hamle = include $this->cacheFile;
-      $hamle($scope, $ctx);
-      $out = ob_get_contents();
-      ob_end_clean();
-    } catch (\Exception $e) {
-      ob_end_clean();
-      throw $e;
-    }
-    return $out;
+    $hamle = include $this->cacheFile;
+    return $hamle($scope, $ctx);
   }
 
   /**

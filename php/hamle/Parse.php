@@ -276,19 +276,44 @@ class Parse
     return $out;
   }
 
-  function output(bool $minify = false):string
+  function toPHPFile(bool $minify = false):string
   {
+    return "<?php\n" .
+"use Seufert\\Hamle;\n\n".
+      $this->compiledString($minify);
+  }
+
+  public function compiledString(bool $minify = false):string {
     $code = '';
     foreach ($this->root as $tag) {
       $code .= $tag->render(0, $minify);
     }
     assert(!str_contains($code, "Scope::"), "Code should not contain static references to Hamle\\Scope: ".$code);
     assert(!str_contains($code, "Run::"), "Code should not contain static references to Hamle\\Run: ".$code);
-    return "<?php\n" . <<<ENDPHP
-use Seufert\\Hamle;
+    $scopeType = \Seufert\Hamle\Runtime\Scope::class;
+    $ctxType = \Seufert\Hamle\Runtime\Context::class;
+    return <<<ENDPHP
+    return function($scopeType \$scope, $ctxType \$ctx):string {
+      ob_start();
+      try {
+        ?>$code<?php
+        \$out = ob_get_contents();
+        ob_end_clean();
+        return \$out;
+      } catch (\Exception \$e) {
+        ob_end_clean();
+        throw \$e;
+      }
+    };
+ENDPHP
+    ;
+  }
 
-return function(Hamle\Runtime\Scope \$scope, Hamle\Runtime\Context \$ctx) { ?>$code<?php };
-ENDPHP;
+  /**
+   * @return Closure(\Hamle\Runtime\Scope,\Hamle\Runtime\Context):string
+   */
+  function toClosure(bool $minify = false):\Closure {
+    return eval($this->compiledString($minify));
   }
 
   function consumeBlock(int $indent):array
