@@ -27,6 +27,7 @@ THE SOFTWARE.
 namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle\Model;
+use Seufert\Hamle\Runtime\Context;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\WriteModel;
@@ -50,9 +51,9 @@ class Scope extends SimpleVar
   function toPHP(): string
   {
     if (is_numeric($this->scope)) {
-      return 'Hamle\\Scope::get(' . Text::varToCode($this->scope) . ')';
+      return '$scope->modelNum(' . Text::varToCode($this->scope) . ')';
     } else {
-      return 'Hamle\\Scope::getName(' . Text::varToCode($this->scope) . ')';
+      return '$scope->namedModel(' . Text::varToCode($this->scope) . ')';
     }
   }
 
@@ -61,16 +62,22 @@ class Scope extends SimpleVar
     throw new ParseError('Unable to use Scope operator in HTML Code');
   }
 
-  function setValue(mixed $value): WriteModel
-  {
+  function setValue(
+    \Seufert\Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    mixed $value
+  ): WriteModel {
     throw new \Exception('Unsupported');
   }
 
-  function getOrCreateModel(Model $parent = null): Model
-  {
+  function getOrCreateModel(
+    \Seufert\Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    Model $parent = null
+  ): Model {
     if (is_int($this->scope)) {
-      return \Seufert\Hamle\Scope::get($this->scope);
+      return $scope->modelNum($this->scope);
     }
-    return \Seufert\Hamle\Scope::getName($this->scope);
+    return $scope->namedModel($this->scope);
   }
 }

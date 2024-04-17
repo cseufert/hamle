@@ -18,32 +18,32 @@ class LegacyStringTest extends base
     $this->assertEquals($expect, $ct->toPHP());
   }
 
-  public function complexProvider(): array
+  public static function complexProvider(): array
   {
     return [
       [
-        "Hamle\Run::modelTypeTags(array('page'=>array()),array(),0,0)",
+        "\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array(),0,0)",
         '$(page)',
       ],
-      ["Hamle\Scope::getName('user')", '$[user]', ''],
-      ['Hamle\Scope::get(-2)', '$[-2]', ''],
+      ["\$scope->namedModel('user')", '$[user]', ''],
+      ['$scope->modelNum(-2)', '$[-2]', ''],
       [
-        "Hamle\Run::modelTypeTags(array('page'=>array(0=>'test')),array(),1,0)",
+        "\$ctx->hamleFindTypeTags(\$scope,array('page'=>array(0=>'test')),array(),1,0)",
         '$(page.test:1)',
       ],
       [
-        "Hamle\Scope::getName('user')->hamleRel(1,array('application'=>array(0=>'current')),array(),1,0,5)",
+        "\$scope->namedModel('user')->hamleRel(1,array('application'=>array(0=>'current')),array(),1,0,5)",
         '$($[user] > application.current:1@5)',
       ],
       [
-        "Hamle\Run::modelTypeTags(array('page'=>array()),array(),0,0)->hamleGet('title')",
+        "\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array(),0,0)->hamleGet('title')",
         '$(page)->title',
       ],
       [
-        "strtoupper(Hamle\Run::modelTypeTags(array('page'=>array()),array(),0,0)->hamleGet('code'))",
+        "strtoupper(\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array(),0,0)->hamleGet('code'))",
         '$(page)->code|strtoupper',
       ],
-      ["Hamle\Scope::get()->hamleGet('a')", '$a'],
+      ["\$scope->model()->hamleGet('a')", '$a'],
     ];
   }
 
@@ -58,7 +58,7 @@ class LegacyStringTest extends base
     $ct = new Complex($input);
   }
 
-  public function invalidComplexProvider()
+  public static function invalidComplexProvider()
   {
     return [['$(abc'], ['$blah|non(', ['{$a}']]];
   }
@@ -74,29 +74,26 @@ class LegacyStringTest extends base
     $this->assertEquals($expect, $ct->toPHP());
   }
 
-  public function compareProvider()
+  public static function compareProvider()
   {
     return [
-      ["Hamle\Scope::get()->hamleGet('code') == 'Test'", '$code equals Test'],
+      ["\$scope->model()->hamleGet('code') == 'Test'", '$code equals Test'],
+      ["\$scope->model()->hamleGet('code') != 'Test'", '$code notequals Test'],
       [
-        "Hamle\Scope::get()->hamleGet('code') != 'Test'",
-        '$code notequals Test',
-      ],
-      [
-        "strpos(Hamle\Scope::get()->hamleGet('code'), 'Test') === 0",
+        "strpos(\$scope->model()->hamleGet('code'), 'Test') === 0",
         '$code starts Test',
       ],
       [
-        "strpos(Hamle\Scope::get()->hamleGet('code'), 'Test') !== FALSE",
+        "strpos(\$scope->model()->hamleGet('code'), 'Test') !== FALSE",
         '$code contains Test',
       ],
       [
-        "substr(Hamle\Scope::get()->hamleGet('code'), -strlen('Test')) === 'Test'",
+        "substr(\$scope->model()->hamleGet('code'), -strlen('Test')) === 'Test'",
         '$code ends Test',
       ],
-      ["Hamle\Scope::get()->hamleGet('price') < 4", '$price less 4'],
-      ["Hamle\Scope::get()->hamleGet('price') > 5", '$price greater 5'],
-      ["Hamle\Scope::get()->hamleGet('price') > 5", '$price greater 5'],
+      ["\$scope->model()->hamleGet('price') < 4", '$price less 4'],
+      ["\$scope->model()->hamleGet('price') > 5", '$price greater 5'],
+      ["\$scope->model()->hamleGet('price') > 5", '$price greater 5'],
     ];
   }
 }

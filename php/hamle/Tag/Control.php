@@ -96,9 +96,9 @@ class Control extends H\Tag
         if ($hsv) {
           $out .= 'foreach(' . $hsv->toPHP() . " as {$this->o}) { \n";
         } else {
-          $out .= "foreach(Hamle\\Scope::get() as {$this->o}) { \n";
+          $out .= "foreach(\$scope->model() as {$this->o}) { \n";
         }
-        $out .= "Hamle\\Scope::add({$this->o}); ";
+        $out .= "\$scope = \$scope->withModel({$this->o}); ";
         break;
       case 'with':
         if (!$hsv) {
@@ -108,14 +108,16 @@ class Control extends H\Tag
         }
         if ($scopeName) {
           $out .=
-            'Hamle\\Scope::add(' . $hsv->toPHP() . ", \"$scopeName\");\n;";
+            '$scope = $scope->withModel(' .
+            $hsv->toPHP() .
+            "); \$scope->setNamedModel(\"$scopeName\")\n;";
         } else {
           $out .=
             "if(({$this->o} = " .
             $hsv->toPHP() .
             ') && ' .
             "{$this->o}->valid()) {\n";
-          $out .= "Hamle\\Scope::add({$this->o});\n;";
+          $out .= "\$scope = \$scope->withModel({$this->o});\n;";
         }
         break;
       case 'include':
@@ -124,9 +126,7 @@ class Control extends H\Tag
             'Include requires a parameter for what to include',
           );
         }
-        $file = $hsv->toHTML();
-        $fn = $file[0] === '#' ? 'includeFragment' : 'includeFile';
-        $out .= "echo Hamle\\Run::$fn({$hsv->toPHP()});";
+        $out .= "echo \$ctx->hamleInclude(\$scope, {$hsv->toPHP()});";
     }
     return $out . "\n?>";
   }
@@ -144,10 +144,10 @@ class Control extends H\Tag
     $out = '<' . '?php ';
     switch ($this->type) {
       case 'each':
-        $out .= 'Hamle\\Scope::done(); ';
+        $out .= '$scope = $scope->lastScope(); ';
         $out .= '}';
         if (!$this->var) {
-          $out .= "Hamle\\Scope::get()->rewind();\n";
+          $out .= "\$scope->model()->rewind();\n";
         }
         break;
       case 'if':
@@ -156,7 +156,7 @@ class Control extends H\Tag
         break;
       case 'with':
         if (!preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
-          $out .= 'Hamle\\Scope::done(); ';
+          $out .= '$scope = $scope->lastScope(); ';
           $out .= '}';
         }
         break;

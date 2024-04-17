@@ -2,7 +2,7 @@
 
 require_once 'base.php';
 
-class fitlerTest extends base
+class filterTest extends base
 {
   public function setUp(): void
   {
@@ -33,7 +33,7 @@ class fitlerTest extends base
 </html>
 ';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 
@@ -79,7 +79,7 @@ class fitlerTest extends base
       '</html>';
 
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->assertSame(trim($html), trim($out));
     $this->hamle->setup->minify = true;
   }
@@ -111,7 +111,7 @@ class fitlerTest extends base
     </head>
     HTML;
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 }

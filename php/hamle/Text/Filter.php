@@ -127,8 +127,11 @@ class Filter extends Text
   static function itersplit(mixed $v, string $sep = ','): Model
   {
     $o = [];
+    if ($sep == '') {
+      throw new \RuntimeException('Cannot split by empty seperator');
+    }
     foreach (explode($sep, $v) as $k => $i) {
-      if ($i) {
+      if ($i !== '') {
         $o[] = ['v' => trim($i), 'value' => trim($i), 'k' => $k, 'key' => $k];
       }
     }
@@ -137,7 +140,7 @@ class Filter extends Text
 
   static function newlinebr(mixed $v): string
   {
-    return str_replace("\n", "<br />\n", $v);
+    return str_replace("\n", "<br />\n", (string) $v);
   }
 
   static function replace(mixed $v, string $src, string $dst): mixed
@@ -147,7 +150,7 @@ class Filter extends Text
 
   static function ascents(mixed $v): int
   {
-    $v = (float) str_replace(['$', ' ', ','], '', $v);
+    $v = (float) str_replace(['$', ' ', ','], '', (string) $v);
     return (int) round($v * 100, 0);
   }
 }

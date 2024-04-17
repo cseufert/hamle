@@ -27,6 +27,7 @@ namespace Seufert\Hamle\Text;
 
 use Seufert\Hamle;
 use Seufert\Hamle\Model;
+use Seufert\Hamle\Runtime\Context;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\Exception\ParseError;
 
@@ -150,17 +151,17 @@ class Func extends SimpleVar
       ',' .
       $this->sortlimit['offset'];
     if (count($this->filt['tag'])) {
-      return 'Hamle\\Run::modelTypeTags(' .
+      return '$ctx->hamleFindTypeTags($scope,' .
         Text::varToCode($this->filt['tag']) .
         ",$limit)$sub";
     }
     if (count($this->filt['id'])) {
       if (isset($this->filt['id']['*']) && count($this->filt['id']['*']) == 1) {
-        return 'Hamle\\Run::modelId(' .
+        return '$ctx->hamleFindId($scope,' .
           Text::varToCode(current($this->filt['id']['*'])) .
           ",$limit)$sub";
       } else {
-        return 'Hamle\\Run::modelTypeId(' .
+        return '$ctx->hamleFindTypeId($scope,' .
           Text::varToCode($this->filt['id']) .
           ",$limit)$sub";
       }
@@ -170,17 +171,22 @@ class Func extends SimpleVar
 
   /**
    * @param Model|null $parent
+   * @param Context $ctx
    * @return Model
    */
-  public function getOrCreateModel(Model $parent = null): Model
-  {
+  public function getOrCreateModel(
+    Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    Model $parent = null
+  ): Model {
     if ($this->scope instanceof Scope) {
-      $parent = $this->scope->getOrCreateModel();
+      $parent = $this->scope->getOrCreateModel($scope, $ctx);
     } elseif ($this->scope === true) {
-      $parent = \Seufert\Hamle\Scope::get(0);
+      $parent = $scope->model();
     }
     if ($this->filt && count($this->filt['tag'])) {
-      $parent = \Seufert\Hamle\Run::modelTypeTags(
+      $parent = $ctx->hamleFindTypeTags(
+        $scope,
         $this->filt['tag'],
         $this->sortlimit['sort'],
         $this->sortlimit['limit'],
@@ -192,14 +198,16 @@ class Func extends SimpleVar
         isset($this->filt['id']['*']) &&
         count($this->filt['id']['*']) === 1
       ) {
-        $parent = \Seufert\Hamle\Run::modelId(
+        $parent = $ctx->hamleFindId(
+          $scope,
           current($this->filt['id']['*']),
           $this->sortlimit['sort'],
           $this->sortlimit['limit'],
           $this->sortlimit['offset'],
         );
       } else {
-        $parent = \Seufert\Hamle\Run::modelTypeId(
+        $parent = $ctx->hamleFindTypeId(
+          $scope,
           $this->filt['id'],
           $this->sortlimit['sort'],
           $this->sortlimit['limit'],
@@ -208,7 +216,7 @@ class Func extends SimpleVar
       }
     }
     if ($this->sub) {
-      return $this->sub->getOrCreateModel($parent)->current();
+      return $this->sub->getOrCreateModel($scope, $ctx, $parent)->current();
     }
     if (!$parent) {
       throw new \RuntimeException('Unable to create model with no relation');

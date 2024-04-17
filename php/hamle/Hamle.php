@@ -24,6 +24,8 @@ THE SOFTWARE.
 
  */
 namespace Seufert\Hamle;
+use Seufert\Hamle\Runtime\Context;
+
 /**
  * HAMLE - HAML inspired template, with (E)nhancements
  *
@@ -32,10 +34,6 @@ namespace Seufert\Hamle;
  */
 class Hamle
 {
-  /**
-   * @var Setup instance of hamleSetup Object
-   */
-  public Setup $setup;
   /**
    * @var Hamle|null Instance of the 'current' hamle Engine
    */
@@ -62,8 +60,6 @@ class Hamle
    */
   protected $snipMod = 0;
 
-  public ?Model $baseModel = null;
-
   const REL_CHILD = 0x01; /* Child Relation */
   const REL_PARENT = 0x02; /* Parent Relation */
   const REL_ANY = 0x03; /* Unspecified or any relation */
@@ -78,27 +74,10 @@ class Hamle
    * @throws Exception\Unsupported
    * @throws Exception\NotFound
    */
-  function __construct(Model $baseModel, ?Setup $setup = null)
+  function __construct(public Setup $setup)
   {
     self::$me = $this;
-    if (!$setup) {
-      $setup = new Setup();
-    }
     $this->parse = new Parse();
-    if (!$setup instanceof Setup) {
-      throw new Exception\Unsupported(
-        'Unsupported Setup Helper was passed, it must extends hamleSetup',
-      );
-    }
-    if (!$baseModel instanceof Model) {
-      throw new Exception\Unsupported(
-        'Unsupported Model(' .
-          get_class($baseModel) .
-          ') Type was passed, it must implement hamleModel',
-      );
-    }
-    $this->setup = $setup;
-    $this->baseModel = $baseModel;
     $this->initSnipFiles();
   }
 
@@ -210,32 +189,21 @@ class Hamle
    * @return string HTML Output as String
    * @throws Exception
    */
-  function output()
+  function output(\Seufert\Hamle\Runtime\Scope $scope, Context $ctx)
   {
     try {
       ob_start();
-      Run::addInstance($this);
-      $baseModel = $this->baseModel;
-      $this->baseModel = null;
-      $currentModel = $baseModel == Scope::getTopScope();
-      if (!$currentModel && $baseModel) {
-        Scope::add($baseModel);
-      }
       /**
        * @psalm-suppress UnresolvableInclude
        */
-      require $this->cacheFile;
-      if (!$currentModel && $baseModel) {
-        Scope::done();
-      }
-      $this->baseModel = $baseModel;
+      $hamle = include $this->cacheFile;
+      $hamle($scope, $ctx);
       $out = ob_get_contents();
       ob_end_clean();
     } catch (\Exception $e) {
       ob_end_clean();
       throw $e;
     }
-    Run::popInstance();
     return $out;
   }
 

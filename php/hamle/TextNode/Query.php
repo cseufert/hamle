@@ -40,7 +40,9 @@ class Query implements Evaluated
       $o = self::queryId($this->filters);
     } else {
       $o =
-        'Hamle\Run::modelTypeTags(' . self::queryParams($this->filters) . ')';
+        '$ctx->hamleFindTypeTags($scope,' .
+        self::queryParams($this->filters) .
+        ')';
     }
     if ($this->immediate) {
       $o = $this->immediate->apply($o);
@@ -136,8 +138,8 @@ class Query implements Evaluated
     ];
     if (!$type || $type === '*') {
       $opt[0] = Text::varToCode($id);
-      return 'Hamle\Run::modelId(' . join(',', $opt) . ')';
+      return '$ctx->hamleFindId($scope,' . join(',', $opt) . ')';
     }
-    return 'Hamle\Run::modelTypeId(' . join(',', $opt) . ')';
+    return '$ctx->hamleFindTypeId($scope,' . join(',', $opt) . ')';
   }
 }

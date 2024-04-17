@@ -73,7 +73,7 @@ class formTest extends base
 </html>
 ';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     //$this->assertEquals($html, $out);
     $this->compareXmlStrings($html, $out);
   }
@@ -116,7 +116,7 @@ class formTest extends base
 </html>
 ';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 
@@ -146,7 +146,7 @@ class formTest extends base
 </head>
 ';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->assertEquals($html, $out);
   }
 }

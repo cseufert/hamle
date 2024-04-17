@@ -257,7 +257,7 @@ class Parse
           }
         } else {
           throw new ParseError(
-            "Unable to parse line {$this->lineNo}\n\"$line\"/" .
+            "Unable to parse line {$this->lineNo}\n\"$line\" #" .
               preg_last_error(),
           );
         }
@@ -278,11 +278,17 @@ class Parse
 
   function output(bool $minify = false):string
   {
-    $out = "<?php\nuse Seufert\\Hamle;\n?>";
+    $code = '';
     foreach ($this->root as $tag) {
-      $out .= $tag->render(0, $minify);
+      $code .= $tag->render(0, $minify);
     }
-    return $out;
+    assert(!str_contains($code, "Scope::"), "Code should not contain static references to Hamle\\Scope: ".$code);
+    assert(!str_contains($code, "Run::"), "Code should not contain static references to Hamle\\Run: ".$code);
+    return "<?php\n" . <<<ENDPHP
+use Seufert\\Hamle;
+
+return function(Hamle\Runtime\Scope \$scope, Hamle\Runtime\Context \$ctx) { ?>$code<?php };
+ENDPHP;
   }
 
   function consumeBlock(int $indent):array
