@@ -29,6 +29,7 @@ namespace Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Grammar\Parser;
 use Seufert\Hamle\Grammar\SyntaxError;
+use Seufert\Hamle\Runtime\Context;
 use Seufert\Hamle\TextNode\Doc;
 
 /**
@@ -141,7 +142,7 @@ class Text
       self::varToCode($limit),
       self::varToCode($offset),
     ];
-    return 'Hamle\Run::modelTypeId(' . join(',', $opt) . ')';
+    return '$ctx->hamleFindTypeId($scope,' . join(',', $opt) . ')';
   }
 
   function toHTML(bool $escape = false): string
@@ -223,6 +224,7 @@ class Text
     if ($var instanceof Text) {
       return $var->toPHP();
     }
+    $var = (string) $var;
     if (strpos($var, "\n") !== false) {
       return '"' .
         str_replace(
@@ -241,8 +243,11 @@ class Text
    * @param mixed $value
    * @return WriteModel
    */
-  function setValue(mixed $value): WriteModel
-  {
+  function setValue(
+    \Seufert\Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    mixed $value
+  ): WriteModel {
     throw new \RuntimeException('Unsupported');
   }
 }

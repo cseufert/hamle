@@ -12,9 +12,10 @@ class writeTest extends base
     $hs = new Text\Complex("$[write]->title");
     $m = new writeTestModel();
     $m->values['title'] = 'abc';
-    \Seufert\Hamle\Scope::add($m, 'write');
+    $scope = new \Seufert\Hamle\Scope(new Zero());
+    $scope->withModel($m)->setNamedModel('write');
     $this->assertEquals('abc', $m->values['title']);
-    $hs->setValue('test');
+    $hs->setValue($scope, $this->ctx, 'test');
     $this->assertEquals('test', $m->values['title']);
   }
 
@@ -22,8 +23,10 @@ class writeTest extends base
   {
     $hs = new Text\Complex("$($[write] > write)->new");
     $m = new writeTestModel();
-    \Seufert\Hamle\Scope::add($m, 'write');
-    $m = $hs->setValue('test');
+
+    $scope = new \Seufert\Hamle\Scope(new Zero());
+    $scope->withModel($m)->setNamedModel('write');
+    $m = $hs->setValue($scope, $this->ctx, 'test');
     $this->assertEquals('test', $m->values['new']);
   }
 }

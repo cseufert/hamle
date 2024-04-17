@@ -7,6 +7,7 @@
 
 use Seufert\Hamle;
 use Seufert\Hamle\Model\WrapArray;
+use Seufert\Hamle\Scope;
 
 require_once 'base.php';
 
@@ -45,7 +46,7 @@ class snippetTest extends base
 
   function testHeadSnippet()
   {
-    $he = new Hamle\Hamle($this->model(), new snippetHeadSetup());
+    $he = new Hamle\Hamle(new snippetHeadSetup());
     $hamle =
       "html\n" .
       "  head\n" .
@@ -67,13 +68,13 @@ class snippetTest extends base
     </html>
     HTML;
     $he->string($hamle);
-    $out = $he->output();
+    $out = $he->output(new Hamle\Scope($this->model()), $he->setup);
     $this->compareXmlStrings($html, $out);
   }
 
   function testHead2Snippet()
   {
-    $he = new Hamle\Hamle($this->model(), new snippetHead2Setup());
+    $he = new Hamle\Hamle(new snippetHead2Setup());
     $hamle =
       "html\n" .
       "  head\n" .
@@ -98,13 +99,13 @@ class snippetTest extends base
     ENDHTML;
 
     $he->string($hamle);
-    $out = $he->output();
+    $out = $he->output(new Scope($this->model()), $he->setup);
     $this->compareXmlStrings($html, $out);
   }
 
   function testTypeClassIDSnippet()
   {
-    $he = new Hamle\Hamle($this->model(), new snippetTypeClassIDSetup());
+    $he = new Hamle\Hamle(new snippetTypeClassIDSetup());
     $hamle =
       "html\n" .
       "  head\n" .
@@ -122,13 +123,13 @@ class snippetTest extends base
       '</div></div></div>' .
       '</body></html>';
     $he->string($hamle);
-    $out = $he->output();
+    $out = $he->output(new Scope($this->model()), $he->setup);
     $this->compareXmlStrings($html, $out);
   }
 
   function testReplaceImgSnippet()
   {
-    $he = new Hamle\Hamle($this->model(), new snippetReplaceImgSetup());
+    $he = new Hamle\Hamle(new snippetReplaceImgSetup());
     $he->setup->minify = false;
     $hamle =
       "html\n" .
@@ -174,7 +175,7 @@ class snippetTest extends base
     </html>
     TESTHTML;
     $he->string($hamle);
-    $out = $he->output();
+    $out = $he->output(new Hamle\Scope($this->model()), $he->setup);
     $this->assertEquals(trim($html), trim($out));
     $this->compareXmlStrings($html, $out);
   }
@@ -209,7 +210,8 @@ class snippetHead2Setup extends Hamle\Setup
   }
 }
 
-class snippetTypeClassIDSetup extends Hamle\Setup
+class snippetTypeClassIDSetup extends Hamle\Setup implements
+  Hamle\Runtime\Context
 {
   function templatePath($f)
   {
@@ -222,7 +224,8 @@ class snippetTypeClassIDSetup extends Hamle\Setup
   }
 }
 
-class snippetReplaceImgSetup extends Hamle\Setup
+class snippetReplaceImgSetup extends Hamle\Setup implements
+  Hamle\Runtime\Context
 {
   function templatePath($f)
   {

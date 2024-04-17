@@ -1,18 +1,29 @@
 <?php
 
-require_once "base.php";
+require_once 'base.php';
 
-class scopeTest extends base {
-  public function testScopeAccessor() {
-    $hamle = "html".PHP_EOL.
-             '  |with $(basetest) as test'.PHP_EOL.
-             "  body".PHP_EOL.
-             '    ul.menu'.PHP_EOL.
-             '      |each $[test]'.PHP_EOL.
-             '        li.menuitem[data-menu=$title]'.PHP_EOL.
-             '          a[href=$url] $title'.PHP_EOL.
-             '    |with $[test]'.PHP_EOL.
-             '      span $title';
+class scopeTest extends base
+{
+  public function testScopeAccessor()
+  {
+    $hamle =
+      'html' .
+      PHP_EOL .
+      '  |with $(basetest) as test' .
+      PHP_EOL .
+      '  body' .
+      PHP_EOL .
+      '    ul.menu' .
+      PHP_EOL .
+      '      |each $[test]' .
+      PHP_EOL .
+      '        li.menuitem[data-menu=$title]' .
+      PHP_EOL .
+      '          a[href=$url] $title' .
+      PHP_EOL .
+      '    |with $[test]' .
+      PHP_EOL .
+      '      span $title';
     $html = '
 <html>
   <body>
@@ -31,18 +42,26 @@ class scopeTest extends base {
   </body>
 </html>';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 
-  public function testScopeAccessor2() {
-    $hamle = "html".PHP_EOL.
-             "  body".PHP_EOL.
-             '    ul.menu'.PHP_EOL.
-             '      |each $(basetest)'.PHP_EOL.
-             '        li.menuitem[data-menu=$title]'.PHP_EOL.
-             '          a[href=$url] $title'.PHP_EOL.
-             '    span $title';
+  public function testScopeAccessor2()
+  {
+    $hamle =
+      'html' .
+      PHP_EOL .
+      '  body' .
+      PHP_EOL .
+      '    ul.menu' .
+      PHP_EOL .
+      '      |each $(basetest)' .
+      PHP_EOL .
+      '        li.menuitem[data-menu=$title]' .
+      PHP_EOL .
+      '          a[href=$url] $title' .
+      PHP_EOL .
+      '    span $title';
     $html = '
 <html>
   <body>
@@ -61,19 +80,29 @@ class scopeTest extends base {
   </body>
 </html>';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
-  
-  public function testIf1() {
-    $hamle = "html".PHP_EOL.
-             "  body".PHP_EOL.
-             '    |if $title'.PHP_EOL.
-             '      h2 $title'.PHP_EOL.
-             '    |if {$[0]->istrue}'.PHP_EOL.
-             '      .show[class={$[0]->class}] This will be visible'.PHP_EOL.
-             '    |if $nottrue'.PHP_EOL.
-             '      .hide This will not be shown'.PHP_EOL;
+
+  public function testIf1()
+  {
+    $hamle =
+      'html' .
+      PHP_EOL .
+      '  body' .
+      PHP_EOL .
+      '    |if $title' .
+      PHP_EOL .
+      '      h2 $title' .
+      PHP_EOL .
+      '    |if {$[0]->istrue}' .
+      PHP_EOL .
+      '      .show[class={$[0]->class}] This will be visible' .
+      PHP_EOL .
+      '    |if $nottrue' .
+      PHP_EOL .
+      '      .hide This will not be shown' .
+      PHP_EOL;
     $html = '
 <html>
   <body>
@@ -82,21 +111,33 @@ class scopeTest extends base {
   </body>
 </html>';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
 
-  public function testIf2() {
-    $hamle = "html".PHP_EOL.
-             "  body".PHP_EOL.
-             '    |if $title starts This'.PHP_EOL.
-             '      h2 Title starts with This'.PHP_EOL.
-             '    |if $class ends red'.PHP_EOL.
-             '      .show class ends with red'.PHP_EOL.
-             '    |if $title contains is My'.PHP_EOL.
-             '      .show title has "is my"'.PHP_EOL.
-             '    |if $class equals colored'.PHP_EOL.
-             '      .hide class = colored'.PHP_EOL;
+  public function testIf2()
+  {
+    $hamle =
+      'html' .
+      PHP_EOL .
+      '  body' .
+      PHP_EOL .
+      '    |if $title starts This' .
+      PHP_EOL .
+      '      h2 Title starts with This' .
+      PHP_EOL .
+      '    |if $class ends red' .
+      PHP_EOL .
+      '      .show class ends with red' .
+      PHP_EOL .
+      '    |if $title contains is My' .
+      PHP_EOL .
+      '      .show title has "is my"' .
+      PHP_EOL .
+      '    |if $class equals colored' .
+      PHP_EOL .
+      '      .hide class = colored' .
+      PHP_EOL;
     $html = '
 <html>
   <body>
@@ -107,21 +148,33 @@ class scopeTest extends base {
   </body>
 </html>';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
-  
-  public function testIf3() {
-    $hamle = "html".PHP_EOL.
-             "  body".PHP_EOL.
-             '    |if $title starts This'.PHP_EOL.
-             '      h2 Title starts with This'.PHP_EOL.
-             '    |else'.PHP_EOL.
-             '      .show Title else starts with This'.PHP_EOL.
-             '    |if $title contains Jabber'.PHP_EOL.
-             '      .show title contains Jabber'.PHP_EOL.
-             '    |else'.PHP_EOL.
-             '      .hide title else contains Jabber'.PHP_EOL;
+
+  public function testIf3()
+  {
+    $hamle =
+      'html' .
+      PHP_EOL .
+      '  body' .
+      PHP_EOL .
+      '    |if $title starts This' .
+      PHP_EOL .
+      '      h2 Title starts with This' .
+      PHP_EOL .
+      '    |else' .
+      PHP_EOL .
+      '      .show Title else starts with This' .
+      PHP_EOL .
+      '    |if $title contains Jabber' .
+      PHP_EOL .
+      '      .show title contains Jabber' .
+      PHP_EOL .
+      '    |else' .
+      PHP_EOL .
+      '      .hide title else contains Jabber' .
+      PHP_EOL;
     $html = '
 <html>
   <body>
@@ -130,8 +183,7 @@ class scopeTest extends base {
   </body>
 </html>';
     $this->hamle->string($hamle);
-    $out = $this->hamle->output();
+    $out = $this->hamle->output($this->scope, $this->ctx);
     $this->compareXmlStrings($html, $out);
   }
-  
 }

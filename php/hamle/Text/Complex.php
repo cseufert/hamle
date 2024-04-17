@@ -28,6 +28,7 @@ namespace Seufert\Hamle\Text;
 use RuntimeException;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Model;
+use Seufert\Hamle\Runtime\Context;
 use Seufert\Hamle\Text;
 use Seufert\Hamle\WriteModel;
 
@@ -86,13 +87,13 @@ class Complex extends Text
     }
   }
 
-  function getOrCreateModel(Model $parent = null): Model
-  {
-    if ($this->func instanceof Text\Scope) {
-      return $this->func->getOrCreateModel($parent);
-    }
-    if ($this->func instanceof Text\Func) {
-      return $this->func->getOrCreateModel($parent);
+  function getOrCreateModel(
+    \Seufert\Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    Model $parent = null
+  ): Model {
+    if ($this->func instanceof Text\Scope || $this->func instanceof Text\Func) {
+      return $this->func->getOrCreateModel($scope, $ctx, $parent);
     }
     throw new RuntimeException(
       'Unsupported func type encountered:' .
@@ -104,14 +105,17 @@ class Complex extends Text
    * @param mixed $value
    * @return WriteModel
    */
-  function setValue(mixed $value): WriteModel
-  {
+  function setValue(
+    \Seufert\Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    mixed $value
+  ): WriteModel {
     if (!$this->sel || count($this->sel) != 1) {
       throw new RuntimeException(
         'Can only set values, when one var name is present',
       );
     }
-    $model = $this->getOrCreateModel();
+    $model = $this->getOrCreateModel($scope, $ctx);
     if (!$model instanceof WriteModel) {
       throw new RuntimeException(
         'Can only set values on WriteModel, got ' . get_class($model),

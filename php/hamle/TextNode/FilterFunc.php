@@ -14,6 +14,8 @@ class FilterFunc implements Chainable
   public ?Chainable $chain;
   public array $args;
 
+  private string $name = '';
+
   public function __construct(
     string $func,
     Chainable $chain = null,
@@ -21,21 +23,13 @@ class FilterFunc implements Chainable
   ) {
     $this->chain = $chain;
     $this->args = $args;
-    if (method_exists(Filter::class, $func)) {
-      $this->func = Filter::class . '::' . $func;
-    } elseif (
-      in_array($func, ['round', 'strtoupper', 'strtolower', 'ucfirst'])
-    ) {
+    if (in_array($func, ['strtoupper', 'strtolower', 'ucfirst', 'round'])) {
       $this->func = $func;
     } elseif ($func === 'json') {
       $this->func = 'json_encode';
-    } elseif (
-      Filter::$filterResolver &&
-      ($filter = (Filter::$filterResolver)($func))
-    ) {
-      $this->func = $filter;
     } else {
-      throw new ParseError("Unknown Filter Type \"{$func}\"");
+      $this->func = '';
+      $this->name = Text::varToCode($func);
     }
   }
 
@@ -48,7 +42,12 @@ class FilterFunc implements Chainable
       $this->args,
     );
     array_unshift($args, $out);
-    $o = "{$this->func}(" . join(',', $args) . ')';
+    if ($this->name !== '') {
+      $o =
+        "\$ctx->hamleFilter(\$scope,{$this->name}," . implode(',', $args) . ')';
+    } else {
+      $o = "{$this->func}(" . join(',', $args) . ')';
+    }
     if ($this->chain) {
       $o = $this->chain->apply($o);
     }

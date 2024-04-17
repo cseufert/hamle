@@ -60,44 +60,32 @@ class stringTest extends base
     $hs = new Text("Hello \$user");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('user')?>",
-      $html,
-    );
-    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=\$scope->model()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.\$scope->model()->hamleGet('user')", $php);
   }
   public function testDollarString2()
   {
     $hs = new Text("Hello {\$user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('user')?>",
-      $html,
-    );
-    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=\$scope->model()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.\$scope->model()->hamleGet('user')", $php);
   }
   public function testDollarString3()
   {
     $hs = new Text("Hello {\$[0]->user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('user')?>",
-      $html,
-    );
-    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=\$scope->model()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.\$scope->model()->hamleGet('user')", $php);
   }
   public function testDollarString3alt()
   {
     $hs = new Text("Hello {\$[0]-!user}");
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('user')?>",
-      $html,
-    );
-    $this->assertEquals("'Hello '.Hamle\\Scope::get()->hamleGet('user')", $php);
+    $this->assertEquals("Hello <?=\$scope->model()->hamleGet('user')?>", $html);
+    $this->assertEquals("'Hello '.\$scope->model()->hamleGet('user')", $php);
   }
   public function testDollarString4()
   {
@@ -105,11 +93,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')?>",
+      "Hello <?=\$ctx->hamleFindTypeTags(\$scope,array('site'=>array()),array(),0,0)->hamleGet('user')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')",
+      "'Hello '.\$ctx->hamleFindTypeTags(\$scope,array('site'=>array()),array(),0,0)->hamleGet('user')",
       $php,
     );
   }
@@ -119,11 +107,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')?>",
+      "Hello <?=\$ctx->hamleFindTypeTags(\$scope,array('site'=>array()),array(),0,0)->hamleGet('user')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->hamleGet('user')",
+      "'Hello '.\$ctx->hamleFindTypeTags(\$scope,array('site'=>array()),array(),0,0)->hamleGet('user')",
       $php,
     );
   }
@@ -134,14 +122,14 @@ class stringTest extends base
     $php = $hs->toPHP();
     $this->assertEquals(
       'Hello <?=' .
-        "Hamle\\Run::modelTypeTags(array('site'=>array()),array(),0,0)->" .
+        "\$ctx->hamleFindTypeTags(\$scope,array('site'=>array()),array(),0,0)->" .
         "hamleRel(1,array('address'=>array(0=>'mail')),array(),0,0,2)->" .
         "hamleGet('state')?>",
       $html,
     );
     $this->assertEquals(
       "'Hello '." .
-        'Hamle\\Run::modelTypeTags(' .
+        '$ctx->hamleFindTypeTags($scope,' .
         "array('site'=>array()),array(),0,0)->" .
         "hamleRel(1,array('address'=>array(0=>'mail')),array(),0,0,2)->" .
         "hamleGet('state')",
@@ -154,11 +142,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get(1)->hamleGet('summary')?>",
+      "Hello <?=\$scope->modelNum(1)->hamleGet('summary')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Scope::get(1)->hamleGet('summary')",
+      "'Hello '.\$scope->modelNum(1)->hamleGet('summary')",
       $php,
     );
   }
@@ -167,8 +155,8 @@ class stringTest extends base
     $hs = new Text("$[0]->user", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("<?=Hamle\\Scope::get()->hamleGet('user')?>", $html);
-    $this->assertEquals("Hamle\\Scope::get()->hamleGet('user')", $php);
+    $this->assertEquals("<?=\$scope->model()->hamleGet('user')?>", $html);
+    $this->assertEquals("\$scope->model()->hamleGet('user')", $php);
   }
   public function testDollarString8()
   {
@@ -176,13 +164,10 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "<?=Hamle\\Scope::getName('test')->hamleGet('user')?>",
+      "<?=\$scope->namedModel('test')->hamleGet('user')?>",
       $html,
     );
-    $this->assertEquals(
-      "Hamle\\Scope::getName('test')->hamleGet('user')",
-      $php,
-    );
+    $this->assertEquals("\$scope->namedModel('test')->hamleGet('user')", $php);
   }
   public function testDollarString9()
   {
@@ -190,11 +175,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')?>",
+      "Hello <?=\$ctx->hamleFindTypeTags(\$scope,array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Run::modelTypeTags(array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')",
+      "'Hello '.\$ctx->hamleFindTypeTags(\$scope,array('page'=>array(0=>'home',1=>'feature')),array(),0,0)->hamleGet('user')",
       $php,
     );
   }
@@ -206,11 +191,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\Scope::get()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>",
+      "Hello <?=\$scope->model()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\Scope::get()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')",
+      "'Hello '.\$scope->model()->hamleRel(1,array('test'=>array(0=>'7ba736fc-3d6e-4907-b448-d995bd78a477')),array(),0,0,0)->hamleGet('valid')",
       $php,
     );
   }
@@ -220,11 +205,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "<?=Hamle\Run::modelTypeId(array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')?>",
+      "<?=\$ctx->hamleFindTypeId(\$scope,array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')?>",
       $html,
     );
     $this->assertEquals(
-      "Hamle\Run::modelTypeId(array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')",
+      "\$ctx->hamleFindTypeId(\$scope,array('_request'=>array(0=>'get')),array(),0,0)->hamleGet('application')",
       $php,
     );
   }
@@ -234,7 +219,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $code =
-      "Hamle\Run::modelTypeId(array('_checkout2'=>array(0=>'cart')),array(),0,0)->hamleGet('cond_empty___0')";
+      "\$ctx->hamleFindTypeId(\$scope,array('_checkout2'=>array(0=>'cart')),array(),0,0)->hamleGet('cond_empty___0')";
     $this->assertEquals("<?=$code?>", $html);
     $this->assertEquals($code, $php);
   }
@@ -244,7 +229,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $code =
-      'Hamle\Run::modelId(32303,array(),0,0)->hamleRel(1,array(2011=>array(),1010=>array(),2012=>array()),array(),0,0,0)';
+      '$ctx->hamleFindId($scope,32303,array(),0,0)->hamleRel(1,array(2011=>array(),1010=>array(),2012=>array()),array(),0,0,0)';
     $this->assertEquals("<?=$code?>", $html);
     $this->assertEquals($code, $php);
   }
@@ -254,7 +239,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $code =
-      "strtoupper(Hamle\Scope::get()->hamleGet('a'),'a='.Hamle\Scope::get()->hamleGet('a').'&b='.Hamle\Scope::get()->hamleGet('b').'&c='.Hamle\Scope::get()->hamleGet('c'))";
+      "strtoupper(\$scope->model()->hamleGet('a'),'a='.\$scope->model()->hamleGet('a').'&b='.\$scope->model()->hamleGet('b').'&c='.\$scope->model()->hamleGet('c'))";
     $this->assertEquals("<?=$code?>", $html);
     $this->assertEquals($code, $php);
   }
@@ -265,11 +250,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('test_str')?>",
+      "Hello <?=\$scope->model()->hamleGet('test_str')?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Scope::get()->hamleGet('test_str')",
+      "'Hello '.\$scope->model()->hamleGet('test_str')",
       $php,
     );
   }
@@ -279,11 +264,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=Hamle\\Scope::get()->hamleGet('test')?>-str",
+      "Hello <?=\$scope->model()->hamleGet('test')?>-str",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.Hamle\\Scope::get()->hamleGet('test').'-str'",
+      "'Hello '.\$scope->model()->hamleGet('test').'-str'",
       $php,
     );
   }
@@ -293,11 +278,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=round(Hamle\\Scope::get()->hamleGet('length'),0)?>",
+      "Hello <?=round(\$scope->model()->hamleGet('length'),0)?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.round(Hamle\\Scope::get()->hamleGet('length'),0)",
+      "'Hello '.round(\$scope->model()->hamleGet('length'),0)",
       $php,
     );
   }
@@ -308,11 +293,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)?>",
+      "Hello <?=round(\$scope->model()->hamleGet('box')->hamleGet('length'),0)?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),0)",
+      "'Hello '.round(\$scope->model()->hamleGet('box')->hamleGet('length'),0)",
       $php,
     );
   }
@@ -322,11 +307,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>",
+      "Hello <?=round(\$scope->model()->hamleGet('box')->hamleGet('length'))?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))",
+      "'Hello '.round(\$scope->model()->hamleGet('box')->hamleGet('length'))",
       $php,
     );
   }
@@ -336,11 +321,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))?>",
+      "Hello <?=json_encode(\$scope->model()->hamleGet('box')->hamleGet('length'))?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.json_encode(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'))",
+      "'Hello '.json_encode(\$scope->model()->hamleGet('box')->hamleGet('length'))",
       $php,
     );
   }
@@ -350,11 +335,11 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hello <?=round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),Hamle\\Scope::get(-1)->hamleGet('decimals'))?>",
+      "Hello <?=round(\$scope->model()->hamleGet('box')->hamleGet('length'),\$scope->modelNum(-1)->hamleGet('decimals'))?>",
       $html,
     );
     $this->assertEquals(
-      "'Hello '.round(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),Hamle\\Scope::get(-1)->hamleGet('decimals'))",
+      "'Hello '.round(\$scope->model()->hamleGet('box')->hamleGet('length'),\$scope->modelNum(-1)->hamleGet('decimals'))",
       $php,
     );
   }
@@ -363,7 +348,7 @@ class stringTest extends base
     $hs = new Text('{$box->length|itersplit(";")}', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),';')",
+      "\$ctx->hamleFilter(\$scope,'itersplit',\$scope->model()->hamleGet('box')->hamleGet('length'),';')",
       $php,
     );
   }
@@ -372,7 +357,7 @@ class stringTest extends base
     $hs = new Text("{\$box->length|itersplit(',')}", Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::itersplit(Hamle\\Scope::get()->hamleGet('box')->hamleGet('length'),',')",
+      "\$ctx->hamleFilter(\$scope,'itersplit',\$scope->model()->hamleGet('box')->hamleGet('length'),',')",
       $php,
     );
   }
@@ -381,7 +366,7 @@ class stringTest extends base
     $hs = new Text("{\$desc|newlinebr}", Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc'))",
+      "\$ctx->hamleFilter(\$scope,'newlinebr',\$scope->model()->hamleGet('desc'))",
       $php,
     );
   }
@@ -390,7 +375,7 @@ class stringTest extends base
     $hs = new Text('{$desc|iterSplit("\n","\'")}', Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::iterSplit(Hamle\\Scope::get()->hamleGet('desc'),\"\\n\",'\\'')",
+      "\$ctx->hamleFilter(\$scope,'iterSplit',\$scope->model()->hamleGet('desc'),\"\\n\",'\\'')",
       $php,
     );
   }
@@ -399,12 +384,12 @@ class stringTest extends base
   {
     $hs = new Text('$(page:1)->title|iterSplit(\'-\')', Text::TOKEN_CONTROL);
     $this->assertEquals(
-      "Seufert\Hamle\Text\Filter::iterSplit(Hamle\Run::modelTypeTags(array('page'=>array()),array(),1,0)->hamleGet('title'),'-')",
+      "\$ctx->hamleFilter(\$scope,'iterSplit',\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array(),1,0)->hamleGet('title'),'-')",
       $hs->toPHP(),
     );
   }
 
-  public function invalidStringsProvider(): array
+  public static function invalidStringsProvider(): array
   {
     return [
       ['{$a|iterSplit("a)'],
@@ -441,7 +426,7 @@ class stringTest extends base
     $hs = new Text("{\$url|strtoupper('hash={\$[-2]->hash}')}");
     $php = $hs->toPHP();
     $this->assertEquals(
-      "strtoupper(Hamle\Scope::get()->hamleGet('url'),'hash='.Hamle\Scope::get(-2)->hamleGet('hash'))",
+      "strtoupper(\$scope->model()->hamleGet('url'),'hash='.\$scope->modelNum(-2)->hamleGet('hash'))",
       $php,
     );
   }
@@ -450,7 +435,7 @@ class stringTest extends base
     $hs = new Text("{\$desc|newlinebr|json}", Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "json_encode(Seufert\\Hamle\\Text\\Filter::newlinebr(Hamle\\Scope::get()->hamleGet('desc')))",
+      "json_encode(\$ctx->hamleFilter(\$scope,'newlinebr',\$scope->model()->hamleGet('desc')))",
       $php,
     );
   }
@@ -460,7 +445,7 @@ class stringTest extends base
     $hs = new Text("{\$price|ascents}", Text::TOKEN_CONTROL);
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Seufert\\Hamle\\Text\\Filter::ascents(Hamle\\Scope::get()->hamleGet('price'))",
+      "\$ctx->hamleFilter(\$scope,'ascents',\$scope->model()->hamleGet('price'))",
       $php,
     );
     $this->assertEquals(2501, Text\Filter::ascents("$ 25.01"));
@@ -473,7 +458,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "\"My Title = <?=Hamle\\Scope::get()->hamleGet('title')?>\"",
+      "\"My Title = <?=\$scope->model()->hamleGet('title')?>\"",
       $html,
     );
   }
@@ -523,7 +508,7 @@ class stringTest extends base
     $hs = new Text("\$[user]", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Scope::getName('user')", $php);
+    $this->assertEquals("\$scope->namedModel('user')", $php);
   }
 
   public function testDollarScope2()
@@ -532,7 +517,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Scope::getName('layout')->hamleGet('view')",
+      "\$scope->namedModel('layout')->hamleGet('view')",
       $php,
     );
   }
@@ -543,7 +528,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('user'=>array()),array(),0,0)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('user'=>array()),array(),0,0)",
       $php,
     );
   }
@@ -554,7 +539,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeId(array('user'=>array(0=>3)),array(),0,0)",
+      "\$ctx->hamleFindTypeId(\$scope,array('user'=>array(0=>3)),array(),0,0)",
       $php,
     );
   }
@@ -563,7 +548,10 @@ class stringTest extends base
     $hs = new Text("\$(#my_page)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Run::modelId('my_page',array(),0,0)", $php);
+    $this->assertEquals(
+      "\$ctx->hamleFindId(\$scope,'my_page',array(),0,0)",
+      $php,
+    );
   }
   public function testDollarFunc4()
   {
@@ -571,7 +559,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('page'=>array()),array(),4,0)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array(),4,0)",
       $php,
     );
   }
@@ -581,7 +569,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('page'=>array()),array('title'=>2),3,1)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('page'=>array()),array('title'=>2),3,1)",
       $php,
     );
   }
@@ -591,7 +579,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('photo'=>array(0=>'heroimage')),array(''=>4),1,0)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('photo'=>array(0=>'heroimage')),array(''=>4),1,0)",
       $php,
     );
   }
@@ -601,7 +589,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('*'=>array(0=>'hero-image')),array(''=>4),1,0)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('*'=>array(0=>'hero-image')),array(''=>4),1,0)",
       $php,
     );
   }
@@ -610,7 +598,7 @@ class stringTest extends base
     $hs = new Text("\$(#_ga)", Text::TOKEN_CONTROL);
     $html = $hs->toHTML();
     $php = $hs->toPHP();
-    $this->assertEquals("Hamle\\Run::modelId('_ga',array(),0,0)", $php);
+    $this->assertEquals("\$ctx->hamleFindId(\$scope,'_ga',array(),0,0)", $php);
   }
   public function testDollarFuncChild1()
   {
@@ -618,7 +606,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelId('my_page',array(),0,0)" .
+      "\$ctx->hamleFindId(\$scope,'my_page',array(),0,0)" .
         "->hamleRel(1,array('link'=>array()),array(),0,0,0)",
       $php,
     );
@@ -629,7 +617,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelId('my_page',array(),0,0)" .
+      "\$ctx->hamleFindId(\$scope,'my_page',array(),0,0)" .
         "->hamleRel(1,array('*'=>array(0=>'gallery')),array(),0,0,0)",
       $php,
     );
@@ -640,7 +628,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelId('menu',array(),0,0)" .
+      "\$ctx->hamleFindId(\$scope,'menu',array(),0,0)" .
         "->hamleRel(1,array('page'=>array(),'cat'=>array()),array(),0,0,0)",
       $php,
     );
@@ -658,7 +646,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelId('heroimage',array(),0,0)" .
+      "\$ctx->hamleFindId(\$scope,'heroimage',array(),0,0)" .
         "->hamleRel(1,array('photo'=>array()),array(''=>4),4,0,0)",
       $php,
     );
@@ -669,7 +657,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      'Hamle\\Scope::get()->' . "hamleRel(1,array('*'=>array()),array(),0,0,2)",
+      '$scope->model()->' . "hamleRel(1,array('*'=>array()),array(),0,0,2)",
       $php,
     );
   }
@@ -679,8 +667,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      'Hamle\\Scope::get()->' .
-        "hamleRel(1,array('image'=>array()),array(),0,0,2)",
+      '$scope->model()->' . "hamleRel(1,array('image'=>array()),array(),0,0,2)",
       $php,
     );
   }
@@ -693,7 +680,7 @@ class stringTest extends base
     }
     ENDIN;
     $out =
-      '"{\n  \"hash\": \"".Hamle\Run::modelTypeId(array(\'_request\'=>array(0=>\'get\')),array(),0,0)->hamleGet(\'hash\')."\",\n  \"fileId\": ".Hamle\Scope::getName(\'file\')->hamleGet(\'id\')."\n}"';
+      '"{\n  \"hash\": \"".$ctx->hamleFindTypeId($scope,array(\'_request\'=>array(0=>\'get\')),array(),0,0)->hamleGet(\'hash\')."\",\n  \"fileId\": ".$scope->namedModel(\'file\')->hamleGet(\'id\')."\n}"';
 
     $hs = new Text($in);
     $php = $hs->toPHP();
@@ -705,7 +692,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Run::modelTypeTags(array('testim'=>array(0=>'featured')),array('sorder'=>3,'title'=>2),0,0)",
+      "\$ctx->hamleFindTypeTags(\$scope,array('testim'=>array(0=>'featured')),array('sorder'=>3,'title'=>2),0,0)",
       $php,
     );
   }
@@ -715,8 +702,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      'Hamle\\Scope::get()->' .
-        "hamleRel(2,array('cat'=>array()),array(),0,0,0)",
+      '$scope->model()->' . "hamleRel(2,array('cat'=>array()),array(),0,0,0)",
       $php,
     );
   }
@@ -735,7 +721,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Scope::get()->hamleRel(1,array('next'=>array()),array(),0,0,0)",
+      "\$scope->model()->hamleRel(1,array('next'=>array()),array(),0,0,0)",
       $php,
     );
   }
@@ -746,7 +732,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Scope::get(-1)->hamleRel(1,array('next'=>array()),array(),0,0,0)",
+      "\$scope->modelNum(-1)->hamleRel(1,array('next'=>array()),array(),0,0,0)",
       $php,
     );
   }
@@ -756,7 +742,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)",
+      "\$scope->namedModel('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)",
       $php,
     );
   }
@@ -767,7 +753,7 @@ class stringTest extends base
     $html = $hs->toHTML();
     $php = $hs->toPHP();
     $this->assertEquals(
-      "Hamle\\Scope::getName('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)->hamleRel(1,array('next'=>array()),array(),0,0,0)",
+      "\$scope->namedModel('prev')->hamleRel(1,array('next'=>array()),array(),0,0,0)->hamleRel(1,array('next'=>array()),array(),0,0,0)",
       $php,
     );
   }
@@ -775,28 +761,24 @@ class stringTest extends base
   //  public function testDollarFuncVar1() {
   //    $hs = new Text('$(product.{$tags})', Text::TOKEN_CONTROL);
   //    $php = $hs->toPHP();
-  //    $this->assertEquals("Hamle\\Run::modelTypeTags(array('product'=>array(0=>Hamle\\Scope::get()->hamleGet('tags'))),array(),0,0)", $php);
+  //    $this->assertEquals("\$ctx->hamleFindTypeTags(\$scope,array('product'=>array(0=>\$scope->model()->hamleGet('tags'))),array(),0,0)", $php);
   //  }
 
   public function testFilterFunc()
   {
-    $oldFR = Text\Filter::$filterResolver;
-    Text\Filter::$filterResolver = static function ($s) {
-      return $s == 'format_date' ? 'Test::formatDate' : null;
-    };
     $hs = new Text('Date {$date|format_date}');
     $php = $hs->toPHP();
     $this->assertEquals(
-      "'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'))",
+      "'Date '.\$ctx->hamleFilter(\$scope,'format_date',\$scope->model()->hamleGet('date'))",
       $php,
     );
     $hs = new Text('Date {$date|format_date("Y-m-d")}');
     $php = $hs->toPHP();
     $this->assertEquals(
-      "'Date '.Test::formatDate(Hamle\Scope::get()->hamleGet('date'),'Y-m-d')",
+      "'Date '.\$ctx->hamleFilter(\$scope,'format_date',\$scope->model()->hamleGet('date'),'Y-m-d')",
+
       $php,
     );
-    Text\Filter::$filterResolver = $oldFR;
   }
 
   /**
@@ -807,7 +789,7 @@ class stringTest extends base
     $this->assertEquals($var, eval('return ' . Text::varToCode($var) . ';'));
   }
 
-  public function varDataProvider()
+  public static function varDataProvider()
   {
     return [
       'newline' => ["\n"],
@@ -821,32 +803,32 @@ class stringTest extends base
     ];
   }
 
-  public function dollarStringProvider(): array
+  public static function dollarStringProvider(): array
   {
     return [
       [
         '$($[0] > image@1:1)',
-        "Hamle\Scope::get()->hamleRel(1,array('image'=>array()),array(),1,0,1)",
+        "\$scope->model()->hamleRel(1,array('image'=>array()),array(),1,0,1)",
         Text::TOKEN_CONTROL,
       ],
       [
         '$( _cursor#next > bldwork )',
-        "Hamle\Run::modelTypeId(array('_cursor'=>array(0=>'next')),array(),0,0)->hamleRel(1,array('bldwork'=>array()),array(),0,0,0)",
+        "\$ctx->hamleFindTypeId(\$scope,array('_cursor'=>array(0=>'next')),array(),0,0)->hamleRel(1,array('bldwork'=>array()),array(),0,0,0)",
         Text::TOKEN_CONTROL,
       ],
       [
         '{$($[-1] &gt; page)-&gt;title}',
-        "Hamle\Scope::get(-1)->hamleRel(2,array('page'=>array()),array(),0,0,0)->hamleGet('title')",
+        "\$scope->modelNum(-1)->hamleRel(2,array('page'=>array()),array(),0,0,0)->hamleGet('title')",
         Text::TOKEN_HTML,
       ],
       [
         '{$($[-1] &lt; page)-&gt;title|strtoupper("{$(#12)-&gt;size}")}',
-        "strtoupper(Hamle\Scope::get(-1)->hamleRel(1,array('page'=>array()),array(),0,0,0)->hamleGet('title'),Hamle\Run::modelId(12,array(),0,0)->hamleGet('size'))",
+        "strtoupper(\$scope->modelNum(-1)->hamleRel(1,array('page'=>array()),array(),0,0,0)->hamleGet('title'),\$ctx->hamleFindId(\$scope,12,array(),0,0)->hamleGet('size'))",
         Text::TOKEN_HTML,
       ],
       [
         '$(_inspect#organisation^title:1000)',
-        "Hamle\Run::modelTypeId(array('_inspect'=>array(0=>'organisation')),array('title'=>2),1000,0)",
+        "\$ctx->hamleFindTypeId(\$scope,array('_inspect'=>array(0=>'organisation')),array('title'=>2),1000,0)",
         Text::TOKEN_CONTROL,
       ],
     ];

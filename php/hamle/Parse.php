@@ -205,10 +205,6 @@ class Parse
               $hTag = new Tag\Text($textcode);
               $hTag->addContent($text);
               break;
-            case '___': //Unescape String Tag
-              $hTag = new Tag\Text($textcode);
-              $hTag->addContent($text);
-              break;
             case '/': // HTML Comment
             case '//': // Non Printed Comment
               $hTag = new Tag\Comment($textcode);
@@ -257,7 +253,7 @@ class Parse
           }
         } else {
           throw new ParseError(
-            "Unable to parse line {$this->lineNo}\n\"$line\"/" .
+            "Unable to parse line {$this->lineNo}\n\"$line\" #" .
               preg_last_error(),
           );
         }
@@ -276,13 +272,44 @@ class Parse
     return $out;
   }
 
-  function output(bool $minify = false):string
+  function toPHPFile(bool $minify = false):string
   {
-    $out = "<?php\nuse Seufert\\Hamle;\n?>";
+    return "<?php\n" .
+"use Seufert\\Hamle;\n\n".
+      $this->compiledString($minify);
+  }
+
+  public function compiledString(bool $minify = false):string {
+    $code = '';
     foreach ($this->root as $tag) {
-      $out .= $tag->render(0, $minify);
+      $code .= $tag->render(0, $minify);
     }
-    return $out;
+    assert(!str_contains($code, "Scope::"), "Code should not contain static references to Hamle\\Scope: ".$code);
+    assert(!str_contains($code, "Run::"), "Code should not contain static references to Hamle\\Run: ".$code);
+    $scopeType = \Seufert\Hamle\Runtime\Scope::class;
+    $ctxType = \Seufert\Hamle\Runtime\Context::class;
+    return <<<ENDPHP
+    return function($scopeType \$scope, $ctxType \$ctx):string {
+      ob_start();
+      try {
+        ?>$code<?php
+        \$out = ob_get_contents();
+        ob_end_clean();
+        return \$out;
+      } catch (\Exception \$e) {
+        ob_end_clean();
+        throw \$e;
+      }
+    };
+ENDPHP
+    ;
+  }
+
+  /**
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
+   */
+  function toClosure(bool $minify = false):\Closure {
+    return eval($this->compiledString($minify));
   }
 
   function consumeBlock(int $indent):array

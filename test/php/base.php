@@ -7,6 +7,7 @@ use Seufert\Hamle\Hamle;
 use Seufert\Hamle as H;
 use Seufert\Hamle\Field;
 use Seufert\Hamle\Model\WrapArray;
+use Seufert\Hamle\Runtime\Scope;
 
 class base extends \PHPUnit\Framework\TestCase
 {
@@ -14,25 +15,26 @@ class base extends \PHPUnit\Framework\TestCase
    * @var Hamle Hamle Parser
    */
   protected $hamle;
+  public H\Scope $scope;
+  public H\Runtime\Context $ctx;
 
   public function setUp(): void
   {
-    $this->hamle = new Hamle(
-      new WrapArray([
-        [
-          'url' => 'https://www.secure.com',
-          'title' => 'This is My TITLE',
-          'class' => 'colored',
-          'empty' => '',
-          'nottrue' => false,
-          'csv' => 'a,b,c',
-          'scsv' => 'a;b;c;',
-          'unescaped' => 'Hi & >',
-          'istrue' => true,
-        ],
-      ]),
-      new baseTestSetup(),
-    );
+    $model = new WrapArray([
+      [
+        'url' => 'https://www.secure.com',
+        'title' => 'This is My TITLE',
+        'class' => 'colored',
+        'empty' => '',
+        'nottrue' => false,
+        'csv' => 'a,b,c',
+        'scsv' => 'a;b;c;',
+        'unescaped' => 'Hi & >',
+        'istrue' => true,
+      ],
+    ]);
+    $this->hamle = new Hamle(($this->ctx = new baseTestSetup()));
+    $this->scope = new H\Scope($model);
     parent::setUp();
   }
 
@@ -88,15 +90,15 @@ class base extends \PHPUnit\Framework\TestCase
   }
 }
 
-class baseTestSetup extends H\Setup
+class baseTestSetup extends H\Setup implements H\Runtime\Context
 {
-  function getModelTypeTags(
-    $typeTags,
-    $sortDir = 0,
-    $sortField = '',
-    $limit = 0,
-    $offset = 0
-  ) {
+  function hamleFindTypeTags(
+    Scope $scope,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0
+  ): H\Model {
     if (in_array('basetest', array_keys($typeTags))) {
       return new WrapArray([
         ['url' => 'http://www.test.com', 'title' => 'Test.com'],
@@ -109,13 +111,7 @@ class baseTestSetup extends H\Setup
         ['title' => 'The Title', 'testform' => new formTestForm()],
       ]);
     }
-    return parent::getModelTypeTags(
-      $typeTags,
-      $sortDir = 0,
-      $sortField = '',
-      $limit = 0,
-      $offset = 0,
-    );
+    parent::hamleFindTypeTags($scope, $typeTags, $sort, $limit, $offset);
   }
 
   function templatePath($f)

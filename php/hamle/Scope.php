@@ -10,86 +10,68 @@ use Seufert\Hamle\Exception\RunTime;
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Scope
+class Scope implements \Seufert\Hamle\Runtime\Scope
 {
-  /** @var Model[] Array of Models by Scope Order */
-  static $scopes = [];
-  /** @var Model[] Assoc array of Models by Scope Name */
-  static $namedScopes = [];
+  public Scope|null $lastScope = null;
 
-  /** @var null|Callable */
-  static $scopeHook;
+  /** @var list<Model> $parents  Parent Scopes */
+  public array $parents = [];
 
-  static function add(Model $model, string $name = null): void
+  public ?Scope $root = null;
+
+  public function __construct(public Model $model)
   {
-    if (!$model instanceof Model) {
-      throw new Unsupported(
-        'Unsupported Model (' .
-          get_class($model) .
-          '), Needs to implement hamleModel Interface',
-      );
-    }
-    if ($name) {
-      self::$namedScopes[$name] = $model;
-    } else {
-      self::$scopes[] = $model;
-    }
-    if (self::$scopeHook) {
-      (self::$scopeHook)($model);
-    }
+    $this->parents = [$model];
   }
 
-  static function done(): void
+  public function model(): Model
   {
-    array_pop(self::$scopes);
+    return $this->model;
   }
 
-  /**
-   * Get arbitary scope
-   * 0 = current
-   * negative vals = back form here, -1 = last, -2 one before last, etc
-   * positive vals = absolute position, 1 = first, 2 = second, etc
-   * @param int $id ID of scope to get
-   * @return Model
-   * @throws OutOfScope
-   */
-  static function get(int $id = 0): Model
+  public function modelNum(int $id): Model
   {
     if (0 === $id) {
-      if ($scope = end(self::$scopes)) {
-        return $scope;
-      }
-      throw new OutOfScope("Unable to find Scope ($id)");
+      return $this->model;
     }
     $key = $id - 1;
     if ($id < 0) {
-      $key = count(self::$scopes) + $id - 1;
+      $key = count($this->parents) + $id - 1;
     }
-    if (!isset(self::$scopes[$key])) {
-      throw new OutOfScope("Unable to find Scope ($id) or $key");
-    }
-    return self::$scopes[$key];
+    return $this->parents[$key] ??
+      throw new OutOfScope("Unable to find Scope ($id)");
   }
 
-  static function getTopScope(): ?Model
+  public function lastScope(): \Seufert\Hamle\Runtime\Scope
   {
-    return end(self::$scopes) ?: null;
-  }
-  static function getDepth(): int
-  {
-    return count(self::$scopes);
+    return $this->lastScope ?? $this;
   }
 
-  static bool $returnZeroOnNoScope = false;
-
-  static function getName(string $name): Model
+  public function withModel(Model $m): \Seufert\Hamle\Runtime\Scope
   {
-    if ($name && isset(self::$namedScopes[$name])) {
-      self::$namedScopes[$name]->rewind();
-      return self::$namedScopes[$name];
-    } elseif (self::$returnZeroOnNoScope) {
-      return new Model\Zero();
-    }
-    throw new RunTime("Unable to find scope ($name)");
+    $new = new self($m);
+    $new->lastScope = $this;
+    $new->parents = [...$this->parents, $this->model];
+    $new->root = $this->root ?? $this;
+    return $new;
+  }
+
+  /** @var array<string,Model> */
+  public array $namedModels = [];
+
+  public function setNamedModel(string $name): void
+  {
+    $root = $this->root ?? $this;
+    $root->namedModels[$name] = $this->model;
+  }
+
+  public function namedModel(string $name): Model
+  {
+    $root = $this->root ?? $this;
+    $model =
+      $root->namedModels[$name] ??
+      throw new RunTime("Unable to find named model ($name)");
+    $model->rewind();
+    return $model;
   }
 }

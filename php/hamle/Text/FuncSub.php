@@ -28,6 +28,7 @@ namespace Seufert\Hamle\Text;
 use Seufert\Hamle;
 use Seufert\Hamle\Exception\ParseError;
 use Seufert\Hamle\Model;
+use Seufert\Hamle\Runtime\Context;
 
 class FuncSub extends Hamle\Text\Func
 {
@@ -86,8 +87,11 @@ class FuncSub extends Hamle\Text\Func
       ",$limit)$sub";
   }
 
-  public function getOrCreateModel(Model $parent = null): Model
-  {
+  public function getOrCreateModel(
+    Hamle\Runtime\Scope $scope,
+    Context $ctx,
+    Model $parent = null
+  ): Model {
     if (!$parent) {
       throw new \RuntimeException('Unable to create when no model is passed');
     }
@@ -117,7 +121,7 @@ class FuncSub extends Hamle\Text\Func
         );
     }
     if ($this->sub) {
-      return $this->sub->getOrCreateModel($model)->current();
+      return $this->sub->getOrCreateModel($model, $ctx)->current();
     }
     return $model->current();
   }

@@ -32,9 +32,9 @@ class ScopeId implements Evaluated
   function toPHP(): string
   {
     if ($this->id === 0) {
-      $o = 'Hamle\\Scope::get()';
+      $o = '$scope->model()';
     } else {
-      $o = "Hamle\\Scope::get({$this->id})";
+      $o = "\$scope->modelNum({$this->id})";
     }
     if ($this->immediate) {
       $o = $this->immediate->apply($o);

@@ -28,8 +28,9 @@ namespace Seufert\Hamle {
   use Iterator;
 
   /**
-   * HAMLE Model Interface, all models used in the template must implmenent this
+   * HAMLE Model Interface, all models used in the template must implement this
    *
+   * @template-implements Iterator<int,Model>
    * @author Chris
    */
   interface Model extends Iterator

@@ -24,6 +24,9 @@ THE SOFTWARE.
 
  */
 namespace Seufert\Hamle;
+use RuntimeException;
+use Seufert\Hamle\Runtime\Scope;
+
 /**
  * Basic HAMLE Setup Class
  * This class should be extended to override the Model Methods,
@@ -31,7 +34,7 @@ namespace Seufert\Hamle;
  *
  * @author Chris Seufert <chris@seufert.id.au>
  */
-class Setup
+class Setup implements Runtime\Context
 {
   public bool $minify = true;
 
@@ -60,27 +63,26 @@ class Setup
    * @param int $offset Results Offset
    * @return Model Instance of model class that implements hamleModel
    */
-  public function getModelDefault($id, $sort = [], $limit = 0, $offset = 0)
-  {
+  public function hamleFindId(
+    Scope $scope,
+    string $id,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0
+  ): Model {
     return new Model\Zero();
   }
 
   /**
    * Open a specific model type with id
-   *
-   * @param array[] $typeId Type ID array [type=>[id]] or [page=>[3]]
-   * @param array $sort
-   * @param int $limit Results Limit
-   * @param int $offset Results Offset
-   * @return Model
-   * @throws Exception\RunTime
    */
-  public function getModelTypeID(
+  public function hamleFindTypeID(
+    Scope $scope,
     array $typeId,
     array $sort = [],
     int $limit = 0,
     int $offset = 0
-  ) {
+  ): Model {
     if (count($typeId) > 1) {
       throw new Exception\RunTime('Unable to open more than one ID at a time');
     }
@@ -89,19 +91,14 @@ class Setup
 
   /**
    * Return Iterator containing results from search of tags
-   *
-   * @param array[] $typeTags Type Tag Array [type=>[tag1,tag2],type2=>[]]
-   * @param array $sort
-   * @param int $limit Results Limit
-   * @param int $offset Results Limit
-   * @return Model Instance of Iterable model class
    */
-  public function getModelTypeTags(
-    $typeTags,
-    $sort = [],
-    $limit = 0,
-    $offset = 0
-  ) {
+  public function hamleFindTypeTags(
+    Scope $scope,
+    array $typeTags,
+    array $sort = [],
+    int $limit = 0,
+    int $offset = 0
+  ): Model {
     return new Model\Zero();
   }
   /**
@@ -160,5 +157,32 @@ class Setup
   public function getMinify()
   {
     return $this->minify;
+  }
+
+  public function hamleInclude(Scope $scope, string $name): string
+  {
+    if ($name[0] === '#') {
+      $h = new Hamle($this);
+      $name = substr($name, 1);
+      return $this->getFragment($h, $name);
+    } else {
+      $h = new Hamle($this);
+      $h->load($name);
+      return $h->output($scope, $this);
+    }
+  }
+
+  public function hamleFilter(
+    Scope $scope,
+    string $filter,
+    mixed ...$args
+  ): mixed {
+    return match ($filter) {
+      'itersplit' => \Seufert\Hamle\Text\Filter::itersplit(...$args),
+      'newlinebr' => \Seufert\Hamle\Text\Filter::newlinebr(...$args),
+      'replace' => \Seufert\Hamle\Text\Filter::replace(...$args),
+      'ascents' => \Seufert\Hamle\Text\Filter::ascents(...$args),
+      default => throw new RuntimeException('Unknown Filter: ' . $filter)
+    };
   }
 }

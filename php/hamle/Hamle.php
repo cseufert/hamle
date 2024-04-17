@@ -24,6 +24,8 @@ THE SOFTWARE.
 
  */
 namespace Seufert\Hamle;
+use Seufert\Hamle\Runtime\Context;
+
 /**
  * HAMLE - HAML inspired template, with (E)nhancements
  *
@@ -32,10 +34,6 @@ namespace Seufert\Hamle;
  */
 class Hamle
 {
-  /**
-   * @var Setup instance of hamleSetup Object
-   */
-  public Setup $setup;
   /**
    * @var Hamle|null Instance of the 'current' hamle Engine
    */
@@ -62,8 +60,6 @@ class Hamle
    */
   protected $snipMod = 0;
 
-  public ?Model $baseModel = null;
-
   const REL_CHILD = 0x01; /* Child Relation */
   const REL_PARENT = 0x02; /* Parent Relation */
   const REL_ANY = 0x03; /* Unspecified or any relation */
@@ -78,27 +74,10 @@ class Hamle
    * @throws Exception\Unsupported
    * @throws Exception\NotFound
    */
-  function __construct(Model $baseModel, ?Setup $setup = null)
+  function __construct(public Setup $setup)
   {
     self::$me = $this;
-    if (!$setup) {
-      $setup = new Setup();
-    }
     $this->parse = new Parse();
-    if (!$setup instanceof Setup) {
-      throw new Exception\Unsupported(
-        'Unsupported Setup Helper was passed, it must extends hamleSetup',
-      );
-    }
-    if (!$baseModel instanceof Model) {
-      throw new Exception\Unsupported(
-        'Unsupported Model(' .
-          get_class($baseModel) .
-          ') Type was passed, it must implement hamleModel',
-      );
-    }
-    $this->setup = $setup;
-    $this->baseModel = $baseModel;
     $this->initSnipFiles();
   }
 
@@ -119,9 +98,9 @@ class Hamle
    * Parse a HAMLE Template File
    * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws Exception\NotFound If tempalte file cannot be found
-   * @return Hamle Returns instance for chaining commands
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
    */
-  function load($hamleFile, \Closure $parseFunc = null)
+  function load($hamleFile, \Closure $parseFunc = null): Closure
   {
     $template = $this->setup->templatePath($hamleFile);
     if (!file_exists($template)) {
@@ -142,7 +121,7 @@ class Hamle
     } else {
       $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
     }
-    return $this;
+    return include $this->cacheFile;
   }
   /**
    * Parse a HAMLE tempalte from a string
@@ -152,8 +131,11 @@ class Hamle
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
-  function parse($hamleCode, \Closure $parseFunc = null): void
-  {
+  function parse(
+    $hamleCode,
+    \Closure $parseFunc = null,
+    bool $cache = false
+  ): void {
     if (!$this->cacheFile) {
       $this->cacheFile = $this->setup->cachePath('string.hamle.php');
     }
@@ -177,13 +159,31 @@ class Hamle
       false ===
       file_put_contents(
         $this->cacheFile,
-        $this->parse->output($this->setup->getMinify()),
+        $this->parse->toPHPFile($this->setup->getMinify()),
       )
     ) {
       throw new Exception\ParseError(
         "Unable to write to cache file ({$this->cacheFile})",
       );
     }
+  }
+
+  /**
+   * @param string $hamleCode
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):void
+   */
+  function parseString(string $hamleCode): \Closure
+  {
+    $this->parse->str($hamleCode);
+    $this->setup->debugLog('Loading Snippet Files');
+    foreach ($this->snipFiles as $snip) {
+      $this->parse->parseSnip(file_get_contents($snip));
+    }
+    $this->parse->applySnip();
+    foreach ($this->setup->getFilters() as $filter) {
+      $this->parse->parseFilter($filter);
+    }
+    return $this->parse->toClosure($this->setup->getMinify());
   }
 
   /**
@@ -210,33 +210,10 @@ class Hamle
    * @return string HTML Output as String
    * @throws Exception
    */
-  function output()
+  function output(\Seufert\Hamle\Runtime\Scope $scope, Context $ctx)
   {
-    try {
-      ob_start();
-      Run::addInstance($this);
-      $baseModel = $this->baseModel;
-      $this->baseModel = null;
-      $currentModel = $baseModel == Scope::getTopScope();
-      if (!$currentModel && $baseModel) {
-        Scope::add($baseModel);
-      }
-      /**
-       * @psalm-suppress UnresolvableInclude
-       */
-      require $this->cacheFile;
-      if (!$currentModel && $baseModel) {
-        Scope::done();
-      }
-      $this->baseModel = $baseModel;
-      $out = ob_get_contents();
-      ob_end_clean();
-    } catch (\Exception $e) {
-      ob_end_clean();
-      throw $e;
-    }
-    Run::popInstance();
-    return $out;
+    $hamle = include $this->cacheFile;
+    return $hamle($scope, $ctx);
   }
 
   /**
