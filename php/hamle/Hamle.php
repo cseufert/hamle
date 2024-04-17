@@ -98,9 +98,9 @@ class Hamle
    * Parse a HAMLE Template File
    * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws Exception\NotFound If tempalte file cannot be found
-   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
+   * @return \Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
    */
-  function load($hamleFile, \Closure $parseFunc = null): Closure
+  function load($hamleFile, \Closure $parseFunc = null): \Closure
   {
     $template = $this->setup->templatePath($hamleFile);
     if (!file_exists($template)) {
@@ -170,7 +170,7 @@ class Hamle
 
   /**
    * @param string $hamleCode
-   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):void
+   * @return \Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):void
    */
   function parseString(string $hamleCode): \Closure
   {
