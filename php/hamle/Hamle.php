@@ -170,7 +170,7 @@ class Hamle
 
   /**
    * @param string $hamleCode
-   * @return Closure(\Hamle\Runtime\Scope,\Hamle\Runtime\Context):void
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):void
    */
   function parseString(string $hamleCode): \Closure
   {

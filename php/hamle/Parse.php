@@ -310,7 +310,7 @@ ENDPHP
   }
 
   /**
-   * @return Closure(\Hamle\Runtime\Scope,\Hamle\Runtime\Context):string
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
    */
   function toClosure(bool $minify = false):\Closure {
     return eval($this->compiledString($minify));
