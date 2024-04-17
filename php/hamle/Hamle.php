@@ -98,9 +98,9 @@ class Hamle
    * Parse a HAMLE Template File
    * @param string $hamleFile Template File Name (will have path gathered from hamleSetup->templatePath
    * @throws Exception\NotFound If tempalte file cannot be found
-   * @return Hamle Returns instance for chaining commands
+   * @return Closure(\Seufert\Hamle\Runtime\Scope,\Seufert\Hamle\Runtime\Context):string
    */
-  function load($hamleFile, \Closure $parseFunc = null)
+  function load($hamleFile, \Closure $parseFunc = null): Closure
   {
     $template = $this->setup->templatePath($hamleFile);
     if (!file_exists($template)) {
@@ -121,7 +121,7 @@ class Hamle
     } else {
       $this->setup->debugLog("Using Cached file ({$this->cacheFile})");
     }
-    return $this;
+    return include $this->cacheFile;
   }
   /**
    * Parse a HAMLE tempalte from a string
