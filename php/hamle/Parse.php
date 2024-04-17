@@ -205,10 +205,6 @@ class Parse
               $hTag = new Tag\Text($textcode);
               $hTag->addContent($text);
               break;
-            case '___': //Unescape String Tag
-              $hTag = new Tag\Text($textcode);
-              $hTag->addContent($text);
-              break;
             case '/': // HTML Comment
             case '//': // Non Printed Comment
               $hTag = new Tag\Comment($textcode);
