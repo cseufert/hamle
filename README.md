@@ -9,12 +9,8 @@ Requires PHP >= 8.1
 
 ### Installation via Composer
 
-```json
-{
-  "require": {
-      "cseufert/hamle": "dev-master",
-  }
-}
+```sh
+composer require cseufert/hamle dev-master
 ```
 
 * [Example Implementation](doc/example.md)
