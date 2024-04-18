@@ -39,10 +39,10 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
+          file: ./clover.xml
 
       - name: Upload code coverage to Scrutinizer (optional)
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover coverage.xml
+          php ocular.phar code-coverage:upload --format=php-clover clover.xml
 
