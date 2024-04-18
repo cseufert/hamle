@@ -42,7 +42,6 @@ jobs:
           file: ./coverage.xml
 
       - name: Upload code coverage to Scrutinizer (optional)
-        if: ${{ secrets.SCRUTINIZER_TOKEN }}  # Only run if Scrutinizer token is provided
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
           php ocular.phar code-coverage:upload --format=php-clover coverage.xml
