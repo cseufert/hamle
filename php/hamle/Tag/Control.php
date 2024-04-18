@@ -106,19 +106,11 @@ class Control extends H\Tag
             'With requires a parameter for what to include',
           );
         }
+        $out .= "\$scope = \$scope->withModel({$this->o} = {$hsv->toPHP()});\n";
         if ($scopeName) {
-          $out .=
-            '$scope = $scope->withModel(' .
-            $hsv->toPHP() .
-            "); \$scope->setNamedModel(\"$scopeName\")\n;";
-        } else {
-          $out .=
-            "if(({$this->o} = " .
-            $hsv->toPHP() .
-            ') && ' .
-            "{$this->o}->valid()) {\n";
-          $out .= "\$scope = \$scope->withModel({$this->o});\n;";
+          $out .= "\$scope->setNamedModel(\"$scopeName\");\n";
         }
+        $out .= "if({$this->o}->valid()) {\n";
         break;
       case 'include':
         if (!$hsv) {
@@ -155,10 +147,8 @@ class Control extends H\Tag
         $out .= '}';
         break;
       case 'with':
-        if (!preg_match('/ as ([a-zA-Z]+)$/', $this->var, $m)) {
-          $out .= '$scope = $scope->lastScope(); ';
-          $out .= '}';
-        }
+        $out .= "}\n";
+        $out .= "\$scope = \$scope->lastScope();\n";
         break;
       case 'include':
         return '';
