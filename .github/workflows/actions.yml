@@ -23,17 +23,14 @@ jobs:
       - name: Composer install
         run: composer install
 
-      - name: Download Code Climate test reporter
-        run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
+    #  - name: Download Code Climate test reporter
+    #    run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
 
-      - name: Make test reporter executable
-        run: chmod +x cc-test-reporter
+    #  - name: Make test reporter executable
+    #    run: chmod +x cc-test-reporter
 
       - name: Run tests
-        run: |
-          ./cc-test-reporter before-build
-          composer test
-          ./cc-test-reporter after-build -t clover --exit-code $?
+        run: composer test
 
       - name: Upload code coverage to Code Climate
         uses: codecov/codecov-action@v4
