@@ -32,14 +32,14 @@ jobs:
       - name: Run tests
         run: composer test
 
-      - name: Upload code coverage to Code Climate
+      - name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./clover.xml
 
-      - name: Upload code coverage to Scrutinizer (optional)
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover clover.xml
+      - name: Upload Scrutinizer coverage
+        uses: sudo-bot/action-scrutinizer@latest
+        with:
+          cli-args: "--format=php-clover clover.xml --revision=${{ github.event.pull_request.head.sha || github.sha }}"
 
