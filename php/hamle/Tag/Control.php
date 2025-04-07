@@ -47,7 +47,7 @@ class Control extends H\Tag
    * @param \Seufert\Hamle\Tag $parentTag
    * @throws ParseError
    */
-  function __construct(string $tag, H\Tag $parentTag = null)
+  function __construct(string $tag, ?H\Tag $parentTag = null)
   {
     parent::__construct();
     $this->o = "\$o" . self::$instCount++;

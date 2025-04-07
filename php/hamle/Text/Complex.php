@@ -86,7 +86,7 @@ class Complex extends Text
     }
   }
 
-  function getOrCreateModel(Model $parent = null): Model
+  function getOrCreateModel(?Model $parent = null): Model
   {
     if ($this->func instanceof Text\Scope) {
       return $this->func->getOrCreateModel($parent);

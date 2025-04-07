@@ -86,7 +86,7 @@ class FuncSub extends Hamle\Text\Func
       ",$limit)$sub";
   }
 
-  public function getOrCreateModel(Model $parent = null): Model
+  public function getOrCreateModel(?Model $parent = null): Model
   {
     if (!$parent) {
       throw new \RuntimeException('Unable to create when no model is passed');

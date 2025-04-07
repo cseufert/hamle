@@ -121,7 +121,7 @@ class Hamle
    * @throws Exception\NotFound If tempalte file cannot be found
    * @return Hamle Returns instance for chaining commands
    */
-  function load($hamleFile, \Closure $parseFunc = null)
+  function load($hamleFile, ?\Closure $parseFunc = null)
   {
     $template = $this->setup->templatePath($hamleFile);
     if (!file_exists($template)) {
@@ -152,7 +152,7 @@ class Hamle
    * @param string $hamleCode Hamle Template as string
    * @throws Exception\ParseError if unable to write to the cache file
    */
-  function parse($hamleCode, \Closure $parseFunc = null): void
+  function parse($hamleCode, ?\Closure $parseFunc = null): void
   {
     if (!$this->cacheFile) {
       $this->cacheFile = $this->setup->cachePath('string.hamle.php');

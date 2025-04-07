@@ -63,7 +63,7 @@ class SimpleVar extends Text
     return 'Hamle\\Scope::get()->hamleGet(' . Text::varToCode($this->var) . ')';
   }
 
-  function getOrCreateModel(Model $parent = null): Model
+  function getOrCreateModel(?Model $parent = null): Model
   {
     return \Seufert\Hamle\Scope::get()->current();
   }

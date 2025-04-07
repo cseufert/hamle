@@ -172,7 +172,7 @@ class Func extends SimpleVar
    * @param Model|null $parent
    * @return Model
    */
-  public function getOrCreateModel(Model $parent = null): Model
+  public function getOrCreateModel(?Model $parent = null): Model
   {
     if ($this->scope instanceof Scope) {
       $parent = $this->scope->getOrCreateModel();

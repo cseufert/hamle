@@ -34,7 +34,7 @@ class ParseError extends Hamle\Exception
   function __construct(
     string $message = '',
     int $code = 0,
-    Throwable $previous = null
+    ?Throwable $previous = null
   ) {
     ///@todo  Include Line number & file name within parse error exceptions
     $message .= ', on line ' . Hamle\Hamle::getLineNo() . ' in file ?.hamle';

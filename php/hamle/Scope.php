@@ -20,7 +20,7 @@ class Scope
   /** @var null|Callable */
   static $scopeHook;
 
-  static function add(Model $model, string $name = null): void
+  static function add(Model $model, ?string $name = null): void
   {
     if (!$model instanceof Model) {
       throw new Unsupported(

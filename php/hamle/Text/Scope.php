@@ -66,7 +66,7 @@ class Scope extends SimpleVar
     throw new \Exception('Unsupported');
   }
 
-  function getOrCreateModel(Model $parent = null): Model
+  function getOrCreateModel(?Model $parent = null): Model
   {
     if (is_int($this->scope)) {
       return \Seufert\Hamle\Scope::get($this->scope);

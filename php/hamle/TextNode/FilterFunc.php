@@ -16,7 +16,7 @@ class FilterFunc implements Chainable
 
   public function __construct(
     string $func,
-    Chainable $chain = null,
+    ?Chainable $chain = null,
     array $args = []
   ) {
     $this->chain = $chain;
