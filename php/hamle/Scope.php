@@ -20,6 +20,8 @@ class Scope
   /** @var null|Callable */
   static $scopeHook;
 
+  static NoScopeMode $noScopeMode = NoScopeMode::Throw;
+
   static function add(Model $model, ?string $name = null): void
   {
     if (!$model instanceof Model) {
@@ -59,14 +61,14 @@ class Scope
       if ($scope = end(self::$scopes)) {
         return $scope;
       }
-      throw new OutOfScope("Unable to find Scope ($id)");
+      return self::$noScopeMode->get($id);
     }
     $key = $id - 1;
     if ($id < 0) {
       $key = count(self::$scopes) + $id - 1;
     }
     if (!isset(self::$scopes[$key])) {
-      throw new OutOfScope("Unable to find Scope ($id) or $key");
+      return self::$noScopeMode->get("$id / $key");
     }
     return self::$scopes[$key];
   }
@@ -80,8 +82,16 @@ class Scope
     return count(self::$scopes);
   }
 
+  /**
+   * @var bool Return Zero Model when named Scope is not found
+   */
   static bool $returnZeroOnNoScope = false;
 
+  /**
+   * @param string $name Name of scope to return
+   * @return Model
+   * @throws OutOfScope
+   */
   static function getName(string $name): Model
   {
     if ($name && isset(self::$namedScopes[$name])) {
@@ -90,6 +100,6 @@ class Scope
     } elseif (self::$returnZeroOnNoScope) {
       return new Model\Zero();
     }
-    throw new RunTime("Unable to find scope ($name)");
+    return self::$noScopeMode->get($name);
   }
 }
