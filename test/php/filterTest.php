@@ -2,7 +2,7 @@
 
 require_once 'base.php';
 
-class fitlerTest extends base
+class filterTest extends base
 {
   public function setUp(): void
   {
