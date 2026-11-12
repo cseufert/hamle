@@ -63,7 +63,7 @@ class Complex extends Text
 
   function toHTML(bool $escape = false): string
   {
-    if ($escape) {
+    if ($escape && !($this->allowRaw && $this->filter?->isRaw())) {
       return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
     }
     return '<?=' . $this->toPHP() . '?>';

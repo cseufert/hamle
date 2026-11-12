@@ -71,7 +71,13 @@ class Filter extends Text
     } else {
       throw new ParseError("Unable to parse filter expression \"$s\"");
     }
-    if (method_exists(Filter::class, $this->filter)) {
+    if ($this->filter === 'raw') {
+      if ($s !== 'raw') {
+        throw new ParseError(
+          'raw must be the last modifier and takes no arguments',
+        );
+      }
+    } elseif (method_exists(Filter::class, $this->filter)) {
       $this->filter = Filter::class . '::' . $this->filter;
     } elseif (
       in_array($this->filter, ['round', 'strtoupper', 'strtolower', 'ucfirst'])
@@ -91,14 +97,23 @@ class Filter extends Text
 
   function toHTML(bool $escape = false): string
   {
-    if ($escape) {
+    if ($escape && !($this->allowRaw && $this->isRaw())) {
       return '<?=htmlspecialchars(' . $this->toPHP() . ')?>';
     }
     return '<?=' . $this->toPHP() . '?>';
   }
 
+  function isRaw(): bool
+  {
+    return $this->filter === 'raw' ||
+      ($this->chained && $this->chained->isRaw());
+  }
+
   function toPHPpre(): string
   {
+    if ($this->filter === 'raw') {
+      return '';
+    }
     $pre = '';
     if ($this->chained) {
       $pre = $this->chained->toPHPpre();
@@ -108,6 +123,9 @@ class Filter extends Text
 
   function toPHPpost(): string
   {
+    if ($this->filter === 'raw') {
+      return '';
+    }
     $post = '';
     if ($this->chained) {
       $post = $this->chained->toPHPpost();
