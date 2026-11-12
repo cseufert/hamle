@@ -34,11 +34,16 @@ SimpleVar = "$" name:Identifier { /** <?php
         return new \Seufert\Hamle\TextNode\ScopeId(null, null, new \Seufert\Hamle\TextNode\ModelParam($name)); ?> **/
                                    return {type:'scopeThis', name};}
 
-ExprBody = expr:VarExprPart chain:VarParamFilter* {
-                   /** <?php if(!$chain) return $expr;
-                       $top = array_pop($chain);
-                       while($chain) { $top = array_pop($chain)->withChain($top); } return $expr->withChain($top); ?> **/
-                                               return {...expr, filter};}
+ExprBody = expr:VarExprPart chain:VarParamFilter* raw:("|raw" ![a-zA-Z0-9_])? {
+                   /** <?php
+                       if($chain) {
+                         $top = array_pop($chain);
+                         while($chain) { $top = array_pop($chain)->withChain($top); }
+                         $expr = $expr->withChain($top);
+                       }
+                       return $raw ? new \Seufert\Hamle\TextNode\RawOutput($expr) : $expr;
+                   ?> **/
+                   return {...expr, chain, raw: raw !== null};}
            / GetVarExpr
 
 GetVarExpr = expr:VarExprPart ExprParamArrow param:VarExprSub
@@ -47,7 +52,7 @@ GetVarExpr = expr:VarExprPart ExprParamArrow param:VarExprSub
 VarParamFilter = ExprParamArrow sub: VarExprSubName {
                           /** <?php return $sub; ?> **/
                           return { ...expr, param};}
-                / "|" filter:filter {
+                / "|" !("raw" ![a-zA-Z0-9_]) filter:filter {
                           /** <?php return $filter; ?> **/
                 }
 

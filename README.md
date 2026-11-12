@@ -169,6 +169,11 @@ becomes
     * This will also not attempt to parse any variables (eg {$title})
   * use `___` when you want unescape html (include variables) This allows rendering variables that contain html to display as html
 * Functions
+  * From v2.2, `{$body|raw}` renders a field containing HTML without escaping that expression. Other text and variables remain escaped as usual.
+  * `raw` must be the last modifier and takes no arguments, for example `{$body|replace("old","new")|raw}`.
+  * `raw` preserves the returned value; it does not decode HTML entities, sanitize HTML, or parse the value as a Hamle template. Use only trusted or already-sanitized HTML.
+  * HTML attribute values remain escaped even with `raw`. Existing `_`, `__`, and `___` behavior is unchanged.
+  * Clear compiled Hamle template caches after upgrading to v2.2 so templates are recompiled with modifier support.
   * `{$title|strtoupper}` runs strtoupper on models title value
   * `{$amount|format_currency("$", $(#prefs)->places)}` Pass arguments to functions
 

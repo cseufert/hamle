@@ -58,6 +58,8 @@ class Text
 
   protected int $mode = self::TOKEN_HTML;
 
+  protected bool $allowRaw = true;
+
   protected mixed $tree;
 
   function __construct(string $s, int $mode = self::TOKEN_HTML)
@@ -146,7 +148,11 @@ class Text
 
   function toHTML(bool $escape = false): string
   {
-    return $this->tree->toHTML($escape, $this->mode !== self::TOKEN_CODE);
+    return $this->tree->toHTML(
+      $escape,
+      $this->mode !== self::TOKEN_CODE,
+      $this->allowRaw,
+    );
     $out = '';
     foreach ($this->tree as $node) {
       switch ($node['type']) {
@@ -173,7 +179,9 @@ class Text
 
   function toHTMLAtt(): string
   {
-    return $this->toHTML(true);
+    $text = clone $this;
+    $text->allowRaw = false;
+    return $text->toHTML(true);
   }
 
   function toPHP(): string

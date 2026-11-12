@@ -32,38 +32,26 @@ class Doc
     return join('.', $out);
   }
 
-  public function toHtml(bool $escVar = false, bool $escFixed = true): string
-  {
+  public function toHtml(
+    bool $escVar = false,
+    bool $escFixed = true,
+    bool $allowRaw = true,
+  ): string {
     $out = [];
-    if ($escVar) {
-      $openTag = '<?=htmlspecialchars(';
-      $closeTag = ')?>';
-    } else {
-      $openTag = '<?=';
-      $closeTag = '?>';
-    }
-    $code = false;
     foreach ($this->body as $n) {
       if ($n instanceof Literal) {
-        if ($code) {
-          $out[] = $closeTag;
-          $code = false;
-        }
         $s = $n->string();
         if ($escFixed) {
           $s = htmlspecialchars($s);
         }
         $out[] = $s;
       } else {
-        if (!$code) {
-          $out[] = $openTag;
-          $code = true;
+        $php = $n->toPHP();
+        if ($escVar && !($allowRaw && $n instanceof RawOutput)) {
+          $php = 'htmlspecialchars(' . $php . ')';
         }
-        $out[] = $n->toPHP();
+        $out[] = '<?=' . $php . '?>';
       }
-    }
-    if ($code) {
-      $out[] = $closeTag;
     }
     return join('', $out);
   }
